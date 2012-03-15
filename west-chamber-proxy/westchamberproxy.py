@@ -22,6 +22,7 @@ gBlockedDomains = {
     "www.baidu.jp" : True,
     "www.nicovideo.jp": True,
     "ext.nicovideo.jp": True,
+    "www.bbc.co.uk": True,
 }
 
 gConfig = config.gConfig
