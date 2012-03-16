@@ -221,19 +221,19 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
                 print "use simple web proxy for " + path
             
-            inWhileList = False
-            for d in domainWhiteList:
-                if host.endswith(d):
-                    print host + " in domainWhiteList: " + d
-                    inWhileList = True
-
-            connectHost = host
-            if not inWhileList:
-                connectHost = self.getip(host)
-            
             self.lastHost = self.headers["Host"]
             
             while True:
+                inWhileList = False
+                for d in domainWhiteList:
+                    if host.endswith(d):
+                        print host + " in domainWhiteList: " + d
+                        inWhileList = True
+
+                connectHost = host
+                if not inWhileList:
+                    connectHost = self.getip(host)
+
                 doInject = self.enableInjection(host, connectHost)
                 if self.remote is None or self.lastHost != self.headers["Host"]:
                     self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
