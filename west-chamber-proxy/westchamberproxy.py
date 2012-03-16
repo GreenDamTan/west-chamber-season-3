@@ -25,6 +25,7 @@ gBlockedDomains = {
     "blog.roodo.com": True,
     "www.dwnews.com": True,
     "china.dwnews.com": True,
+    "www.mediafire.com": True,
 }
 
 gConfig = config.gConfig
