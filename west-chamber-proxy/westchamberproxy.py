@@ -22,7 +22,9 @@ gBlockedDomains = {
     "www.baidu.jp" : True,
     "www.nicovideo.jp": True,
     "ext.nicovideo.jp": True,
-    "www.bbc.co.uk": True,
+    "blog.roodo.com": True,
+    "www.dwnews.com": True,
+    "china.dwnews.com": True,
 }
 
 gConfig = config.gConfig
@@ -49,7 +51,7 @@ domainWhiteList = [
     "tudou.com",
     "ft.net",
     "ge.net",
-    "phonenumber.com"
+    "no-ip.com"
     ]
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer): pass
@@ -62,12 +64,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
         global gipWhiteList;
         print "check "+host + " " + ip
         if (host == ip):
-            print host + ": do not inject ip, maybe stream server or ws"
+            print host + ": do not inject ip or white list domain"
             return False
-        for d in domainWhiteList:
-            if host.endswith(d):
-                print host + " in domainWhiteList: " + d
-                return False
+        
         for c in ip:
             if c!='.' and (c>'9' or c < '0'):
                 print "recursive ip "+ip
@@ -185,6 +184,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             redirectUrl = self.path
             while True:
                 (scm, netloc, path, params, query, _) = urlparse.urlparse(redirectUrl)
+                print urlparse.urlparse(redirectUrl)
 
                 if (netloc not in gConfig["REDIRECT_DOMAINS"]):
                     break
@@ -212,15 +212,23 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.connection.close()
                 return
             # Remove http://[host]
-            path = self.path[self.path.find(netloc) + len(netloc):]
+            # path = self.path[self.path.find(netloc) + len(netloc):]
 
             if host in gBlockedDomains:
                 host = gConfig["PROXY_SERVER_SIMPLE"]
                 path = self.path[len(scm)+2:]
                 self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
                 print "use simple web proxy for " + path
+            
+            inWhileList = False
+            for d in domainWhiteList:
+                if host.endswith(d):
+                    print host + " in domainWhiteList: " + d
+                    inWhileList = True
 
-            connectHost = self.getip(host)
+            connectHost = host
+            if not inWhileList:
+                connectHost = self.getip(host)
             
             self.lastHost = self.headers["Host"]
             
@@ -231,8 +239,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     print "connect to " + host + ":" + str(port)
                     self.remote.connect((connectHost, port))
                     if doInject: 
+                        print "inject http"
                         self.remote.send("\r\n\r\n")
                 # Send requestline
+                if path == "":
+                    path = "/"
+                print " ".join((self.command, path, self.request_version)) + "\r\n"
                 self.remote.send(" ".join((self.command, path, self.request_version)) + "\r\n")
                 # Send headers
                 self.remote.send(str(self.headers) + "\r\n")
