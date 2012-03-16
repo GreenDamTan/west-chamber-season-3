@@ -211,8 +211,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.wfile.write("Location: " + redirectUrl + "\r\n")
                 self.connection.close()
                 return
-            # Remove http://[host]
-            # path = self.path[self.path.find(netloc) + len(netloc):]
+
+            # Remove http://[host] , for google.com.hk
+            path = self.path[self.path.find(netloc) + len(netloc):]
 
             if host in gBlockedDomains:
                 host = gConfig["PROXY_SERVER_SIMPLE"]
