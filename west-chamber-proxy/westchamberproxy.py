@@ -26,6 +26,8 @@ gBlockedDomains = {
     "www.dwnews.com": True,
     "china.dwnews.com": True,
     "www.mediafire.com": True,
+    "thepiratebay.org": True,
+    "thepiratebay.se": True,
 }
 
 gConfig = config.gConfig
