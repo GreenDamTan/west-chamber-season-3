@@ -280,10 +280,26 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if hh.upper()!='TRANSFER-ENCODING':
                     h += hh + ': ' + vv + '\r\n'
             self.wfile.write(h + "\r\n")
+
+            dataLength = 0
             while True:
                 response_data = response.read(8192)
                 if(len(response_data) == 0): break
+                if dataLength == 0 and (len(response_data) <= 173):
+                    if response_data.find("<title>400 Bad Request") != -1:
+                        domainWhiteList.append(host)
+                        response_data = """<html>
+    <head>
+        <script type="text/javascript" charset="utf-8">
+            window.location.reload();
+        </script>
+    </head>
+    <body>
+    </body>
+</html>"""
                 self.wfile.write(response_data)
+                dataLength += len(response_data)
+                print "data length: %d"%dataLength
         except:
             if self.remote:
                 self.remote.close()
