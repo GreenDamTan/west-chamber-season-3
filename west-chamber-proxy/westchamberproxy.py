@@ -56,12 +56,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
         global gipWhiteList;
         print "check "+host + " " + ip
         if (host == ip):
-            print host + ": do not inject ip or white list domain"
+            if gOptions.log>0: print host + ": do not inject ip or white list domain"
             return False
         
         for c in ip:
             if c!='.' and (c>'9' or c < '0'):
-                print "recursive ip "+ip
+                if gOptions.log>0: print "recursive ip "+ip
                 return True
 
         for r in gipWhiteList:
@@ -70,7 +70,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
             dran = struct.unpack('!I', socket.inet_aton(ran))[0]
             shift = 32 - int(m2)
             if (dip>>shift) == (dran>>shift):
-                print ip + " (" + host + ") is in China, matched " + (r)
+                if gOptions.log > 1: 
+                    print ip + " (" + host + ") is in China, matched " + (r)
                 return False
         return True
 
@@ -90,7 +91,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
         self.now = int( time.time() )
         if host in self.dnsCache:
             if self.now < self.dnsCache[host]["expire"]:
-                print "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now)
+                if gOptions.log > 1: 
+                    print "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now)
                 return self.dnsCache[host]["ip"]
 
         if gConfig["SKIP_LOCAL_RESOLV"]:
@@ -119,9 +121,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if struct.unpack('!I', packedIp)[0] in fakeIp:
                 print ("Fake IP " + host + " => " + ip)
             elif ip in ChinaUnicom404:
-                print ("ChinaUnicom404 " + host + " => " + ip + ", ignore");
+                print ("ChinaUnicom404 " + host + " => " + ip + ", ignore")
             else:
-                print ("DNS system resolve: " + host + " => " + ip)
+                if gOptions.log > 1: 
+                    print ("DNS system resolve: " + host + " => " + ip)
                 return ip
         except:
             print "DNS system resolve Error: " + host
@@ -129,7 +132,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
         return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
 
     def getRemoteResolve(self, host, dnsserver):
-        print "remote resolve " + host + " by " + dnsserver
+        if gOptions.log > 1: 
+            print "remote resolve " + host + " by " + dnsserver
         import DNS
         reqObj = DNS.Request()
         response = reqObj.req(name=host, qtype="A", protocol="tcp", server=dnsserver)
@@ -137,12 +141,14 @@ class ProxyHandler(BaseHTTPRequestHandler):
         #print "answers: " + str(response.answers)
         for a in response.answers:
             if a["name"] == host:
-                print ("DNS remote resolve: " + host + " => " + str(a))
+                if gOptions.log > 1: 
+                    print ("DNS remote resolve: " + host + " => " + str(a))
                 if a['typename'] == 'CNAME':
                     return self.getip(a["data"])
                 self.dnsCache[host] = {"ip":a["data"], "expire":self.now + a["ttl"]}
                 return a["data"]
-        print "authority: "+ str(response.authority)
+        if gOptions.log > 0: 
+            print "authority: "+ str(response.authority)
         for a in response.authority:
             if a['typename'] != "NS":
                 continue
@@ -154,17 +160,17 @@ class ProxyHandler(BaseHTTPRequestHandler):
         return host
     
     def netlog(self, path):
-        print "FEEDBACK_LOG: " + path
         if "FEEDBACK_LOG_SERVER" in gConfig:
+            if gOptions.log > 1: print "FEEDBACK_LOG: " + path
             try:
                 urllib2.urlopen(gConfig["FEEDBACK_LOG_SERVER"] + path).close()
             except:
                 pass
-        print "end FEEDBACK_LOG" 
+            if gOptions.log > 1: print "end FEEDBACK_LOG" 
         
     def proxy(self):
         doInject = False
-        print self.requestline
+        if gOptions.log > 0: print self.requestline
         port = 80
         host = self.headers["Host"]
         if host.find(":") != -1:
@@ -176,7 +182,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             redirectUrl = self.path
             while True:
                 (scm, netloc, path, params, query, _) = urlparse.urlparse(redirectUrl)
-                print urlparse.urlparse(redirectUrl)
+                if gOptions.log > 2: print urlparse.urlparse(redirectUrl)
 
                 if (netloc not in gConfig["REDIRECT_DOMAINS"]):
                     break
@@ -219,7 +225,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 inWhileList = False
                 for d in domainWhiteList:
                     if host.endswith(d):
-                        print host + " in domainWhiteList: " + d
+                        if gOptions.log > 1: print host + " in domainWhiteList: " + d
                         inWhileList = True
 
                 connectHost = host
@@ -229,10 +235,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 doInject = self.enableInjection(host, connectHost)
                 if self.remote is None or self.lastHost != self.headers["Host"]:
                     self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    print "connect to " + host + ":" + str(port)
+                    if gOptions.log > 1: print "connect to " + host + ":" + str(port)
                     self.remote.connect((connectHost, port))
                     if doInject: 
-                        print "inject http"
+                        if gOptions.log > 0: print "inject http for "+host
                         self.remote.send("\r\n\r\n")
                 # Send requestline
                 if path == "":
@@ -292,7 +298,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
 </html>"""
                 self.wfile.write(response_data)
                 dataLength += len(response_data)
-                print "data length: %d"%dataLength
+                if gOptions.log > 1: print "data length: %d"%dataLength
         except:
             if self.remote:
                 self.remote.close()
@@ -377,7 +383,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                         out.send(data)
                         count = 0
             if count == time_out_max:
-                print ("select timeout")
+                if gOptions.log > 1: print ("select timeout")
                 break
 
 
@@ -403,7 +409,7 @@ def start():
     
     try:
         global gipWhiteList;
-        s = open(gOptions["CHINA_IP_LIST_FILE"])
+        s = open(gConfig["CHINA_IP_LIST_FILE"])
         gipWhiteList = json.loads( s.read() )
         print "load %d ip range rules" % len(gipWhiteList);
         s.close()
@@ -429,6 +435,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='west chamber proxy')
     parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
                    help='local port')
+    parser.add_argument('--log', default=1, type=int, help='log level, 0-3')
     parser.add_argument('--pidfile', default='', help='pid file')
     gOptions = parser.parse_args()
     if gOptions.pidfile != "":

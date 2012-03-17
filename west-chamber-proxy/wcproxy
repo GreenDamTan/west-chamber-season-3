@@ -23,7 +23,7 @@ case "$1" in
   stop)
         if [ -f $pidfile ]; then
         if ps -C `cat $pidfile` > /dev/null; then
-            echo -n "Shutting down wcproxy: "
+            echo "Shutting down wcproxy: "
             kill -9 `cat $pidfile`
         fi
         RETVAL=$?
