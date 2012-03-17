@@ -287,15 +287,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if dataLength == 0 and (len(response_data) <= 173):
                     if response_data.find("<title>400 Bad Request") != -1:
                         domainWhiteList.append(host)
-                        response_data = """<html>
-    <head>
-        <script type="text/javascript" charset="utf-8">
-            window.location.reload();
-        </script>
-    </head>
-    <body>
-    </body>
-</html>"""
+                        response_data = gConfig["PAGE_RELOAD_HTML"]
                 self.wfile.write(response_data)
                 dataLength += len(response_data)
                 if gOptions.log > 1: print "data length: %d"%dataLength
@@ -312,6 +304,11 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if exc_type == socket.error:
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].replace(" ", "")
+                if code == "60": #timed out
+                    self.wfile.write("HTTP/1.1 200 OK\r\n\r\n")
+                    self.wfile.write(gConfig["PAGE_RELOAD_HTML"])
+                    return
+
                 errpath = code + "/host/" + host + "/?msg=" + urllib.quote(msg)
             traceback.print_tb(exc_traceback)
             (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)

@@ -76,4 +76,12 @@ gConfig = {
         "www.bbc.co.uk": True,
     },
     "CHINA_IP_LIST_FILE":"exclude-ip.json",
+    "PAGE_RELOAD_HTML": """<html>
+    <head>
+        <script type="text/javascript" charset="utf-8">
+            window.location.reload();
+        </script>
+    </head>
+    <body>
+    </body></html>""",
 }
