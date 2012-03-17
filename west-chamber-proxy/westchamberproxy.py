@@ -21,7 +21,6 @@ gConfig = config.gConfig
 
 gOptions = {}
 
-PID_FILE = '/tmp/python.pid'
 gipWhiteList = []
 domainWhiteList = [
     ".cn",
@@ -430,5 +429,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='west chamber proxy')
     parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
                    help='local port')
+    parser.add_argument('--pidfile', default='', help='pid file')
     gOptions = parser.parse_args()
+    if gOptions.pidfile != "":
+        import os
+        pid = str(os.getpid())
+        f = open(gOptions.pidfile,'w')
+        print "Writing pid " + pid + " to "+gOptions.pidfile
+        f.write(pid)
+        f.close()
     start()
