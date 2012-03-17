@@ -12,12 +12,14 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 from httplib import HTTPResponse, BadStatusLine
-import re, socket, struct, threading, os, traceback, sys, select, urlparse, signal, urllib, urllib2, json, platform, time
+import re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, json, time, argparse
 import config
 
 grules = []
 
 gConfig = config.gConfig
+
+gOptions = {}
 
 PID_FILE = '/tmp/python.pid'
 gipWhiteList = []
@@ -380,39 +382,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 break
 
 
-def start(fork):
-    # do the UNIX double-fork magic, see Stevens' "Advanced   
-    # Programming in the UNIX Environment" for details (ISBN 0201563177)
-    
-    if fork:
-        try:   
-            pid = os.fork()   
-            if pid > 0:  
-                # exit first parent  
-                sys.exit(0)   
-        except OSError, e:   
-            print >>sys.stderr, "fork #1 failed: %d (%s)" % (e.errno, e.strerror)   
-            sys.exit(1)  
-        # decouple from parent environment  
-        os.chdir("/")   
-        os.setsid()   
-        os.umask(0)   
-        # do second fork  
-        try:   
-            pid = os.fork()   
-            if pid > 0:
-                sys.exit(0)   
-        except OSError, e:   
-            print >>sys.stderr, "fork #2 failed: %d (%s)" % (e.errno, e.strerror)   
-            sys.exit(1)
-
-        pid = str(os.getpid())
-        print "start pid %s"%pid
-        f = open(PID_FILE,'a')
-        f.write(" ")
-        f.write(pid)
-        f.close()
-    
+def start():
     # Read Configuration
     try:
         s = urllib2.urlopen('http://liruqi.sinaapp.com/mirror.php?u=aHR0cDovL3NtYXJ0aG9zdHMuZ29vZ2xlY29kZS5jb20vc3ZuL3RydW5rL2hvc3Rz')
@@ -423,9 +393,8 @@ def start(fork):
             if (len(d) != 2): continue
             #remove long domains
             if len(d[1]) > 24:
-                print "ignore "+d[1]
                 continue
-            print "read "+line
+            #print "read "+line
             regexp = d[1].replace(".", "\.").replace("*", ".*")
             try: grules.append((d[0], re.compile(regexp)))
             except: print "Invalid rule:", d[1]
@@ -452,40 +421,14 @@ def start(fork):
         print "load blocked domains failed"
 
     print "Loaded", len(grules), " dns rules."
-    print "Set your browser's HTTP proxy to 127.0.0.1:%d"%(gConfig["LOCAL_PORT"])
-    server = ThreadingHTTPServer(("0.0.0.0", gConfig["LOCAL_PORT"]), ProxyHandler)
+    print "Set your browser's HTTP proxy to 127.0.0.1:%d"%(gOptions.port)
+    server = ThreadingHTTPServer(("0.0.0.0", gOptions.port), ProxyHandler)
     try: server.serve_forever()
     except KeyboardInterrupt: exit()
     
 if __name__ == "__main__":
-    isWindows = (platform.system() == "Windows")
-    if (len(sys.argv)<2 or sys.argv[1] == "start"):
-        # 
-        # http://stackoverflow.com/questions/82831/how-do-i-check-if-a-file-exists-using-python
-        if not isWindows:
-            try:
-                open(PID_FILE).close()
-                print "pid exists: " + open(PID_FILE).read()
-                exit(0)
-            except IOError as e:
-                print "start new process..."
-        start( (False == isWindows) )
-        
-    if (sys.argv[1] == "stop"):
-        if isWindows:
-            print "process control is not supported on Windows"
-            exit(2)
-        try:
-            pid = open(PID_FILE).read()
-            os.remove(PID_FILE)
-            os.kill(int(pid), signal.SIGKILL)
-        except:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            print exc_type
-            print exc_value
-            traceback.print_tb(exc_traceback)
-        exit(0)
-
-    print "Usage: "+ sys.argv[0] + " start | stop"
-    exit(1)
-    
+    parser = argparse.ArgumentParser(description='west chamber proxy')
+    parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
+                   help='local port')
+    gOptions = parser.parse_args()
+    start()
