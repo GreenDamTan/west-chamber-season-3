@@ -60,5 +60,19 @@ gConfig = {
         "www.youtube.com": 1,
         "twitter.com": 1,
         "api.twitter.com": 1,
+    },
+    "BLOCKED_DOMAINS": {
+        "baidu.jp" : True,
+        "search.twitter.com" : True,
+        "www.baidu.jp" : True,
+        "www.nicovideo.jp": True,
+        "ext.nicovideo.jp": True,
+        "blog.roodo.com": True,
+        "www.dwnews.com": True,
+        "china.dwnews.com": True,
+        "www.mediafire.com": True,
+        "thepiratebay.org": True,
+        "thepiratebay.se": True,
+        "www.bbc.co.uk": True,
     }
 }

@@ -16,19 +16,6 @@ import re, socket, struct, threading, os, traceback, sys, select, urlparse, sign
 import config
 
 grules = []
-gBlockedDomains = {
-    "baidu.jp" : True,
-    "search.twitter.com" : True,
-    "www.baidu.jp" : True,
-    "www.nicovideo.jp": True,
-    "ext.nicovideo.jp": True,
-    "blog.roodo.com": True,
-    "www.dwnews.com": True,
-    "china.dwnews.com": True,
-    "www.mediafire.com": True,
-    "thepiratebay.org": True,
-    "thepiratebay.se": True,
-}
 
 gConfig = config.gConfig
 
@@ -219,7 +206,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             # Remove http://[host] , for google.com.hk
             path = self.path[self.path.find(netloc) + len(netloc):]
 
-            if host in gBlockedDomains:
+            if host in gConfig["BLOCKED_DOMAINS"]:
                 host = gConfig["PROXY_SERVER_SIMPLE"]
                 path = self.path[len(scm)+2:]
                 self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
@@ -456,11 +443,10 @@ def start(fork):
         print "load ip-range config fail"
 
     try:
-        global gBlockedDomains
         s = urllib2.urlopen(gConfig["BLOCKED_DOMAINS_URI"])
         for line in s.readlines():
             line = line.strip()
-            gBlockedDomains[line] = True
+            gConfig["BLOCKED_DOMAINS"][line] = True
         s.close()
     except:
         print "load blocked domains failed"
