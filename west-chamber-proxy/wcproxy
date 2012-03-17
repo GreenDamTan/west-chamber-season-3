@@ -17,7 +17,7 @@ RETVAL=0
 # See how we were called.
 case "$1" in
   start)
-        echo -n "Starting wcproxy: "
+        echo "Starting wcproxy: "
          $wcproxy --pidfile $pidfile &
         ;;
   stop)

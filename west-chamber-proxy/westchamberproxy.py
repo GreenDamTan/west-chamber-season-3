@@ -403,7 +403,7 @@ def start():
     
     try:
         global gipWhiteList;
-        s = urllib2.urlopen('http://liruqi.sinaapp.com/exclude-ip.json')
+        s = open(gOptions["CHINA_IP_LIST_FILE"])
         gipWhiteList = json.loads( s.read() )
         print "load %d ip range rules" % len(gipWhiteList);
         s.close()
