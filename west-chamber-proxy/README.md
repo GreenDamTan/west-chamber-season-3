@@ -16,7 +16,7 @@
 * Mac / Linux
 
     1. 下载项目代码: [zip](https://github.com/liruqi/west-chamber-season-3/zipball/master)
-    1. 解压缩，打开终端，cd 到代码目录，cd west-chamber-proxy; python westchamberproxy.py
+    1. 解压缩，打开终端，cd 到代码目录，cd west-chamber-proxy; 启动代理：./wcproxy start；关闭代理：./wcproxy stop。
     2. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998。
 
 * Android
