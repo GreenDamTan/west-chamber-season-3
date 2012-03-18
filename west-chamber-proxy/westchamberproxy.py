@@ -437,7 +437,7 @@ def start():
         print "load blocked domains failed"
 
     print "Loaded", len(grules), " dns rules."
-    print "Set your browser's HTTP proxy to 127.0.0.1:%d"%(gOptions.port)
+    print "Set your browser's HTTP/HTTPS proxy to 127.0.0.1:%d"%(gOptions.port)
     server = ThreadingHTTPServer(("0.0.0.0", gOptions.port), ProxyHandler)
     try: server.serve_forever()
     except KeyboardInterrupt: exit()

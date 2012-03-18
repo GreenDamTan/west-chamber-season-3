@@ -8,6 +8,10 @@ wcproxy=./westchamberproxy.py
 [ -f $wcproxy ] || exit 0
 
 pidfile=/var/run/wcproxy.pid
+if [ $(whoami) != "root" ]; then
+    pidfile=/tmp/wcproxy.pid
+fi
+
 if [ `uname` == "Darwin" ]; then
     pidfile=/tmp/wcproxy.pid
 fi
