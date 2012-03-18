@@ -12,8 +12,10 @@ if [ $(whoami) != "root" ]; then
     pidfile=/tmp/wcproxy.pid
 fi
 
+processcheck="ps -c"
 if [ `uname` == "Darwin" ]; then
     pidfile=/tmp/wcproxy.pid
+    processcheck="ps -C"
 fi
 
 RETVAL=0
@@ -26,7 +28,7 @@ case "$1" in
         ;;
   stop)
         if [ -f $pidfile ]; then
-        if ps -C `cat $pidfile` > /dev/null; then
+        if $processcheck `cat $pidfile` > /dev/null; then
             echo "Shutting down wcproxy: "
             kill -9 `cat $pidfile`
         fi
