@@ -308,7 +308,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].split(' ')[1]
 
-            if exc_type == socket.timeout or (exc_type == socket.error and (code == "60" or code == "32")): #timed out
+            if exc_type == socket.timeout or (exc_type == socket.error and code in ["60"]): #timed out
                 if gOptions.log > 0: print "add "+host+" to blocked domains"
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 self.wfile.write("HTTP/1.1 200 OK\r\n\r\n")
