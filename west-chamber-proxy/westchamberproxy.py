@@ -208,7 +208,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 status = "HTTP/1.1 302 Found"
                 self.wfile.write(status + "\r\n")
                 self.wfile.write("Location: " + redirectUrl + "\r\n")
-                self.connection.close()
+                self.wfile.close()
                 return
 
             # Remove http://[host] , for google.com.hk
@@ -293,6 +293,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(response_data)
                 dataLength += len(response_data)
                 if gOptions.log > 1: print "data length: %d"%dataLength
+            self.wfile.close()
         except:
             if self.remote:
                 self.remote.close()
@@ -337,7 +338,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 errpath = ("error/host/" + host + "/?msg=" + msg)
                 self.wfile.write(status + "\r\n")
                 self.wfile.write("Location: http://liruqi.info/post/18486575704/west-chamber-proxy#" + msg + "\r\n")
-            self.connection.close()
+            self.wfile.close()
             print "client connection closed"
 
         if errpath != "":
@@ -360,7 +361,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         self.remote.connect((host, int(port)))
 
         Agent = 'WCProxy/1.0'
-        self.connection.send('HTTP/1.1'+' 200 Connection established\n'+
+        self.wfile.write('HTTP/1.1'+' 200 Connection established\n'+
                          'Proxy-agent: %s\n\n'%Agent)
         self._read_write()
         return
