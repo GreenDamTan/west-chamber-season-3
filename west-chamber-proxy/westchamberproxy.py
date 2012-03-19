@@ -397,10 +397,7 @@ def start():
             line = line.split("#")[0]
             d = line.split()
             if (len(d) != 2): continue
-            #remove long domains
-            if len(d[1]) > 24:
-                continue
-            #print "read "+line
+            if gOptions.log > 1: print "read "+line
             regexp = d[1].replace(".", "\.").replace("*", ".*")
             try: grules.append((d[0], re.compile(regexp)))
             except: print "Invalid rule:", d[1]
