@@ -44,6 +44,7 @@ domainWhiteList = [
     "ge.net",
     "no-ip.com",
     "nbcsandiego.com",
+    "unity3d.com",
     ]
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer): pass
@@ -306,18 +307,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if exc_type == socket.error:
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].split(' ')[1]
-                if code == "60" or code == "32":
-                    gConfig["BLOCKED_DOMAINS"][host] = True
-                    if gOptions.log > 0: print "add "+host+" to blocked domains"
-                else:
-                    domainWhiteList.append(host)
-                    if gOptions.log > 0: print "add "+host+" to domains white list"
 
-                self.wfile.write("HTTP/1.1 200 OK\r\n\r\n")
-                self.wfile.write(gConfig["PAGE_RELOAD_HTML"])
-                return
-
-            if exc_type == socket.timeout: #timed out
+            if exc_type == socket.timeout or (exc_type == socket.error and (code == "60" or code == "32")): #timed out
                 if gOptions.log > 0: print "add "+host+" to blocked domains"
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 self.wfile.write("HTTP/1.1 200 OK\r\n\r\n")
@@ -335,7 +326,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
                 self.wfile.write("Location: " + redirectUrl + "\r\n")
             else:
-                status = "HTTP/1.1 302 Found"
                 if (scm.upper() != "HTTP"):
                     msg = "schme-not-supported"
                 else:
