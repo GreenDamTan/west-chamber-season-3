@@ -306,7 +306,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].split(' ')[1]
                 if code in ["32"]: #errno.EPIPE
-                    if gOptions.log > 1: print "Detected remote disconnect: " + host
+                    if gOptions.log > 0: print "Detected remote disconnect: " + host
+                    self.wfile.close()
                     return
 
             print "error in proxy: ", self.requestline
