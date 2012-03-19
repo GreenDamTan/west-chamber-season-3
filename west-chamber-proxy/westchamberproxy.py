@@ -299,15 +299,19 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.remote = None
 
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            print "error in proxy: ", self.requestline
-            print exc_type
-            print str(exc_value) + " " + host
-            errpath = "unkown/host/" + host 
+             
 
             if exc_type == socket.error:
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].split(' ')[1]
+                if code in ["32"]: #errno.EPIPE
+                    if gOptions.log > 1: print "Detected remote disconnect: " + host
+                    return
 
+            print "error in proxy: ", self.requestline
+            print exc_type
+            print str(exc_value) + " " + host
+            errpath = "unkown/host/" + host
             if exc_type == socket.timeout or (exc_type == socket.error and code in ["60"]): #timed out
                 if gOptions.log > 0: print "add "+host+" to blocked domains"
                 gConfig["BLOCKED_DOMAINS"][host] = True
