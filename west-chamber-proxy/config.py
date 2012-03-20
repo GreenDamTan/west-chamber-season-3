@@ -76,6 +76,17 @@ gConfig = {
         "www.bbc.co.uk": True,
         "chinadigitaltimes.net": True,
     },
+    "BLOCKED_IPS": {
+        "70.86.20.29" : 1, #www.bullogger.com
+        "69.93.206.250": 1, #www.xys.org,
+        "174.121.98.156": 1,
+        "50.22.53.157": 1,
+        "50.22.53.155": 1,
+        "72.32.231.8": 1,
+        "174.121.66.230": 1,
+        "107.20.170.126": 1,
+        "204.236.224.226": 1,
+    },
     "CHINA_IP_LIST_FILE":"exclude-ip.json",
     "PAGE_RELOAD_HTML": """<html>
     <head>

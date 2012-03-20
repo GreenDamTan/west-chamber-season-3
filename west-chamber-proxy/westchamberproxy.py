@@ -232,6 +232,13 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 connectHost = host
                 if not inWhileList:
                     connectHost = self.getip(host)
+                    if connectHost in gConfig["BLOCKED_IPS"]:
+                        gConfig["BLOCKED_DOMAINS"][host] = True
+                        host = gConfig["PROXY_SERVER_SIMPLE"]
+                        path = self.path[len(scm)+2:]
+                        self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
+                        connectHost = self.getip(host)
+                        print "use simple web proxy for " + path
 
                 doInject = self.enableInjection(host, connectHost)
                 if self.remote is None or self.lastHost != self.headers["Host"]:
