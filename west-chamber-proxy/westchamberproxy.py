@@ -321,7 +321,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print exc_type
             print str(exc_value) + " " + host
             errpath = "unkown/host/" + host
-            if exc_type == socket.timeout or (exc_type == socket.error and code in ["60"]): #timed out
+            if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110"]): #timed out
                 if gOptions.log > 0: print "add "+host+" to blocked domains"
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 self.wfile.write("HTTP/1.1 200 OK\r\n\r\n")
@@ -444,7 +444,7 @@ def start():
     
 if __name__ == "__main__":
     try :
-        #import argparse
+        import argparse
         parser = argparse.ArgumentParser(description='west chamber proxy')
         parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
                    help='local port')

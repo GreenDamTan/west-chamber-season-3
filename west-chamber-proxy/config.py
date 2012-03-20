@@ -86,6 +86,7 @@ gConfig = {
         "174.121.66.230": 1,
         "107.20.170.126": 1,
         "204.236.224.226": 1,
+        "69.163.223.11": 1, #letscorp.net
     },
     "CHINA_IP_LIST_FILE":"exclude-ip.json",
     "PAGE_RELOAD_HTML": """<html>
