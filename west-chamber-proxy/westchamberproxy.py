@@ -12,7 +12,7 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 from httplib import HTTPResponse, BadStatusLine
-import re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, json, time, argparse
+import re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, json, time
 import config
 
 grules = []
@@ -443,17 +443,27 @@ def start():
     except KeyboardInterrupt: exit()
     
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='west chamber proxy')
-    parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
+    try :
+        #import argparse
+        parser = argparse.ArgumentParser(description='west chamber proxy')
+        parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
                    help='local port')
-    parser.add_argument('--log', default=1, type=int, help='log level, 0-3')
-    parser.add_argument('--pidfile', default='', help='pid file')
-    gOptions = parser.parse_args()
-    if gOptions.pidfile != "":
-        import os
-        pid = str(os.getpid())
-        f = open(gOptions.pidfile,'w')
-        print "Writing pid " + pid + " to "+gOptions.pidfile
-        f.write(pid)
-        f.close()
+        parser.add_argument('--log', default=1, type=int, help='log level, 0-3')
+        parser.add_argument('--pidfile', default='', help='pid file')
+        gOptions = parser.parse_args()
+        if gOptions.pidfile != "":
+            import os
+            pid = str(os.getpid())
+            f = open(gOptions.pidfile,'w')
+            print "Writing pid " + pid + " to "+gOptions.pidfile
+            f.write(pid)
+            f.close()
+    except :
+        #import argparse error, e.g. python26
+        print "import argparse error"
+        class option:
+            def __init__(self): 
+                self.log = 1
+                self.port = gConfig["LOCAL_PORT"]
+        gOptions = option()
     start()
