@@ -331,7 +331,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             traceback.print_tb(exc_traceback)
             (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
             status = "HTTP/1.1 302 Found"
-            if (netloc != urlparse.urlparse( gConfig["PROXY_SERVER"] )[1]):
+            if (netloc != urlparse.urlparse( gConfig["PROXY_SERVER"] )[1] and doInject):
                 self.wfile.write(status + "\r\n")
                 redirectUrl = gConfig["PROXY_SERVER"] + self.path[7:]
                 if host in gConfig["HSTS_ON_EXCEPTION_DOMAINS"]:
@@ -345,7 +345,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     msg = "web-proxy-fail"
                 errpath = ("error/host/" + host + "/?msg=" + msg)
                 self.wfile.write(status + "\r\n")
-                self.wfile.write("Location: http://liruqi.info/post/18486575704/west-chamber-proxy#" + msg + "\r\n")
+                self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
             self.wfile.close()
             print "client connection closed"
 
