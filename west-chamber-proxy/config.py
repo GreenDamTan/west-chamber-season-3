@@ -5,7 +5,7 @@ gConfig = {
     "PROXY_SERVER" : "http://opliruqi.appspot.com/",
     #proxy without any content rewrite, to fetch IP blocked sites
     "PROXY_SERVER_SIMPLE" : "westchamberproxy.appspot.com",
-    "BLOCKED_DOMAINS_URI" : "https://raw.github.com/liruqi/kernet/stable/Scripts/timeout.txt",
+    "BLOCKED_DOMAINS_URI" : "https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/status/timedout.txt",
     "REMOTE_DNS" : "168.95.1.1",
     "SKIP_LOCAL_RESOLV" : False,
     "REDIRECT_DOMAINS": {
