@@ -7,7 +7,7 @@ gConfig = {
     "PROXY_SERVER_SIMPLE" : "westchamberproxy.appspot.com",
     "BLOCKED_DOMAINS_URI" : "https://raw.github.com/liruqi/kernet/stable/Scripts/timeout.txt",
     "REMOTE_DNS" : "168.95.1.1",
-    "SKIP_LOCAL_RESOLV" : True,
+    "SKIP_LOCAL_RESOLV" : False,
     "REDIRECT_DOMAINS": {
         "plus.url.google.com":"url",
         "plus.url.google.com.hk":"q|url"
@@ -75,6 +75,8 @@ gConfig = {
         "thepiratebay.se": True,
         "www.bbc.co.uk": True,
         "chinadigitaltimes.net": True,
+        "www.wenxuecity.com": True,
+        "bbs.wenxuecity.com": True,
     },
     "BLOCKED_IPS": {
         "70.86.20.29" : 1, #www.bullogger.com
