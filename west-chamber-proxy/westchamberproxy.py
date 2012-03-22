@@ -312,7 +312,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if exc_type == socket.error:
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].split(' ')[1]
-                if code in ["32"]: #errno.EPIPE
+                if code in ["32", "10053"]: #errno.EPIPE, 10053 is for Windows
                     if gOptions.log > 0: print "Detected remote disconnect: " + host
                     self.wfile.close()
                     return
@@ -326,7 +326,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print exc_type
             print str(exc_value) + " " + host
             errpath = "unkown/host/" + host
-            if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110"]): #timed out
+            if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
                 if gOptions.log > 0: print "add "+host+" to blocked domains"
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 self.wfile.write("HTTP/1.1 200 OK\r\n\r\n")
