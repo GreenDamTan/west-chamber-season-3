@@ -1,6 +1,6 @@
 项目目的
 --------
-* 不需要服务器的本地翻墙代理工具。
+* 不依赖代理服务器的本地翻墙代理工具。
 * [项目维护地址](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy)
 * [Follow up](https://plus.google.com/b/108661470402896863593/)
 * [捐赠本项目](https://me.alipay.com/liruqi)
@@ -45,8 +45,10 @@ DNS污染
 
 IP封锁
 ------
-由于不依赖与第三方服务器，对于IP封锁也没有优美的解决方案。目前通过更新配置文件的方式，尽量避免IP封锁。
-现在是通过 Google code 上[SmartHosts项目](http://code.google.com/p/smarthosts/) 自动获取的[配置文件](http://smarthosts.googlecode.com/svn/trunk/hosts)
+
+1. 目前是通过 Google code 上[SmartHosts项目](http://code.google.com/p/smarthosts/) 自动获取的[配置文件](http://smarthosts.googlecode.com/svn/trunk/hosts), 来得到可用IP
+2. HTTP 方式下，对于IP被封锁且没有可用IP的站点(如 www.bullogger.com)，代理能够自动检测到 IP 封锁，并自动通过代理获取网页内容。(也可以手动在配置中增加IP封锁域名，可以加快代理速度)
+3. 现在还没有办法处理 HTTPS 下IP封锁的问题。
 
 可用性
 ------
