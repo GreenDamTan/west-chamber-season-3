@@ -77,6 +77,8 @@ gConfig = {
         "chinadigitaltimes.net": True,
         "www.wenxuecity.com": True,
         "bbs.wenxuecity.com": True,
+        "www.blogger.com": True,
+        "blogger.com": True,
     },
     "BLOCKED_IPS": {
         "70.86.20.29" : 1, #www.bullogger.com

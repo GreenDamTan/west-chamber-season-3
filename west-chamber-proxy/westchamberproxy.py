@@ -316,7 +316,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     if gOptions.log > 0: print "Detected remote disconnect: " + host
                     self.wfile.close()
                     return
-
+                if code in ["61"]: #server not support injection
+                    if doInject:
+                        print "try not inject " + host
+                        domainWhiteList.append(host)
+                        self.proxy()
+                        return
             print "error in proxy: ", self.requestline
             print exc_type
             print str(exc_value) + " " + host
