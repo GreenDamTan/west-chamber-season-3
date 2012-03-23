@@ -217,8 +217,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
             connectHost = self.getip(host)
             if (host in gConfig["BLOCKED_DOMAINS"]) or (connectHost in gConfig["BLOCKED_IPS"]):
                 gConfig["BLOCKED_DOMAINS"][host] = True
+                if gOptions.log>0: print "add ip "+ connectHost + " to block list"
                 gConfig["BLOCKED_IPS"][connectHost] = True
                 host = gConfig["PROXY_SERVER_SIMPLE"]
+                connectHost = self.getip(host)
                 path = self.path[len(scm)+2:]
                 self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
                 print "use simple web proxy for " + path
@@ -264,7 +266,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 except:
                     raise
 
-                if doInject and (response.status == 400 or response.status == 405 or badStatusLine) and host != gConfig["PROXY_SERVER_SIMPLE"] and host != gConfig["PROXY_SERVER_SIMPLE"]:
+                if doInject and (response.status == 400 or response.status == 405 or badStatusLine) and host != gConfig["PROXY_SERVER_SIMPLE"] and host != gConfig["PROXY_SERVER"][7:-1]:
                     self.remote.close()
                     self.remote = None
                     domainWhiteList.append(host)
@@ -298,8 +300,17 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.remote.close()
                 self.remote = None
 
+            (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
+            status = "HTTP/1.1 302 Found"
+            if (netloc == urlparse.urlparse( gConfig["PROXY_SERVER"] )[1]) or (netloc == gConfig["PROXY_SERVER_SIMPLE"]) or (scm.upper() != "HTTP"):
+                msg = scm + "-" + netloc
+                errpath = ("error/host/" + host + "/?msg=" + msg)
+                self.wfile.write(status + "\r\n")
+                self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
+                self.wfile.close()
+                return
+
             exc_type, exc_value, exc_traceback = sys.exc_info()
-             
 
             if exc_type == socket.error:
                 code, msg = str(exc_value).split('] ')
@@ -321,28 +332,15 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
                 if gOptions.log > 0: print "add "+host+" to blocked domains"
                 gConfig["BLOCKED_DOMAINS"][host] = True
-                self.wfile.write("HTTP/1.1 200 OK\r\n\r\n")
-                self.wfile.write(gConfig["PAGE_RELOAD_HTML"])
-                return
+                return self.proxy()
             
             traceback.print_tb(exc_traceback)
-            (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
-            status = "HTTP/1.1 302 Found"
-            if (netloc != urlparse.urlparse( gConfig["PROXY_SERVER"] )[1] and doInject):
-                self.wfile.write(status + "\r\n")
-                redirectUrl = gConfig["PROXY_SERVER"] + self.path[7:]
-                if host in gConfig["HSTS_ON_EXCEPTION_DOMAINS"]:
-                    redirectUrl = "https://" + self.path[7:]
+            self.wfile.write(status + "\r\n")
+            redirectUrl = gConfig["PROXY_SERVER"] + self.path[7:]
+            if host in gConfig["HSTS_ON_EXCEPTION_DOMAINS"]:
+                redirectUrl = "https://" + self.path[7:]
 
-                self.wfile.write("Location: " + redirectUrl + "\r\n")
-            else:
-                if (scm.upper() != "HTTP"):
-                    msg = "schme-not-supported"
-                else:
-                    msg = "web-proxy-fail"
-                errpath = ("error/host/" + host + "/?msg=" + msg)
-                self.wfile.write(status + "\r\n")
-                self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
+            self.wfile.write("Location: " + redirectUrl + "\r\n")
             self.wfile.close()
             print "client connection closed"
 
@@ -407,7 +405,7 @@ def start():
             line = line.split("#")[0]
             d = line.split()
             if (len(d) != 2): continue
-            if gOptions.log > 1: print "read "+line
+            if gOptions.log > 0: print "read "+line
             regexp = d[1].replace(".", "\.").replace("*", ".*")
             try: grules.append((d[0], re.compile(regexp)))
             except: print "Invalid rule:", d[1]
