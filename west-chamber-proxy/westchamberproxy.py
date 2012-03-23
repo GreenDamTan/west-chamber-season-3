@@ -204,7 +204,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 status = "HTTP/1.1 302 Found"
                 self.wfile.write(status + "\r\n")
                 self.wfile.write("Location: " + redirectUrl + "\r\n")
-                self.wfile.close()
                 return
 
             # Remove http://[host] , for google.com.hk
@@ -221,8 +220,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
                 print "use simple web proxy for " + path
             
-            self.lastHost = self.headers["Host"]
-            
             if True:
                 inWhileList = False
                 for d in domainWhiteList:
@@ -231,7 +228,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                         inWhileList = True
 
                 doInject = self.enableInjection(host, connectHost)
-                if self.remote is None or self.lastHost != self.headers["Host"]:
+                if True:
                     self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     if gOptions.log > 1: print "connect to " + host + ":" + str(port)
                     self.remote.connect((connectHost, port))
@@ -290,7 +287,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(response_data)
                 dataLength += len(response_data)
                 if gOptions.log > 1: print "data length: %d"%dataLength
-            self.wfile.close()
         except:
             if self.remote:
                 self.remote.close()
@@ -302,7 +298,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 msg = scm + "-" + netloc
                 self.wfile.write(status + "\r\n")
                 self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
-                self.wfile.close()
                 return
 
             exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -312,7 +307,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 code = code[1:].split(' ')[1]
                 if code in ["32", "10053"]: #errno.EPIPE, 10053 is for Windows
                     if gOptions.log > 0: print "Detected remote disconnect: " + host
-                    self.wfile.close()
                     return
                 if code in ["61"]: #server not support injection
                     if doInject:
@@ -339,7 +333,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 msg = scm + "-" + host 
                 self.wfile.write(status + "\r\n")
                 self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
-            self.wfile.close()
             print "client connection closed"
 
     
