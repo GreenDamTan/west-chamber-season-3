@@ -52,8 +52,14 @@ class ProxyHandler(BaseHTTPRequestHandler):
     remote = None
     dnsCache = {}
     now = 0
+    depth = 0
 
     def enableInjection(self, host, ip):
+        self.depth += 1
+        if self.depth > 3:
+            if gOptions.log>0: print host + " looping, exit"
+            return
+
         global gipWhiteList;
         print "check "+host + " " + ip
         if (host == ip):
@@ -261,7 +267,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     self.remote = None
                     if gOptions.log > 0: print host + " seem not support inject, " + msg
                     domainWhiteList.append(host)
-                    return self.proxy() 
+                    return self.proxy()
 
             # Reply to the browser
             status = "HTTP/1.1 " + str(response.status) + " " + response.reason

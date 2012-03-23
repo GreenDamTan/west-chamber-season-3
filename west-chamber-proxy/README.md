@@ -65,7 +65,7 @@ IP封锁
 
 TODO
 ----
-* [ALL] 整理被blocked 的 IP列表，走网页代理
+* [ALL] 网页代理用Range 方法处理大文件下载
 * [ALL] merge accelerates from [ccp0101/dnschina](https://github.com/ccp0101/dnschina)
 * [Android] 实现系统HTTP 代理的设置，这样系统自带的浏览器也可以用。
 * [Android] 用 Java 重写代理逻辑，用户就不用下载依赖的 python 软件包。
