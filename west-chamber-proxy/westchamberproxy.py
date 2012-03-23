@@ -214,7 +214,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
             # Remove http://[host] , for google.com.hk
             path = self.path[self.path.find(netloc) + len(netloc):]
 
-            if host in gConfig["BLOCKED_DOMAINS"]:
+            connectHost = self.getip(host)
+            if (host in gConfig["BLOCKED_DOMAINS"]) or (connectHost in gConfig["BLOCKED_IPS"]):
+                gConfig["BLOCKED_DOMAINS"][host] = True
+                gConfig["BLOCKED_IPS"][connectHost] = True
                 host = gConfig["PROXY_SERVER_SIMPLE"]
                 path = self.path[len(scm)+2:]
                 self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
@@ -228,17 +231,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     if host.endswith(d):
                         if gOptions.log > 1: print host + " in domainWhiteList: " + d
                         inWhileList = True
-
-                connectHost = host
-                if not inWhileList:
-                    connectHost = self.getip(host)
-                    if connectHost in gConfig["BLOCKED_IPS"]:
-                        gConfig["BLOCKED_DOMAINS"][host] = True
-                        host = gConfig["PROXY_SERVER_SIMPLE"]
-                        path = self.path[len(scm)+2:]
-                        self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
-                        connectHost = self.getip(host)
-                        print "use simple web proxy for " + path
 
                 doInject = self.enableInjection(host, connectHost)
                 if self.remote is None or self.lastHost != self.headers["Host"]:
@@ -272,7 +264,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 except:
                     raise
 
-                if doInject and (response.status == 400 or response.status == 405 or badStatusLine) and host != gConfig["PROXY_SERVER_SIMPLE"]:
+                if doInject and (response.status == 400 or response.status == 405 or badStatusLine) and host != gConfig["PROXY_SERVER_SIMPLE"] and host != gConfig["PROXY_SERVER_SIMPLE"]:
                     self.remote.close()
                     self.remote = None
                     domainWhiteList.append(host)
