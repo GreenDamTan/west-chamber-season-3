@@ -160,15 +160,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
         print ("DNS remote resolve failed: " + host)
         return host
     
-    def netlog(self, path):
-        if "FEEDBACK_LOG_SERVER" in gConfig:
-            if gOptions.log > 1: print "FEEDBACK_LOG: " + path
-            try:
-                urllib2.urlopen(gConfig["FEEDBACK_LOG_SERVER"] + path).close()
-            except:
-                pass
-            if gOptions.log > 1: print "end FEEDBACK_LOG" 
-        
     def proxy(self):
         doInject = False
         if gOptions.log > 0: print self.requestline
@@ -177,7 +168,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
         if host.find(":") != -1:
             port = int(host.split(":")[1])
             host = host.split(":")[0]
-        errpath = ""
 
         try:
             redirectUrl = self.path
@@ -270,7 +260,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     self.remote.close()
                     self.remote = None
                     domainWhiteList.append(host)
-                    errpath = (msg + "/host/" + host)
                     continue
                 break
             # Reply to the browser
@@ -304,7 +293,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
             status = "HTTP/1.1 302 Found"
             if (netloc == urlparse.urlparse( gConfig["PROXY_SERVER"] )[1]) or (netloc == gConfig["PROXY_SERVER_SIMPLE"]) or (scm.upper() != "HTTP"):
                 msg = scm + "-" + netloc
-                errpath = ("error/host/" + host + "/?msg=" + msg)
                 self.wfile.write(status + "\r\n")
                 self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
                 self.wfile.close()
@@ -328,7 +316,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print "error in proxy: ", self.requestline
             print exc_type
             print str(exc_value) + " " + host
-            errpath = "unkown/host/" + host
             if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
                 if gOptions.log > 0: print "add "+host+" to blocked domains"
                 gConfig["BLOCKED_DOMAINS"][host] = True
@@ -344,8 +331,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
             self.wfile.close()
             print "client connection closed"
 
-        if errpath != "":
-            self.netlog(errpath)
     
     def do_GET(self):
         #some sites(e,g, weibo.com) are using comet (persistent HTTP connection) to implement server push
