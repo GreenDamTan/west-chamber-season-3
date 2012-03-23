@@ -323,12 +323,16 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 return self.proxy()
             
             traceback.print_tb(exc_traceback)
-            self.wfile.write(status + "\r\n")
-            redirectUrl = gConfig["PROXY_SERVER"] + self.path[7:]
-            if host in gConfig["HSTS_ON_EXCEPTION_DOMAINS"]:
-                redirectUrl = "https://" + self.path[7:]
-
-            self.wfile.write("Location: " + redirectUrl + "\r\n")
+            if doInject:
+                self.wfile.write(status + "\r\n")
+                redirectUrl = gConfig["PROXY_SERVER"] + self.path[7:]
+                if host in gConfig["HSTS_ON_EXCEPTION_DOMAINS"]:
+                    redirectUrl = "https://" + self.path[7:]
+                self.wfile.write("Location: " + redirectUrl + "\r\n")
+            else :
+                msg = scm + "-" + host 
+                self.wfile.write(status + "\r\n")
+                self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
             self.wfile.close()
             print "client connection closed"
 
