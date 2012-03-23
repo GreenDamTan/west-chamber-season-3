@@ -217,7 +217,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             
             self.lastHost = self.headers["Host"]
             
-            while True:
+            if True:
                 inWhileList = False
                 for d in domainWhiteList:
                     if host.endswith(d):
@@ -259,9 +259,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if doInject and (response.status == 400 or response.status == 405 or badStatusLine) and host != gConfig["PROXY_SERVER_SIMPLE"] and host != gConfig["PROXY_SERVER"][7:-1]:
                     self.remote.close()
                     self.remote = None
+                    if gOptions.log > 0: print host + " seem not support inject, " + msg
                     domainWhiteList.append(host)
-                    continue
-                break
+                    return self.proxy() 
+
             # Reply to the browser
             status = "HTTP/1.1 " + str(response.status) + " " + response.reason
             self.wfile.write(status + "\r\n")
