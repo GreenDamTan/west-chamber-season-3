@@ -205,6 +205,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             path = self.path[self.path.find(netloc) + len(netloc):]
 
             connectHost = self.getip(host)
+            print gConfig["BLOCKED_IPS"]
             if (host in gConfig["BLOCKED_DOMAINS"]) or (connectHost in gConfig["BLOCKED_IPS"]):
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 if gOptions.log>0: print "add ip "+ connectHost + " to block list"
