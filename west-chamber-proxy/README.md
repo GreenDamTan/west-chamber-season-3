@@ -9,15 +9,19 @@
 --------
 * Windows
 
-    1. 下载[客户端](https://github.com/downloads/liruqi/west-chamber-season-3/west-chamber-proxy-20120131.zip)，解压缩，双击 exe
-    2. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998。
+    1. 下载[客户端](https://github.com/downloads/liruqi/west-chamber-season-3/westchamberproxy-20120325.zip)，解压缩，双击 exe
+    2. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
     3. Windows 版本更新比较慢。如果希望使用最新代码，先下载 python 2.7，[32位](http://python.org/ftp/python/2.7.2/python-2.7.2.msi) / [64位](http://python.org/ftp/python/2.7.2/python-2.7.2.amd64.msi) ，然后下载[代码](https://github.com/liruqi/west-chamber-season-3/zipball/master)，解压缩，进入 west-chamber-proxy 文件夹，双击 westchamberproxy.py。
 
-* Mac / Linux
+* Mac 
+    1. 下载[客户端](https://github.com/downloads/liruqi/GoAgentX/GoAgentX-20120325.zip)，解压缩，双击打开
+    2. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
+    
+* Linux
 
-    1. 下载项目代码: [zip](https://github.com/liruqi/west-chamber-season-3/zipball/master)
-    1. 解压缩，打开终端，cd 到代码目录，cd west-chamber-proxy; 启动代理：./wcproxy start；关闭代理：./wcproxy stop。
-    2. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998。
+    1. 下载项目代码: [zip](https://github.com/downloads/liruqi/west-chamber-season-3/west-chamber-proxy-src-20120325.zip)
+    2. 解压缩，打开终端，cd 到代码目录，cd west-chamber-proxy; 启动代理：./wcproxy start；关闭代理：./wcproxy stop。
+    3. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
 
 * Android
 
@@ -25,7 +29,7 @@
 
 * iOS
     
-    目前不打算自己做一个iOS 应用放在 appstore上。因为这需要做成浏览器，我不喜欢做自己不擅长而且重复的事情。iOS 上要使用代理有两个办法。
+    目前不打算自己做一个iOS 应用放在 appstore上，比较麻烦。越狱版本的可能最近会推出。
 
     1. 局域网内的其它设备(PC, Android 设备)上安装本代理，然后把 iOS 设备的 HTTP 代理设置到该设备上。（或者在国内有服务器的同学，自己搭建HTTP 代理）
     2. 类似GoAgent 那种iOS客户端的办法。需要越狱。单我本人没有iOS设备，所以，暂不研究了。
