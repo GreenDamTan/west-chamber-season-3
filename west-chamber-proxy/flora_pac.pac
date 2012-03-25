@@ -3488,10 +3488,10 @@ function FindProxyForURL(url, host)
     ];
 
     var ip = dnsResolve(host);
-
     for (var i in list) {
         if (isInNet(ip, list[i][0], list[i][1])) {
-            return 'DIRECT';
+            if (! isInNet('202.106.199.39', list[i][0], list[i][1])) 
+                return 'DIRECT';
         }
     }
 
