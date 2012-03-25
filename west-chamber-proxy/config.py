@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 gConfig = {
+    "VERSION" : "20120325",
     "PROXY_SERVER" : "http://opliruqi.appspot.com/",
     #proxy without any content rewrite, to fetch IP blocked sites
     "PROXY_SERVER_SIMPLE" : "westchamberproxy.appspot.com",
