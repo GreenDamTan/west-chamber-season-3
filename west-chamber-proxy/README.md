@@ -30,9 +30,10 @@
     1. 局域网内的其它设备(PC, Android 设备)上安装本代理，然后把 iOS 设备的 HTTP 代理设置到该设备上。（或者在国内有服务器的同学，自己搭建HTTP 代理）
     2. 类似GoAgent 那种iOS客户端的办法。需要越狱。单我本人没有iOS设备，所以，暂不研究了。
 
-* Chrome Extension
+* 代理设置
 
-    安装[SwitchySharp](https://chrome.google.com/webstore/detail/dpplabbmogkhghncfbfdeeokoefdjegm) 插件，然后导入这个设置 https://github.com/liruqi/west-chamber-season-3/raw/master/west-chamber-proxy/chrome/SwitchyOptions.bak
+    用[Flora_Pac](https://github.com/Leask/Flora_Pac) 做了一个 .pac 文件。在代理设置中导入即可。
+    具体使用方法，在[这里](http://opliruqi.appspot.com/how) 更新。
 
 开发者
 ------
