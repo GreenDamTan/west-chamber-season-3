@@ -241,7 +241,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 print " ".join((self.command, path, self.request_version)) + "\r\n"
                 self.remote.send(" ".join((self.command, path, self.request_version)) + "\r\n")
                 # Send headers
-                if host == gConfig["PROXY_SERVER_SIMPLE"]:
+                if host[-12:] == ".appspot.com":
                     print "add version code " + gConfig["VERSION"] + " in HTTP header"
                     self.headers["X-WCProxy"] = gConfig["VERSION"]
                 self.remote.send(str(self.headers) + "\r\n")
