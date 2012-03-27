@@ -244,6 +244,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if host[-12:] == ".appspot.com":
                     print "add version code " + gConfig["VERSION"] + " in HTTP header"
                     self.headers["X-WCProxy"] = gConfig["VERSION"]
+                    self.headers["X-WCPasswd"] = gConfig["PROXY_PASSWD"]
                 self.remote.send(str(self.headers) + "\r\n")
                 # Send Post data
                 if(self.command=='POST'):
