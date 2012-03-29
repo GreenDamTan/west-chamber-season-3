@@ -12,7 +12,7 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 from httplib import HTTPResponse, BadStatusLine
-import re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, json, time
+import re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time
 import config
 
 grules = []
@@ -407,6 +407,7 @@ def start():
         print "read onine hosts fail"
     
     try:
+        import json
         global gipWhiteList;
         s = open(gConfig["CHINA_IP_LIST_FILE"])
         gipWhiteList = json.loads( s.read() )
@@ -431,6 +432,16 @@ def start():
     except KeyboardInterrupt: exit()
     
 if __name__ == "__main__":
+    try :
+        import json
+        s = open("config.json")
+        jsonConfig = json.loads( s.read() )
+        for k in jsonConfig:
+            print "read json config " + k + " => " + str(jsonConfig[k])
+            gConfig[k] = jsonConfig[k]
+    except:
+        print "Load json config failed"
+
     try :
         import argparse
         parser = argparse.ArgumentParser(description='west chamber proxy')

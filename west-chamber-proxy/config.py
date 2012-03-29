@@ -17,6 +17,7 @@ gConfig = {
     "LOCAL_PORT" : 1998,
     "HSTS_DOMAINS" : {
         "developers.facebook.com": 1,
+        "groups.google.com": 1,
         "www.paypal.com" : 1,
         "www.elanex.biz" : 1,
         "jottit.com" : 1,
