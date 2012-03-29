@@ -85,6 +85,16 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def isIp(self, host):
         return re.match(r'^([0-9]+\.){3}[0-9]+$', host) != None
 
+    def isIpBlocked(self, ip):
+        if "BLOCKED_IPS" in gConfig:
+            if ip in gConfig["BLOCKED_IPS"]:
+                return True
+        if "BLOCKED_IPS_M16" in gConfig:
+            ipm16 = ".".join(ip.split(".")[:2])
+            if ip in gConfig["BLOCKED_IPS_M16"]:
+                return True
+        return False
+
     def getip(self, host):
         if self.isIp(host):
             return host
@@ -210,7 +220,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             path = self.path[self.path.find(netloc) + len(netloc):]
 
             connectHost = self.getip(host)
-            if (host in gConfig["BLOCKED_DOMAINS"]) or (connectHost in gConfig["BLOCKED_IPS"]):
+            if (host in gConfig["BLOCKED_DOMAINS"]) or self.isIpBlocked(connectHost):
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 if gOptions.log>0 : print "add ip "+ connectHost + " to block list"
                 gConfig["BLOCKED_IPS"][connectHost] = True
