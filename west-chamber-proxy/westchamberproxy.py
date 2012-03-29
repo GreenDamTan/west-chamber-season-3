@@ -91,7 +91,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 return True
         if "BLOCKED_IPS_M16" in gConfig:
             ipm16 = ".".join(ip.split(".")[:2])
-            if ip in gConfig["BLOCKED_IPS_M16"]:
+            if ipm16 in gConfig["BLOCKED_IPS_M16"]:
+                if gOptions.log > 0: print ip+" is blocked."
                 return True
         return False
 
