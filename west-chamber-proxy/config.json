@@ -1,7 +1,7 @@
 {
     "PROXY_SERVER": "http://wcproxy-web.appspot.com/",
     "PROXY_SERVER_SIMPLE" : "wcproxy-content.appspot.com",
-    "PROXY_PASSWD" : "liruqi@gmail.com"
+    "PROXY_PASSWD" : "liruqi@gmail.com",
     "BLOCKED_IPS_M16": {
         "174.129" : 1
     }
