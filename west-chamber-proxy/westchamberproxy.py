@@ -101,7 +101,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             return host
 
         for r in grules:
-            if r[1].match(host) is not None:
+            if r[1] == host:
                 print ("Rule resolve: " + host + " => " + r[0])
                 return r[0]
 
@@ -410,9 +410,7 @@ def start():
             d = line.split()
             if (len(d) != 2): continue
             if gOptions.log > 1: print "read "+line
-            regexp = d[1].replace(".", "\.").replace("*", ".*")
-            try: grules.append((d[0], re.compile(regexp)))
-            except: print "Invalid rule:", d[1]
+            grules.append((d[0], d[1]))
         s.close()
     except:
         print "read onine hosts fail"
