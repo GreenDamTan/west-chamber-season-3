@@ -38,6 +38,10 @@ gConfig = {
         "romab.com" : 1,
         "logentries.com" : 1,
         "stripe.com" : 1,
+        "twitter.com": 1,
+        "www.twitter.com": 1,
+        "facebook.com": 1,
+        "www.facebook.com": 1,
     },
     #collect domains that support HTTPS, to reduce usage of web proxy
     "HSTS_ON_EXCEPTION_DOMAINS" : {
@@ -53,14 +57,9 @@ gConfig = {
         "bits.wikimedia.org": 1,
         "www.wikipedia.org": 1,
         "www.google-analytics.com": 1,
-        "www.google-analytics.com": 1,
-        "facebook.com": 1,
-        "www.facebook.com": 1,
         "apps.facebook.com": 1,
         "graph.facebook.com": 1,
         "www.youtube.com": 1,
-        "twitter.com": 1,
-        "api.twitter.com": 1,
     },
     "BLOCKED_DOMAINS": {
         "baidu.jp" : True,
