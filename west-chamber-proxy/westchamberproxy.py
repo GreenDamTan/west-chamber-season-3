@@ -45,6 +45,7 @@ domainWhiteList = [
     "no-ip.com",
     "nbcsandiego.com",
     "unity3d.com",
+    "opswat.com"
     ]
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer): pass
