@@ -236,17 +236,18 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 inWhileList = False
                 for d in domainWhiteList:
                     if host.endswith(d):
-                        if gOptions.log > 1: print host + " in domainWhiteList: " + d
+                        if gOptions.log > 0: print host + " in domainWhiteList: " + d
                         inWhileList = True
 
-                doInject = self.enableInjection(host, connectHost)
-                if True:
-                    self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    if gOptions.log > 1: print "connect to " + host + ":" + str(port)
-                    self.remote.connect((connectHost, port))
-                    if doInject: 
-                        if gOptions.log > 0: print "inject http for "+host
-                        self.remote.send("\r\n\r\n")
+                if not inWhileList:
+                    doInject = self.enableInjection(host, connectHost)
+                
+                self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                if gOptions.log > 1: print "connect to " + host + ":" + str(port)
+                self.remote.connect((connectHost, port))
+                if doInject: 
+                    if gOptions.log > 0: print "inject http for "+host
+                    self.remote.send("\r\n\r\n")
                 # Send requestline
                 if path == "":
                     path = "/"
