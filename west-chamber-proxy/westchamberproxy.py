@@ -296,7 +296,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             while True:
                 response_data = response.read(8192)
                 if(len(response_data) == 0): break
-                if dataLength == 0 and (len(response_data) <= 320):
+                if dataLength == 0 and (len(response_data) <= 501):
                     if response_data.find("<title>400 Bad Request") != -1 or response_data.find("<title>501 Method Not Implemented") != -1:
                         print host + " not supporting injection"
                         domainWhiteList.append(host)
