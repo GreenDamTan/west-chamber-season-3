@@ -24,9 +24,7 @@ gOptions = {}
 gipWhiteList = []
 domainWhiteList = [
     ".cn",
-    ".am",
-    ".pl",
-    ".gl",
+    "renren.com",
     "baidu.com",
     "mozilla.org",
     "mozilla.net",
@@ -180,6 +178,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
     
     def proxy(self):
         doInject = False
+        inWhileList = False
         if gOptions.log > 0: print self.requestline
         port = 80
         host = self.headers["Host"]
@@ -233,7 +232,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 print "use simple web proxy for " + path
             
             if True:
-                inWhileList = False
                 for d in domainWhiteList:
                     if host.endswith(d):
                         if gOptions.log > 0: print host + " in domainWhiteList: " + d
@@ -335,9 +333,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print exc_type
             print str(exc_value) + " " + host
             if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
-                if gOptions.log > 0: print "add "+host+" to blocked domains"
-                gConfig["BLOCKED_DOMAINS"][host] = True
-                return self.proxy()
+                if not inWhileList:
+                    if gOptions.log > 0: print "add "+host+" to blocked domains"
+                    gConfig["BLOCKED_DOMAINS"][host] = True
+                    return self.proxy()
             
             traceback.print_tb(exc_traceback)
             if doInject:
