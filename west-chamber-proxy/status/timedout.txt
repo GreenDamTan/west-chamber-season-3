@@ -57,7 +57,6 @@ areca-backup.org
 art-or-porn.com
 asiaharvest.org
 atnext.com
-autoproxy-gfwlist.googlecode.com
 axureformac.com
 badassjs.com
 basetimesheightdividedby2.com
@@ -383,7 +382,6 @@ k2.xrea.com
 ka-wai.com
 kagyuoffice.org.tw
 kanzhongguo.com
-kenengba.com
 khcc.gov.tw
 kineox.free.fr
 kinghost.com
@@ -612,6 +610,7 @@ the-sun.on.cc
 thebcomplex.com
 thedw.us
 thepiratebay.org
+thepiratebay.se
 thetibetpost.com
 thetrotskymovie.com
 tianhuayuan.com
