@@ -163,6 +163,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if a['typename'] == 'CNAME':
                     return self.getip(a["data"])
                 self.dnsCache[host] = {"ip":a["data"], "expire":self.now + a["ttl"]*2 + 60}
+                if self.isIpBlocked(a["data"]): 
+                    print (host + " => " + a["data"]+" is blocked. skip.")
+                    continue
                 return a["data"]
         if gOptions.log > 0: 
             print "authority: "+ str(response.authority)
