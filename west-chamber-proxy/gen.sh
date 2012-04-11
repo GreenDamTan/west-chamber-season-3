@@ -1,3 +1,9 @@
-curl https://raw.github.com/liruqi/kernet/stable/kerdns/dnsmasq.conf|awk 'BEGIN {FS="/"} /^address=/ {print $3" "$2}' |grep -v "127\.0\.0\.1" > ghosts
-echo '203.208.46.30    www.youtube.com' >> ghosts
-echo '203.208.46.30    *.ytimg.com' >> ghosts
+ip="74.125.71.0"
+ip_prefix="74.125.71"
+
+nmap -sS -p80 "$ip"/24 --host-timeout 5s --log-errors > .nmap5s.log
+
+cat .nmap16s.log | grep "$ip_prefix" | awk -v ip_prefix="$ip_prefix" '{
+    if (index($5, ip_prefix) > 0) print $5;
+    else print substr($6, 2, length($6)-2);
+}'
