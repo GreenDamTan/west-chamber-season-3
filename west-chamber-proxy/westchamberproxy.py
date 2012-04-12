@@ -46,6 +46,17 @@ domainWhiteList = [
     "opswat.com"
     ]
 
+def isIpBlocked(ip):
+    if "BLOCKED_IPS" in gConfig:
+        if ip in gConfig["BLOCKED_IPS"]:
+            return True
+    if "BLOCKED_IPS_M16" in gConfig:
+        ipm16 = ".".join(ip.split(".")[:2])
+        if ipm16 in gConfig["BLOCKED_IPS_M16"]:
+            if gOptions.log > 0: print ip+" is blocked."
+            return True
+    return False
+
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer): pass
 class ProxyHandler(BaseHTTPRequestHandler):
     remote = None
@@ -83,17 +94,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
     def isIp(self, host):
         return re.match(r'^([0-9]+\.){3}[0-9]+$', host) != None
-
-    def isIpBlocked(self, ip):
-        if "BLOCKED_IPS" in gConfig:
-            if ip in gConfig["BLOCKED_IPS"]:
-                return True
-        if "BLOCKED_IPS_M16" in gConfig:
-            ipm16 = ".".join(ip.split(".")[:2])
-            if ipm16 in gConfig["BLOCKED_IPS_M16"]:
-                if gOptions.log > 0: print ip+" is blocked."
-                return True
-        return False
 
     def getip(self, host):
         if self.isIp(host):
@@ -163,7 +163,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if a['typename'] == 'CNAME':
                     return self.getip(a["data"])
                 self.dnsCache[host] = {"ip":a["data"], "expire":self.now + a["ttl"]*2 + 60}
-                if self.isIpBlocked(a["data"]): 
+                if isIpBlocked(a["data"]): 
                     print (host + " => " + a["data"]+" is blocked. skip.")
                     continue
                 return a["data"]
@@ -224,7 +224,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             path = self.path[self.path.find(netloc) + len(netloc):]
 
             connectHost = self.getip(host)
-            if (host in gConfig["BLOCKED_DOMAINS"]) or self.isIpBlocked(connectHost):
+            if (host in gConfig["BLOCKED_DOMAINS"]) or isIpBlocked(connectHost):
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 if gOptions.log>0 : print "add ip "+ connectHost + " to block list"
                 gConfig["BLOCKED_IPS"][connectHost] = True
@@ -414,6 +414,9 @@ def start():
             d = line.split()
             if (len(d) != 2): continue
             if gOptions.log > 1: print "read "+line
+            if isIpBlocked(d[0]) : 
+                print (d[1]+"  ("+d[0] + ") blocked, skipping")
+                continue
             grules.append((d[0], d[1]))
         s.close()
     except:

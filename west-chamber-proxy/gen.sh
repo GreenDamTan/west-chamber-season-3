@@ -1,9 +1,9 @@
-ip="74.125.71.0"
-ip_prefix="74.125.71"
+ip=${1-74.125.71.0}
 
 sudo nmap -sS -p80 "$ip"/24 --host-timeout 16s --log-errors > .nmap16s.log
-ssh liruqi@asuwish.cc 'sudo nmap -sS -p80 74.125.71.0/24 --host-timeout 16s --log-errors' > .nmap16s.remote.log
+ssh liruqi@asuwish.cc "sudo nmap -sS -p80 $ip/24 --host-timeout 16s --log-errors" > .nmap16s.remote.log
 
+ip_prefix=${ip:0:8}
 cat .nmap16s.log | grep "$ip_prefix" | awk -v ip_prefix="$ip_prefix" '{
     if (index($5, ip_prefix) > 0) print $5;
     else print substr($6, 2, length($6)-2);
