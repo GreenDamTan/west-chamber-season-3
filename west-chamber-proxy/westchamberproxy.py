@@ -55,6 +55,11 @@ def isIpBlocked(ip):
         if ipm16 in gConfig["BLOCKED_IPS_M16"]:
             if gOptions.log > 0: print ip+" is blocked."
             return True
+    if "BLOCKED_IPS_M24" in gConfig:
+        ipm24 = ".".join(ip.split(".")[:3])
+        if ipm24 in gConfig["BLOCKED_IPS_M24"]:
+            if gOptions.log > 0: print ip+" is blocked."
+            return True
     return False
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer): pass
@@ -142,6 +147,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
             else:
                 if gOptions.log > 1: 
                     print ("DNS system resolve: " + host + " => " + ip)
+                if isIpBlocked(ip):
+                    print (host + " => " + ip + " blocked, try remote resolve")
+                    return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
                 return ip
         except:
             print "DNS system resolve Error: " + host
