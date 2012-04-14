@@ -265,7 +265,7 @@ class DnsRequest:
                         # packet is in reply to.
                         while r.header['id'] != self.tid        \
                                 or self.from_address[1] != self.port \
-                                or ( len(r.answers)==0 and len(response.authority)==0) \
+                                or ( len(r.answers)==0 and len(r.authority)==0) \
                                 or ( len(r.answers)==1 and r.answers[0]["data"] in defaults["blackholes"] )   :
                             print "ignored answers: " + str(r.answers)
                             r=self.processUDPReply()
