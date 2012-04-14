@@ -38,8 +38,6 @@ gConfig = {
         "romab.com" : 1,
         "logentries.com" : 1,
         "stripe.com" : 1,
-        "twitter.com": 1,
-        "www.twitter.com": 1,
         "facebook.com": 1,
         "www.facebook.com": 1,
     },
