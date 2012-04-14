@@ -161,7 +161,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print "remote resolve " + host + " by " + dnsserver
         import DNS
         reqObj = DNS.Request()
-        response = reqObj.req(name=host, qtype="A", protocol="tcp", server=dnsserver)
+        reqProtocol = "udp"
+        if "DNS_PROTOCOL" in gConfig:
+            if gConfig["DNS_PROTOCOL"]:
+                reqProtocol = gConfig["DNS_PROTOCOL"]
+
+        response = reqObj.req(name=host, qtype="A", protocol=reqProtocol, server=dnsserver)
         #response.show()
         #print "answers: " + str(response.answers)
         for a in response.answers:

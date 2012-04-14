@@ -7,5 +7,6 @@
     },
     "BLOCKED_IPS_M24": {
         "199.16.156" : 1
-    }
+    },
+    "DNS_PROTOCOL": "udp"
 }
