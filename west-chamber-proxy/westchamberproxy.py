@@ -163,7 +163,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         reqObj = DNS.Request()
         reqProtocol = "udp"
         if "DNS_PROTOCOL" in gConfig:
-            if gConfig["DNS_PROTOCOL"]:
+            if gConfig["DNS_PROTOCOL"] in ["udp", "tcp"]:
                 reqProtocol = gConfig["DNS_PROTOCOL"]
 
         response = reqObj.req(name=host, qtype="A", protocol=reqProtocol, server=dnsserver)
