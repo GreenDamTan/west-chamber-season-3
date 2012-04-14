@@ -71,7 +71,6 @@ IP封锁
 TODO
 ----
 * [ALL] 网页代理用Range 方法处理大文件下载
-* [ALL] Drop UDP dns query fake reply
 * [Android] 实现系统HTTP 代理的设置，这样系统自带的浏览器也可以用。
 * [Android] 用 Java 重写代理逻辑，用户就不用下载依赖的 python 软件包。
 
@@ -85,6 +84,7 @@ UPDATE LOG
 * 2012-01-31 停止维护chrome extension, 而是类似于goagent，直接提供代理程序，以及 SwitchySharp 备份。
 * 2012-02-24 修复Google plus 链接重定向错误 (plus.url.google.com => plus.url.google.com.hk)
 * 2012-03-17 代码重构。python 脚本中去掉了进程控制，增加了多个命令行参数，进程控制由shell 脚本实现。 
-* 2012-04-14 DNS 解析结果中，移除被GFW 封锁的IP。
+* 2012-04-14 DNS解析结果中，移除被GFW 封锁的IP。
+* 2012-04-14 支持UDP方式DNS解析，并丢弃GFW伪包。
 
 
