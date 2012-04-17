@@ -169,17 +169,29 @@ class ProxyHandler(BaseHTTPRequestHandler):
         response = reqObj.req(name=host, qtype="A", protocol=reqProtocol, server=dnsserver)
         #response.show()
         #print "answers: " + str(response.answers)
+        ip = ""
+        blockedIp = ""
+        cname = ""
+        ttl = 0
         for a in response.answers:
-            if a["name"] == host:
-                if gOptions.log > 1: 
-                    print ("DNS remote resolve: " + host + " => " + str(a))
-                if a['typename'] == 'CNAME':
-                    return self.getip(a["data"])
-                self.dnsCache[host] = {"ip":a["data"], "expire":self.now + a["ttl"]*2 + 60}
+            if a['typename'] == 'CNAME':
+                cname = a["data"]
+            else:
+                ttl = a["ttl"]
                 if isIpBlocked(a["data"]): 
-                    print (host + " => " + a["data"]+" is blocked. skip.")
+                    print (host + " => " + a["data"]+" is blocked. ")
+                    blockedIp = a["data"]
                     continue
-                return a["data"]
+                ip = a["data"]
+        if (ip != ""):
+            self.dnsCache[host] = {"ip":ip, "expire":self.now + ttl*2 + 60}
+            return ip;
+        if (blockedIp != ""):
+            return blockedIp;
+        if (cname != ""):
+            return self.getip(cname)
+
+        if gOptions.log > 1: print ("DNS remote resolve: " + host + " => " + str(a))
         if gOptions.log > 0: 
             print "authority: "+ str(response.authority)
         for a in response.authority:

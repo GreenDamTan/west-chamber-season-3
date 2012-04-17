@@ -79,6 +79,8 @@ gConfig = {
         "blogger.com": True,
     },
     "BLOCKED_IPS": {
+        "23.21.220.40":1, "23.21.242.194":1, #dropbox
+        "50.16.240.166":1, #dropbox
         "70.86.20.29" : 1, #www.bullogger.com
         "69.93.206.250": 1, #www.xys.org,
         "174.121.98.156": 1,
