@@ -15,7 +15,7 @@ from httplib import HTTPResponse, BadStatusLine
 import re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time
 import config
 
-grules = []
+grules = {}
 
 gConfig = config.gConfig
 
@@ -104,10 +104,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
         if self.isIp(host):
             return host
 
-        for r in grules:
-            if r[1] == host:
-                print ("Rule resolve: " + host + " => " + r[0])
-                return r[0]
+        if host in grules:
+            print ("Rule resolve: " + host + " => " + grules[host])
+            return grules[host]
 
         print "Resolving " + host
         self.now = int( time.time() )
@@ -442,7 +441,7 @@ def start():
             if isIpBlocked(d[0]) : 
                 print (d[1]+"  ("+d[0] + ") blocked, skipping")
                 continue
-            grules.append((d[0], d[1]))
+            grules[d[1]] = d[0]
         s.close()
     except:
         print "read onine hosts fail"
