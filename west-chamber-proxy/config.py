@@ -58,6 +58,7 @@ gConfig = {
         "apps.facebook.com": 1,
         "graph.facebook.com": 1,
         "www.youtube.com": 1,
+        "m.facebook.com": 1,
     },
     "BLOCKED_DOMAINS": {
         "baidu.jp" : True,
