@@ -483,26 +483,37 @@ if __name__ == "__main__":
         print "Load json config failed"
 
     try :
-        import argparse
-        parser = argparse.ArgumentParser(description='west chamber proxy')
-        parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
+        if sys.version[:3] in ('2.7', '3.0', '3.1', '3.2', '3.3'):
+            import argparse
+            parser = argparse.ArgumentParser(description='west chamber proxy')
+            parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
                    help='local port')
-        parser.add_argument('--log', default=1, type=int, help='log level, 0-3')
-        parser.add_argument('--pidfile', default='', help='pid file')
-        gOptions = parser.parse_args()
-        if gOptions.pidfile != "":
-            import os
-            pid = str(os.getpid())
-            f = open(gOptions.pidfile,'w')
-            print "Writing pid " + pid + " to "+gOptions.pidfile
-            f.write(pid)
-            f.close()
+            parser.add_argument('--log', default=1, type=int, help='log level, 0-3')
+            parser.add_argument('--pidfile', default='', help='pid file')
+            gOptions = parser.parse_args()
+        else:
+            import optparse
+            parser = OptionParser()
+            parser.add_option("-p", "--port", action="store", type="int", dest="port", help="local port")
+            parser.add_option("-l", "--log", action="store", type="int", dest="log", help="log level, 0-3")
+            parser.add_option("-f", "--pidfile", dest="pidfile", help="pid file")
+            (gOptions, args)=parser.parse_args()
+
     except :
-        #import argparse error, e.g. python26
-        print "import argparse error"
+        #import argparse error
+        print "arg parse error"
         class option:
             def __init__(self): 
                 self.log = 1
                 self.port = gConfig["LOCAL_PORT"]
+                self.pidfile = ""
         gOptions = option()
+
+    if gOptions.pidfile != "":
+        import os
+        pid = str(os.getpid())
+        f = open(gOptions.pidfile,'w')
+        print "Writing pid " + pid + " to "+gOptions.pidfile
+        f.write(pid)
+        f.close()
     start()
