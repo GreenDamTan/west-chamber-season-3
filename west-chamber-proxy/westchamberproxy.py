@@ -493,14 +493,14 @@ if __name__ == "__main__":
             gOptions = parser.parse_args()
         else:
             import optparse
-            parser = OptionParser()
-            parser.add_option("-p", "--port", action="store", type="int", dest="port", help="local port")
-            parser.add_option("-l", "--log", action="store", type="int", dest="log", help="log level, 0-3")
-            parser.add_option("-f", "--pidfile", dest="pidfile", help="pid file")
+            parser = optparse.OptionParser()
+            parser.add_option("-p", "--port", action="store", type="int", dest="port", default=gConfig["LOCAL_PORT"], help="local port")
+            parser.add_option("-l", "--log", action="store", type="int", dest="log", default=1, help="log level, 0-3")
+            parser.add_option("-f", "--pidfile", dest="pidfile", default="", help="pid file")
             (gOptions, args)=parser.parse_args()
 
     except :
-        #import argparse error
+        #arg parse error
         print "arg parse error"
         class option:
             def __init__(self): 
