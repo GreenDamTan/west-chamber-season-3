@@ -77,9 +77,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
         global gipWhiteList;
         print "check "+host + " " + ip
-        if (host == ip):
-            if gOptions.log>0: print host + ": do not inject ip or white list domain"
-            return False
         
         for c in ip:
             if c!='.' and (c>'9' or c < '0'):
