@@ -18,6 +18,19 @@ import config
 grules = {}
 
 gConfig = config.gConfig
+gConfig["BLACKHOLES"] = [
+    '243.185.187.30', 
+    '243.185.187.39', 
+    '46.82.174.68', 
+    '78.16.49.15', 
+    '93.46.8.89', 
+    '37.61.54.158', 
+    '159.24.3.173', 
+    '203.98.7.65', 
+    '8.7.198.45', 
+    '159.106.121.75', 
+    '59.24.3.173'
+]
 
 gOptions = {}
 
@@ -118,25 +131,11 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
         try:
             ip = socket.gethostbyname(host)
-            fakeIp = {
-                0x5d2e0859 : 1,
-                0xcb620741 : 1,
-                0x0807c62d : 1,
-                0x4e10310f : 1,
-                0x2e52ae44 : 1,
-                0xf3b9bb27 : 1,
-                0xf3b9bb1e : 1,
-                0x9f6a794b : 1,
-                0x253d369e : 1,
-                0x9f1803ad : 1,
-                0x3b1803ad : 1,
-            }
             ChinaUnicom404 = {
                 "202.106.199.37" : 1,
                 "202.106.195.30" : 1,
             }
-            packedIp = socket.inet_aton(ip)
-            if struct.unpack('!I', packedIp)[0] in fakeIp:
+            if ip in gConfig["BLACKHOLES"]:
                 print ("Fake IP " + host + " => " + ip)
             elif ip in ChinaUnicom404:
                 print ("ChinaUnicom404 " + host + " => " + ip + ", ignore")
@@ -490,14 +489,14 @@ if __name__ == "__main__":
             gOptions = parser.parse_args()
         else:
             import optparse
-            parser = OptionParser()
-            parser.add_option("-p", "--port", action="store", type="int", dest="port", help="local port")
-            parser.add_option("-l", "--log", action="store", type="int", dest="log", help="log level, 0-3")
-            parser.add_option("-f", "--pidfile", dest="pidfile", help="pid file")
+            parser = optparse.OptionParser()
+            parser.add_option("-p", "--port", action="store", type="int", dest="port", default=gConfig["LOCAL_PORT"], help="local port")
+            parser.add_option("-l", "--log", action="store", type="int", dest="log", default=1, help="log level, 0-3")
+            parser.add_option("-f", "--pidfile", dest="pidfile", default="", help="pid file")
             (gOptions, args)=parser.parse_args()
 
     except :
-        #import argparse error
+        #arg parse error
         print "arg parse error"
         class option:
             def __init__(self): 
