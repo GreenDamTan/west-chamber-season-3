@@ -609,12 +609,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if (host in gConfig["BLOCKED_DOMAINS"]) or isIpBlocked(connectHost):
                 gConfig["BLOCKED_DOMAINS"][host] = True
                 if gOptions.log>0 : print "add ip "+ connectHost + " to block list"
-                gConfig["BLOCKED_IPS"][connectHost] = True
-                host = gConfig["PROXY_SERVER_SIMPLE"]
-                connectHost = self.getip(host)
-                path = self.path[len(scm)+2:]
-                self.headers["Host"] = gConfig["PROXY_SERVER_SIMPLE"]
-                print "use simple web proxy for " + path
+                return self.do_METHOD_Tunnel()
             
             if True:
                 for d in domainWhiteList:
@@ -659,7 +654,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 except:
                     raise
 
-                if doInject and (response.status == 400 or response.status == 405 or badStatusLine) and host != gConfig["PROXY_SERVER_SIMPLE"] and host != gConfig["PROXY_SERVER"][7:-1]:
+                if doInject and (response.status == 400 or response.status == 405 or badStatusLine):
                     self.remote.close()
                     self.remote = None
                     if gOptions.log > 0: print host + " seem not support inject, " + msg

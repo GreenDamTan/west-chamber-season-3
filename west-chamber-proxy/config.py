@@ -2,11 +2,9 @@
 # -*- coding: utf-8 -*-
 
 gConfig = {
-    "VERSION" : "20120325",
-    "PROXY_SERVER" : "http://annjonescnch.appspot.com/",
+    "VERSION" : "20120424",
     "PROXY_PASSWD" : "",
     #proxy without any content rewrite, to fetch IP blocked sites
-    "PROXY_SERVER_SIMPLE" : "westchamberproxy.appspot.com",
     "GOAGENT_FETCHHOST": "goagent-hrd.appspot.com",
     "GOAGENT_PASSWORD": "",
     "BLOCKED_DOMAINS_URI" : "https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/status/timedout.txt",

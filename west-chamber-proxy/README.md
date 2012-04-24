@@ -44,21 +44,14 @@
 * [XIAOXIA](http://xiaoxia.org), 原始版本作者
 * [LIRUQI](http://liruqi.info), 后续开发, 各平台的打包、发布
 
-DNS污染
--------
-有实现用户态反DNS污染。而且独立于系统的DNS配置。
 
-IP封锁
-------
+代理原理
+--------
 
-1. 目前是通过 Google code 上[SmartHosts项目](http://code.google.com/p/smarthosts/) 自动获取的[配置文件](http://smarthosts.googlecode.com/svn/trunk/hosts), 来得到可用IP
-2. HTTP 方式下，对于IP被封锁且没有可用IP的站点(如 www.bullogger.com)，代理能够自动检测到 IP 封锁，并自动通过代理获取网页内容。(也可以手动在配置中增加IP封锁域名，可以加快代理速度)
-3. 现在还没有办法处理 HTTPS 下IP封锁的问题。
-
-可用性
-------
-1. 如果国外网站IP被封锁，使用本工具可能无法访问。
-2. 如果国外网站被关键词过滤，且没有严格遵守 [rfc2616 - section 4.1](http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html)，本工具可能不生效。
+1. 对抗关键词过滤: [rfc2616 - section 4.1](http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html)
+2. 对抗DNS污染: 修改PyDNS 库，实现丢弃GFW DNS 伪包。
+3. 对抗IP封锁: 通过 Google code 上[SmartHosts项目](http://code.google.com/p/smarthosts/) 自动获取的[配置文件](http://smarthosts.googlecode.com/svn/trunk/hosts), 来得到可用IP
+4. 如果没有可用IP，或者是HTTP注入导致异常，本代理会走[GoAgent](http://code.google.com/p/goagent/) 代理。
 
 问题反馈
 --------
@@ -86,5 +79,4 @@ UPDATE LOG
 * 2012-03-17 代码重构。python 脚本中去掉了进程控制，增加了多个命令行参数，进程控制由shell 脚本实现。 
 * 2012-04-14 DNS解析结果中，移除被GFW 封锁的IP。
 * 2012-04-14 支持UDP方式DNS解析，并丢弃GFW伪包。
-
-
+* 2012-04-24 基本完成与GoAgent 的整合，直连失败后会走GoAgent 代理。
