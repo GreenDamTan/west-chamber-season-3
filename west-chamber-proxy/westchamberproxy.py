@@ -664,7 +664,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     self.remote = None
                     if gOptions.log > 0: print host + " seem not support inject, " + msg
                     domainWhiteList.append(host)
-                    return self.proxy()
+                    return self.do_METHOD_Tunnel()
 
             # Reply to the browser
             status = "HTTP/1.1 " + str(response.status) + " " + response.reason
@@ -694,11 +694,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
             (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
             status = "HTTP/1.1 302 Found"
-            if (netloc == urlparse.urlparse( gConfig["PROXY_SERVER"] )[1]) or (netloc == gConfig["PROXY_SERVER_SIMPLE"]) or (scm.upper() != "HTTP"):
-                msg = scm + "-" + netloc
+            if host in gConfig["HSTS_ON_EXCEPTION_DOMAINS"]:
+                redirectUrl = "https://" + self.path[7:]
                 self.wfile.write(status + "\r\n")
-                self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
-                return
+                self.wfile.write("Location: " + redirectUrl + "\r\n")
 
             exc_type, exc_value, exc_traceback = sys.exc_info()
 
@@ -712,8 +711,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     if doInject:
                         print "try not inject " + host
                         domainWhiteList.append(host)
-                        self.proxy()
+                        self.do_METHOD_Tunnel()
                         return
+ 
             print "error in proxy: ", self.requestline
             print exc_type
             print str(exc_value) + " " + host
@@ -721,21 +721,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if not inWhileList:
                     if gOptions.log > 0: print "add "+host+" to blocked domains"
                     gConfig["BLOCKED_DOMAINS"][host] = True
-                    return self.proxy()
-            
-            traceback.print_tb(exc_traceback)
-            if doInject:
-                self.wfile.write(status + "\r\n")
-                redirectUrl = gConfig["PROXY_SERVER"] + self.path[7:]
-                if host in gConfig["HSTS_ON_EXCEPTION_DOMAINS"]:
-                    redirectUrl = "https://" + self.path[7:]
-                self.wfile.write("Location: " + redirectUrl + "\r\n")
-            else :
-                msg = scm + "-" + host 
-                self.wfile.write(status + "\r\n")
-                self.wfile.write("Location: http://westchamberproxy.appspot.com/#" + msg + "\r\n")
-            print "client connection closed"
 
+            return self.do_METHOD_Tunnel()
     
     def do_GET(self):
         #some sites(e,g, weibo.com) are using comet (persistent HTTP connection) to implement server push
@@ -860,6 +847,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             # Connection closed before proxy return
             if err in (10053, errno.EPIPE):
                 return
+
     def fetch(self, url, payload, method, headers):
         return urlfetch(url, payload, method, headers, gConfig['GOAGENT_FETCHHOST'], "https://" + gConfig["GOAGENT_FETCHHOST"] + "/fetch.py?", password=gConfig["GOAGENT_PASSWORD"])
 
