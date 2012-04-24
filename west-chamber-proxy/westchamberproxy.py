@@ -17,10 +17,6 @@ try:
 except ImportError:
     OpenSSL = None
 
-__version__ = '1.8.3'
-__config__  = 'proxy.ini'
-
-
 class SimpleLogging(object):
     CRITICAL = 50
     FATAL = CRITICAL
@@ -58,121 +54,11 @@ class SimpleLogging(object):
 
 logging = SimpleLogging()
 
-class Common(object):
-    """global config object"""
-
-    def __init__(self):
-        """load config from proxy.ini"""
-        ConfigParser.RawConfigParser.OPTCRE = re.compile(r'(?P<option>[^=\s][^=]*)\s*(?P<vi>[=])\s*(?P<value>.*)$')
-        self.CONFIG = ConfigParser.ConfigParser()
-        self.CONFIG.read(os.path.abspath(os.path.dirname(__file__))+'/'+ __config__)
-
-        self.LISTEN_IP            = self.CONFIG.get('listen', 'ip')
-        self.LISTEN_PORT          = self.CONFIG.getint('listen', 'port')
-        self.LISTEN_VISIBLE       = self.CONFIG.getint('listen', 'visible')
-
-        self.GAE_ENABLE           = self.CONFIG.getint('gae', 'enable')
-        self.GAE_APPIDS           = self.CONFIG.get('gae', 'appid').replace('.appspot.com', '').split('|')
-        self.GAE_PASSWORD         = self.CONFIG.get('gae', 'password').strip()
-        self.GAE_PATH             = self.CONFIG.get('gae', 'path')
-        self.GAE_PROFILE          = self.CONFIG.get('gae', 'profile')
-        self.GAE_MULCONN          = self.CONFIG.getint('gae', 'mulconn')
-        self.GAE_DEBUGLEVEL       = self.CONFIG.getint('gae', 'debuglevel') if self.CONFIG.has_option('gae', 'debuglevel') else 0
-
-        self.PHP_ENABLE           = self.CONFIG.getint('php', 'enable')
-        self.PHP_LISTEN           = self.CONFIG.get('php', 'listen')
-        self.PHP_PASSWORD         = self.CONFIG.get('php', 'password') if self.CONFIG.has_option('php', 'password') else ''
-        self.PHP_FETCHSERVER      = self.CONFIG.get('php', 'fetchserver')
-
-        if self.CONFIG.has_section('pac'):
-            # XXX, cowork with GoAgentX
-            self.PAC_ENABLE           = self.CONFIG.getint('pac','enable')
-            self.PAC_IP               = self.CONFIG.get('pac','ip')
-            self.PAC_PORT             = self.CONFIG.getint('pac','port')
-            self.PAC_FILE             = self.CONFIG.get('pac','file').lstrip('/')
-            self.PAC_UPDATE           = self.CONFIG.getint('pac', 'update')
-            self.PAC_REMOTE           = self.CONFIG.get('pac', 'remote')
-            self.PAC_TIMEOUT          = self.CONFIG.getint('pac', 'timeout')
-            self.PAC_DIRECTS          = self.CONFIG.get('pac', 'direct').split('|') if self.CONFIG.get('pac', 'direct') else []
-        else:
-            self.PAC_ENABLE           = 0
-
-        self.PROXY_ENABLE         = self.CONFIG.getint('proxy', 'enable')
-        self.PROXY_HOST           = self.CONFIG.get('proxy', 'host')
-        self.PROXY_PORT           = self.CONFIG.getint('proxy', 'port')
-        self.PROXY_USERNAME       = self.CONFIG.get('proxy', 'username')
-        self.PROXY_PASSWROD       = self.CONFIG.get('proxy', 'password')
-
-        self.GOOGLE_MODE          = self.CONFIG.get(self.GAE_PROFILE, 'mode')
-        self.GOOGLE_HOSTS         = tuple(self.CONFIG.get(self.GAE_PROFILE, 'hosts').split('|'))
-        self.GOOGLE_SITES         = tuple(self.CONFIG.get(self.GAE_PROFILE, 'sites').split('|'))
-        self.GOOGLE_FORCEHTTPS    = frozenset(self.CONFIG.get(self.GAE_PROFILE, 'forcehttps').split('|'))
-        self.GOOGLE_WITHGAE       = frozenset(self.CONFIG.get(self.GAE_PROFILE, 'withgae').split('|'))
-
-        self.FETCHMAX_LOCAL       = self.CONFIG.getint('fetchmax', 'local') if self.CONFIG.get('fetchmax', 'local') else 3
-        self.FETCHMAX_SERVER      = self.CONFIG.get('fetchmax', 'server')
-
-        self.AUTORANGE_HOSTS      = tuple(self.CONFIG.get('autorange', 'hosts').split('|'))
-        self.AUTORANGE_HOSTS_TAIL = tuple(x.rpartition('*')[2] for x in self.AUTORANGE_HOSTS)
-        self.AUTORANGE_MAXSIZE    = self.CONFIG.getint('autorange', 'maxsize')
-        self.AUTORANGE_WAITSIZE   = self.CONFIG.getint('autorange', 'waitsize')
-        self.AUTORANGE_BUFSIZE    = self.CONFIG.getint('autorange', 'bufsize')
-
-        assert self.AUTORANGE_BUFSIZE <= self.AUTORANGE_WAITSIZE <= self.AUTORANGE_MAXSIZE
-
-        if self.CONFIG.has_section('crlf'):
-            # XXX, cowork with GoAgentX
-            self.CRLF_ENABLE          = self.CONFIG.getint('crlf', 'enable')
-            self.CRLF_DNS             = self.CONFIG.get('crlf', 'dns')
-            self.CRLF_SITES           = tuple(self.CONFIG.get('crlf', 'sites').split('|'))
-            self.CRLF_CNAME           = dict(x.split('=') for x in self.CONFIG.get('crlf', 'cname').split('|'))
-        else:
-            self.CRLF_ENABLE          = 0
-
-        self.USERAGENT_ENABLE     = self.CONFIG.getint('useragent', 'enable')
-        self.USERAGENT_STRING     = self.CONFIG.get('useragent', 'string')
-
-        self.LOVE_ENABLE          = self.CONFIG.getint('love','enable')
-        self.LOVE_TIMESTAMP       = self.CONFIG.get('love', 'timestamp')
-        self.LOVE_TIP             = [re.sub(r'(?i)\\u([0-9a-f]{4})', lambda m:unichr(int(m.group(1),16)), x) for x in self.CONFIG.get('love','tip').split('|')]
-
-        self.HOSTS                = dict((k, tuple(v.split('|')) if v else tuple()) for k, v in self.CONFIG.items('hosts'))
-
-        self.build_gae_fetchserver()
-        self.PHP_FETCH_INFO       = dict(((listen.rpartition(':')[0], int(listen.rpartition(':')[-1])), (re.sub(r':\d+$', '', urlparse.urlparse(server).netloc), server)) for listen, server in zip(self.PHP_LISTEN.split('|'), self.PHP_FETCHSERVER.split('|')))
-
-    def build_gae_fetchserver(self):
-        """rebuild gae fetch server config"""
-        if self.PROXY_ENABLE:
-            self.GOOGLE_MODE = 'https'
-        self.GAE_FETCHHOST = '%s.appspot.com' % self.GAE_APPIDS[0]
-        if not self.PROXY_ENABLE:
-            # append '?' to url, it can avoid china telicom/unicom AD
-            self.GAE_FETCHSERVER = '%s://%s%s?' % (self.GOOGLE_MODE, self.GAE_FETCHHOST, self.GAE_PATH)
-        else:
-            self.GAE_FETCHSERVER = '%s://%s%s?' % (self.GOOGLE_MODE, random.choice(self.GOOGLE_HOSTS), self.GAE_PATH)
-
-    def install_opener(self):
-        """install urllib2 opener"""
-        httplib.HTTPMessage = SimpleMessageClass
-        if self.PROXY_ENABLE:
-            proxy = '%s:%s@%s:%d'%(self.PROXY_USERNAME, self.PROXY_PASSWROD, self.PROXY_HOST, self.PROXY_PORT)
-            handlers = [urllib2.ProxyHandler({'http':proxy,'https':proxy})]
-        else:
-            handlers = [urllib2.ProxyHandler({})]
-        opener = urllib2.build_opener(*handlers)
-        opener.addheaders = []
-        urllib2.install_opener(opener)
-
-common = Common()
-
-
 import config
 
 gConfig = config.gConfig
-gConfig["GAE_FETCHHOST"] = "goagent-hrd.appspot.com"
-gConfig["GAE_PASSWORD"] = ""
-grules = { gConfig["GAE_FETCHHOST"]: "203.208.46.6" }
+
+grules = { gConfig["GOAGENT_FETCHHOST"]: "203.208.46.6" }
 
 gConfig["BLACKHOLES"] = [
     '243.185.187.30', 
@@ -190,7 +76,7 @@ gConfig["BLACKHOLES"] = [
 
 def socket_create_connection((host, port), timeout=None, source_address=None):
     logging.debug('socket_create_connection connect (%r, %r)', host, port)
-    if host == common.GAE_FETCHHOST:
+    if host == gConfig["GOAGENT_FETCHHOST"]:
         msg = 'socket_create_connection returns an empty list'
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -198,7 +84,7 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
             return sock
         except socket.error, msg:
-            logging.error('socket_create_connection connect fail: (%r, %r)', common.GOOGLE_HOSTS, port)
+            logging.error('socket_create_connection connect fail: (%r, %r)', grules[host], port)
             sock = None
         if not sock:
             raise socket.error, msg
@@ -975,7 +861,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if err in (10053, errno.EPIPE):
                 return
     def fetch(self, url, payload, method, headers):
-        return urlfetch(url, payload, method, headers, gConfig['GAE_FETCHHOST'], "https://" + gConfig["GAE_FETCHHOST"] + "/fetch.py?", password=gConfig["GAE_PASSWORD"])
+        return urlfetch(url, payload, method, headers, gConfig['GOAGENT_FETCHHOST'], "https://" + gConfig["GOAGENT_FETCHHOST"] + "/fetch.py?", password=gConfig["GOAGENT_PASSWORD"])
 
     # reslove ssl from http://code.google.com/p/python-proxy/
     def _read_write(self):
