@@ -39,7 +39,6 @@ gConfig = {
         "logentries.com" : 1,
         "stripe.com" : 1,
         "facebook.com": 1,
-        "www.facebook.com": 1,
     },
     #collect domains that support HTTPS, to reduce usage of web proxy
     "HSTS_ON_EXCEPTION_DOMAINS" : {
@@ -83,6 +82,7 @@ gConfig = {
         "23.21.220.40":1, "23.21.242.194":1, #dropbox
         "50.16.240.166":1, #dropbox
         "70.86.20.29" : 1, #www.bullogger.com
+        "66.220.149.25": 1,
         "69.93.206.250": 1, #www.xys.org,
         "174.121.98.156": 1,
         "50.22.53.157": 1,
