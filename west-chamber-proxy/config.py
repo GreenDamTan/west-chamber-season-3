@@ -7,6 +7,9 @@ gConfig = {
     #proxy without any content rewrite, to fetch IP blocked sites
     "GOAGENT_FETCHHOST": "goagent-hrd.appspot.com",
     "GOAGENT_PASSWORD": "",
+    "AUTORANGE_BUFSIZE": 8192,
+    "AUTORANGE_WAITSIZE": 524288,
+    "AUTORANGE_MAXSIZE": 1048576,
     "BLOCKED_DOMAINS_URI" : "https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/status/timedout.txt",
     "REMOTE_DNS" : "168.95.1.1",
     "SKIP_LOCAL_RESOLV" : False,
