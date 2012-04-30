@@ -67,6 +67,7 @@ gConfig = {
         "search.twitter.com" : True,
         "www.baidu.jp" : True,
         "www.nicovideo.jp": True,
+        "www.dailymotion.com": True,
         "ext.nicovideo.jp": True,
         "blog.roodo.com": True,
         "www.dwnews.com": True,
