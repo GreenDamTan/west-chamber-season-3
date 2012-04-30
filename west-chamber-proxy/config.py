@@ -3,7 +3,6 @@
 
 gConfig = {
     "VERSION" : "20120424",
-    "PROXY_PASSWD" : "",
     #proxy without any content rewrite, to fetch IP blocked sites
     "GOAGENT_FETCHHOST": "goagent-hrd.appspot.com",
     "GOAGENT_PASSWORD": "",
