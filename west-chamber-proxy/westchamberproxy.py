@@ -249,6 +249,7 @@ def urlfetch(url, payload, method, headers, fetchhost, fetchserver, password=Non
             logging.debug('urlfetch %r by %r', url, fetchserver)
             request = urllib2.Request(fetchserver, zlib.compress(params, 9))
             request.add_header('Content-Type', '')
+            request.add_header("X-WCProxy", gConfig["VERSION"])
             response = urllib2.urlopen(request)
             compressed = response.read(1)
 
@@ -631,11 +632,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     path = "/"
                 print " ".join((self.command, path, self.request_version)) + "\r\n"
                 self.remote.send(" ".join((self.command, path, self.request_version)) + "\r\n")
-                # Send headers
-                if host[-12:] == ".appspot.com":
-                    print "add version code " + gConfig["VERSION"] + " in HTTP header"
-                    self.headers["X-WCProxy"] = gConfig["VERSION"]
-                    self.headers["X-WCPasswd"] = gConfig["PROXY_PASSWD"]
+                
                 self.remote.send(str(self.headers) + "\r\n")
                 # Send Post data
                 if(self.command=='POST'):
