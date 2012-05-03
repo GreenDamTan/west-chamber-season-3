@@ -11,7 +11,7 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 from httplib import HTTPResponse, BadStatusLine
-import os, re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time, hashlib, binascii, zlib, httplib, errno
+import os, re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time, hashlib, binascii, zlib, httplib, errno, string
 try:
     import OpenSSL
 except ImportError:
@@ -233,6 +233,10 @@ def isIpBlocked(ip):
             if gOptions.log > 0: print ip+" is blocked."
             return True
     return False
+
+def isDomainBlocked(host):
+    rootDomain = string.join(host.split('.')[-2:], '.')
+    return (host in gConfig["BLOCKED_DOMAINS"]) or (rootDomain in gConfig["BLOCKED_DOMAINS"])
 
 def urlfetch(url, payload, method, headers, fetchhost, fetchserver, password=None, dns=None, on_error=None):
     errors = []
@@ -607,9 +611,11 @@ class ProxyHandler(BaseHTTPRequestHandler):
             path = self.path[self.path.find(netloc) + len(netloc):]
 
             connectHost = self.getip(host)
-            if (host in gConfig["BLOCKED_DOMAINS"]) or isIpBlocked(connectHost):
+            rootDomain = string.join(host.split('.')[-2:], '.')
+            
+            if isDomainBlocked(host) or isIpBlocked(connectHost):
                 gConfig["BLOCKED_DOMAINS"][host] = True
-                if gOptions.log>0 : print "add ip "+ connectHost + " to block list"
+                logging.debug(host + " blocked, try goagent.")
                 return self.do_METHOD_Tunnel()
             
             if True:
@@ -729,7 +735,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         host, port = self.path.split(":")
         ip = self.getip(host)
         try:
-            if not isIpBlocked(ip):
+            if not (isDomainBlocked(host) or isIpBlocked(ip)):
                 self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 print ("SSL: connect " + host + ":ip:" + ip)
                 self.remote.connect((ip, int(port)))
