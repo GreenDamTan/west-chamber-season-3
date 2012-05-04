@@ -449,6 +449,7 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer): pass
 class ProxyHandler(BaseHTTPRequestHandler):
     remote = None
     dnsCache = {}
+    dnsCacheLock = 0
     now = 0
     depth = 0
     MessageClass = SimpleMessageClass
@@ -550,10 +551,19 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     continue
                 ip = a["data"]
         if (ip != ""):
-            self.dnsCache[host] = {"ip":ip, "expire":self.now + ttl*2 + 60}
-            return ip;
+            if len(self.dnsCache) >= gConfig["DNS_CACHE_MAXSZ"] and self.dnsCacheLock <=0 :
+                self.dnsCacheLock = 1
+                logging.debug("purge DNS cache...")
+                for h in self.dnsCache:
+                    if self.now >= self.dnsCache[h]["expire"]:
+                        del self.dnsCache[h]
+                logging.debug("purge DNS cache done, now %d" % len(self.dnsCache))
+                self.dnsCacheLock = 0
+
+            if len(self.dnsCache) < gConfig["DNS_CACHE_MAXSZ"]: self.dnsCache[host] = {"ip":ip, "expire":self.now + ttl*2 + 60}
+            return ip
         if (blockedIp != ""):
-            return blockedIp;
+            return blockedIp
         if (cname != ""):
             return self.getip(cname)
 
