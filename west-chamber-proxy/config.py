@@ -11,6 +11,7 @@ gConfig = {
     "AUTORANGE_MAXSIZE": 1048576,
     "BLOCKED_DOMAINS_URI" : "https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/status/timedout.txt",
     "REMOTE_DNS" : "168.95.1.1",
+    "DNS_CACHE_MAXSZ" : 1024,
     "SKIP_LOCAL_RESOLV" : False,
     "REDIRECT_DOMAINS": {
         "plus.url.google.com":"url",
