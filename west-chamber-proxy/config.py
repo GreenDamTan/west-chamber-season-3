@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import random
+GOAGENT_FETCHHOST_LIST = ["goagent-hrd.appspot.com", "wcproxy1.appspot.com"]
+
 gConfig = {
     "VERSION" : "20120424",
     "PROXY_TYPE": "goagent",# "goagent" or "socks5", can be created by `ssh -NfD 0.0.0.0:1234 user@hostname`
     "SOCKS_HOST": "localhost",
     "SOCKS_PORT": 1234,
-    "GOAGENT_FETCHHOST": "goagent-hrd.appspot.com",
+    "GOAGENT_FETCHHOST": GOAGENT_FETCHHOST_LIST[random.randint(0, len(GOAGENT_FETCHHOST_LIST)-1)], 
     "GOAGENT_PASSWORD": "",
     "AUTORANGE_BUFSIZE": 8192,
     "AUTORANGE_WAITSIZE": 524288,
