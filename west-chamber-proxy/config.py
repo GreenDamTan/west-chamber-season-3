@@ -3,7 +3,9 @@
 
 gConfig = {
     "VERSION" : "20120424",
-    #proxy without any content rewrite, to fetch IP blocked sites
+    "PROXY_TYPE": "goagent",# "goagent" or "socks5", can be created by `ssh -NfD 0.0.0.0:1234 user@hostname`
+    "SOCKS_HOST": "localhost",
+    "SOCKS_PORT": 1234,
     "GOAGENT_FETCHHOST": "goagent-hrd.appspot.com",
     "GOAGENT_PASSWORD": "",
     "AUTORANGE_BUFSIZE": 8192,

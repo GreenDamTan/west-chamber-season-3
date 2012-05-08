@@ -105,8 +105,12 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
                 if sock is not None:
                     sock.close()
         raise socket.error, msg
-socket.create_connection = socket_create_connection
 
+if gConfig["PROXY_TYPE"] == "goagent":
+    socket.create_connection = socket_create_connection
+if gConfig["PROXY_TYPE"] == "socks5":
+    import socks
+    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
 
 class SimpleMessageClass(object):
     def __init__(self, fp, seekable = 0):
@@ -748,6 +752,16 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def do_CONNECT(self):
         host, port = self.path.split(":")
         ip = self.getip(host)
+        if gConfig["PROXY_TYPE"]=="socks5":
+            self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+            print ("SSL: connect " + host + " ip:" + ip + " var socks5 proxy")
+            self.remote.connect((ip, int(port)))
+            Agent = 'WCProxy/1.0'
+            self.wfile.write('HTTP/1.1'+' 200 Connection established\n'+
+                         'Proxy-agent: %s\n\n'%Agent)
+            self._read_write()
+            return
+
         try:
             if not (isDomainBlocked(host) or isIpBlocked(ip)):
                 self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

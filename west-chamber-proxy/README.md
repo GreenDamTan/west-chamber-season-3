@@ -5,6 +5,18 @@
 * [Follow up](https://plus.google.com/b/108661470402896863593/)
 * [捐赠本项目](https://me.alipay.com/liruqi)
 
+代理设置
+--------
+
+* 浏览器代理设置
+    做了一个 [.pac 文件](https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/flora_pac.pac)。下载这个pac 文件，然后在代理设置中导入即可。
+    具体使用方法，在[这里](http://wcproxy.sinaapp.com/) 更新。
+
+* 代理自身的代理配置
+
+    1. 默认配置是GoAgent，包含一个内置的appid ("goagent-hrd")，如果有自己的appid 建议更换，把 config.py 里面的"goagent-hrd" 替换即可。
+    2. 也可以设置socks5代理。如 `ssh -NfD 0.0.0.0:1234 user@hostname` 启动代理之后，把PROXY_TYPE的配置 "goagent" 改为 "socks5"，然后把 SOCKS_HOST/SOCKS_PORT 修改为自己的代理。
+
 使用方法
 --------
 * Windows
@@ -33,11 +45,6 @@
 
     1. 局域网内的其它设备(PC, Android 设备)上安装本代理，然后把 iOS 设备的 HTTP 代理设置到该设备上。（或者在国内有服务器的同学，自己搭建HTTP 代理）
     2. 类似GoAgent 那种iOS客户端的办法。需要越狱。单我本人没有iOS设备，所以，暂不研究了。
-
-* 代理设置
-
-    做了一个 [.pac 文件](https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/flora_pac.pac)。下载这个pac 文件，然后在代理设置中导入即可。
-    具体使用方法，在[这里](http://wcproxy.sinaapp.com/) 更新。
 
 开发者
 ------
