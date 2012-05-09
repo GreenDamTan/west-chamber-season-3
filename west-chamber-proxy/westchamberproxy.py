@@ -106,12 +106,6 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
                     sock.close()
         raise socket.error, msg
 
-if gConfig["PROXY_TYPE"] == "socks5":
-    import socks
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
-else:
-    socket.create_connection = socket_create_connection
-
 class SimpleMessageClass(object):
     def __init__(self, fp, seekable = 0):
         self.dict = dict = {}
@@ -1048,6 +1042,11 @@ if __name__ == "__main__":
             gConfig[k] = jsonConfig[k]
     except:
         print "Load json config failed"
+    if gConfig["PROXY_TYPE"] == "socks5":
+        import socks
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
+    else:
+        socket.create_connection = socket_create_connection
 
     try :
         if sys.version[:3] in ('2.7', '3.0', '3.1', '3.2', '3.3'):
