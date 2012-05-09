@@ -106,11 +106,11 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
                     sock.close()
         raise socket.error, msg
 
-if gConfig["PROXY_TYPE"] == "goagent":
-    socket.create_connection = socket_create_connection
 if gConfig["PROXY_TYPE"] == "socks5":
     import socks
     socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
+else:
+    socket.create_connection = socket_create_connection
 
 class SimpleMessageClass(object):
     def __init__(self, fp, seekable = 0):
@@ -631,11 +631,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
             connectHost = self.getip(host)
             rootDomain = string.join(host.split('.')[-2:], '.')
             
-            if isDomainBlocked(host) or isIpBlocked(connectHost):
-                gConfig["BLOCKED_DOMAINS"][host] = True
-                logging.debug(host + " blocked, try goagent.")
-                return self.do_METHOD_Tunnel()
-            
             if True:
                 for d in domainWhiteList:
                     if host.endswith(d):
@@ -644,13 +639,23 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
                 if not inWhileList:
                     doInject = self.enableInjection(host, connectHost)
-                
-                self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                if gOptions.log > 1: print "connect to " + host + ":" + str(port)
-                self.remote.connect((connectHost, port))
-                if doInject: 
-                    if gOptions.log > 0: print "inject http for "+host
-                    self.remote.send("\r\n\r\n")
+
+                if isDomainBlocked(host) or isIpBlocked(connectHost):
+                    if gConfig["PROXY_TYPE"] == "socks5":
+                        self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+                        logging.debug("connect to " + host + ":" + str(port) + " var socks5 proxy")
+                        self.remote.connect((connectHost, port))
+                    else:
+                        logging.debug(host + " blocked, try goagent.")
+                        return self.do_METHOD_Tunnel()
+                else:
+                    self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    logging.debug( "connect to " + host + ":" + str(port))
+                    self.remote.connect((connectHost, port))
+                    if doInject: 
+                        logging.info ("inject http for "+host)
+                        self.remote.send("\r\n\r\n")
+
                 # Send requestline
                 if path == "":
                     path = "/"
@@ -745,10 +750,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
         #after setting socket timeout, many persistent HTTP requests redirects to web proxy, waste of resource
         #socket.setdefaulttimeout(18)
         self.proxy()
-    def do_POST(self):
-        #socket.setdefaulttimeout(None)
-        self.proxy()
 
+    def do_POST(self):
+        self.proxy()
+    
     def do_CONNECT(self):
         host, port = self.path.split(":")
         ip = self.getip(host)
@@ -819,7 +824,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
         else:
             self.send_response(code, message)
             self.connection.sendall(data)
-
 
     def do_METHOD_Tunnel(self):
         headers = self.headers
