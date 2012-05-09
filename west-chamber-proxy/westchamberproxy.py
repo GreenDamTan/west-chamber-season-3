@@ -755,18 +755,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
         self.proxy()
     
     def do_CONNECT(self):
-        host, port = self.path.split(":")
+        host, _, port = self.path.rpartition(':')
         ip = self.getip(host)
-        if gConfig["PROXY_TYPE"]=="socks5":
-            self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-            print ("SSL: connect " + host + " ip:" + ip + " var socks5 proxy")
-            self.remote.connect((ip, int(port)))
-            Agent = 'WCProxy/1.0'
-            self.wfile.write('HTTP/1.1'+' 200 Connection established\n'+
-                         'Proxy-agent: %s\n\n'%Agent)
-            self._read_write()
-            return
-
         try:
             if not (isDomainBlocked(host) or isIpBlocked(ip)):
                 self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -780,6 +770,17 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 return
         except:
             pass
+
+        if gConfig["PROXY_TYPE"]=="socks5":
+            self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+            print ("SSL: connect " + host + " ip:" + ip + " var socks5 proxy")
+            self.remote.connect((ip, int(port)))
+            Agent = 'WCProxy/1.0'
+            self.wfile.write('HTTP/1.1'+' 200 Connection established\n'+
+                         'Proxy-agent: %s\n\n'%Agent)
+            self._read_write()
+            return
+
         self.do_CONNECT_Tunnel()
 
     def do_CONNECT_Tunnel(self):
