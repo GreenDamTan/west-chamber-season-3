@@ -969,14 +969,14 @@ def start():
             line = line.split("#")[0]
             d = line.split()
             if (len(d) != 2): continue
-            if gOptions.log > 1: print "read "+line
+            logging.debug( "read "+line)
             if isIpBlocked(d[0]) : 
-                print (d[1]+"  ("+d[0] + ") blocked, skipping")
+                logging.info (d[1]+"  ("+d[0] + ") blocked, skipping")
                 continue
             grules[d[1]] = d[0]
         s.close()
     except:
-        print "read onine hosts fail"
+        logging.error("read onine hosts fail")
     
     try:
         import json
@@ -1018,14 +1018,14 @@ if __name__ == "__main__":
             parser = argparse.ArgumentParser(description='west chamber proxy')
             parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
                    help='local port')
-            parser.add_argument('--log', default=1, type=int, help='log level, 0-3')
+            parser.add_argument('--log', default=2, type=int, help='log level, 0-5')
             parser.add_argument('--pidfile', default='', help='pid file')
             gOptions = parser.parse_args()
         else:
             import optparse
             parser = optparse.OptionParser()
             parser.add_option("-p", "--port", action="store", type="int", dest="port", default=gConfig["LOCAL_PORT"], help="local port")
-            parser.add_option("-l", "--log", action="store", type="int", dest="log", default=1, help="log level, 0-3")
+            parser.add_option("-l", "--log", action="store", type="int", dest="log", default=2, help="log level, 0-5")
             parser.add_option("-f", "--pidfile", dest="pidfile", default="", help="pid file")
             (gOptions, args)=parser.parse_args()
 
@@ -1034,7 +1034,7 @@ if __name__ == "__main__":
         print "arg parse error"
         class option:
             def __init__(self): 
-                self.log = 1
+                self.log = 2
                 self.port = gConfig["LOCAL_PORT"]
                 self.pidfile = ""
         gOptions = option()
@@ -1045,4 +1045,6 @@ if __name__ == "__main__":
         print "Writing pid " + pid + " to "+gOptions.pidfile
         f.write(pid)
         f.close()
+
+    logging.basicConfig(level = gOptions.log*10)
     start()
