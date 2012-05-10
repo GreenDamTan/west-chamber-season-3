@@ -3,7 +3,6 @@
 * 不依赖代理服务器的本地翻墙代理工具。
 * [项目维护地址](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy)
 * [Follow up](https://plus.google.com/b/108661470402896863593/)
-* [捐赠本项目](https://me.alipay.com/liruqi)
 
 代理设置
 --------
