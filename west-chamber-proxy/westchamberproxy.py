@@ -11,48 +11,13 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 from httplib import HTTPResponse, BadStatusLine
-import os, re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time, hashlib, binascii, zlib, httplib, errno, string
+import os, re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time, hashlib, binascii, zlib, httplib, errno, string, logging
 try:
     import OpenSSL
 except ImportError:
     OpenSSL = None
 
-class SimpleLogging(object):
-    CRITICAL = 50
-    FATAL = CRITICAL
-    ERROR = 40
-    WARNING = 30
-    WARN = WARNING
-    INFO = 20
-    DEBUG = 10
-    NOTSET = 0
-    def __init__(self, *args, **kwargs):
-        self.level = SimpleLogging.DEBUG
-        self.__write = sys.stdout.write
-    def basicConfig(self, *args, **kwargs):
-        self.level = kwargs.get('level', SimpleLogging.INFO)
-        if self.level > SimpleLogging.DEBUG:
-            self.debug = self.dummy
-    def log(self, level, fmt, *args):
-        self.__write('%s - - [%s] %s\n' % (level, time.ctime()[4:-5], fmt%args))
-    def dummy(self, *args):
-        pass
-    def debug(self, fmt, *args):
-        self.log('DEBUG', fmt, *args)
-    def info(self, fmt, *args):
-        self.log('INFO', fmt, *args)
-    def warning(self, fmt, *args):
-        self.log('WARNING', fmt, *args)
-    def warn(self, fmt, *args):
-        self.log('WARNING', fmt, *args)
-    def error(self, fmt, *args):
-        self.log('ERROR', fmt, *args)
-    def exception(self, fmt, *args):
-        self.log('ERROR', fmt, *args)
-    def critical(self, fmt, *args):
-        self.log('CRITICAL', fmt, *args)
 
-logging = SimpleLogging()
 
 import config
 
@@ -223,12 +188,10 @@ def isIpBlocked(ip):
     if "BLOCKED_IPS_M16" in gConfig:
         ipm16 = ".".join(ip.split(".")[:2])
         if ipm16 in gConfig["BLOCKED_IPS_M16"]:
-            if gOptions.log > 0: print ip+" is blocked."
             return True
     if "BLOCKED_IPS_M24" in gConfig:
         ipm24 = ".".join(ip.split(".")[:3])
         if ipm24 in gConfig["BLOCKED_IPS_M24"]:
-            if gOptions.log > 0: print ip+" is blocked."
             return True
     return False
 
@@ -989,6 +952,16 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
 def start():
     # Read Configuration
+    try :
+        import json
+        s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"])
+        jsonConfig = json.loads( s.read() )
+        for k in jsonConfig:
+            print "read online json config " + k + " => " + str(jsonConfig[k])
+            gConfig[k] = jsonConfig[k]
+    except:
+        print "Load online json config failed"
+
     try:
         s = urllib2.urlopen('http://liruqi.sinaapp.com/mirror.php?u=aHR0cDovL3NtYXJ0aG9zdHMuZ29vZ2xlY29kZS5jb20vc3ZuL3RydW5rL2hvc3Rz')
         for line in s.readlines():
@@ -1004,16 +977,6 @@ def start():
         s.close()
     except:
         print "read onine hosts fail"
-    
-    try :
-        import json
-        s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"])
-        jsonConfig = json.loads( s.read() )
-        for k in jsonConfig:
-            print "read online json config " + k + " => " + str(jsonConfig[k])
-            gConfig[k] = jsonConfig[k]
-    except:
-        print "Load online json config failed"
     
     try:
         import json
