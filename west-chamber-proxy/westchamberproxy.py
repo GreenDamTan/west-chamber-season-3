@@ -1005,6 +1005,16 @@ def start():
     except:
         print "read onine hosts fail"
     
+    try :
+        import json
+        s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"])
+        jsonConfig = json.loads( s.read() )
+        for k in jsonConfig:
+            print "read online json config " + k + " => " + str(jsonConfig[k])
+            gConfig[k] = jsonConfig[k]
+    except:
+        print "Load online json config failed"
+    
     try:
         import json
         global gipWhiteList;
@@ -1033,15 +1043,6 @@ def start():
     except KeyboardInterrupt: exit()
     
 if __name__ == "__main__":
-    try :
-        import json
-        s = open("config.json")
-        jsonConfig = json.loads( s.read() )
-        for k in jsonConfig:
-            print "read json config " + k + " => " + str(jsonConfig[k])
-            gConfig[k] = jsonConfig[k]
-    except:
-        print "Load json config failed"
     if gConfig["PROXY_TYPE"] == "socks5":
         import socks
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
