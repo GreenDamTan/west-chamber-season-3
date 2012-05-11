@@ -422,7 +422,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
             return
 
         global gipWhiteList;
-        print "check "+host + " " + ip
         
         for c in ip:
             if c!='.' and (c>'9' or c < '0'):
@@ -447,14 +446,14 @@ class ProxyHandler(BaseHTTPRequestHandler):
             return host
 
         if host in grules:
-            print ("Rule resolve: " + host + " => " + grules[host])
+            logging.info ("Rule resolve: " + host + " => " + grules[host])
             return grules[host]
 
-        print "Resolving " + host
+        logging.info ("Resolving " + host)
         self.now = int( time.time() )
         if host in self.dnsCache:
             if self.now < self.dnsCache[host]["expire"]:
-                logging.info( "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now))
+                logging.debug( "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now))
                 return self.dnsCache[host]["ip"]
 
         if gConfig["SKIP_LOCAL_RESOLV"]:
@@ -653,7 +652,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if(len(response_data) == 0): break
                 if dataLength == 0 and (len(response_data) <= 501):
                     if response_data.find("<title>400 Bad Request") != -1 or response_data.find("<title>501 Method Not Implemented") != -1:
-                        print host + " not supporting injection"
+                        logging.error( host + " not supporting injection")
                         domainWhiteList.append(host)
                         response_data = gConfig["PAGE_RELOAD_HTML"]
                 self.wfile.write(response_data)
@@ -681,7 +680,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     return
                 if code in ["61"]: #server not support injection
                     if doInject:
-                        print "try not inject " + host
+                        logging.info( "try not inject " + host)
                         domainWhiteList.append(host)
                         self.do_METHOD_Tunnel()
                         return
@@ -711,7 +710,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         try:
             if not (isDomainBlocked(host) or isIpBlocked(ip)):
                 self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                print ("SSL: connect " + host + ":ip:" + ip)
+                logging.info ("SSL: connect " + host + " ip:" + ip)
                 self.remote.connect((ip, int(port)))
 
                 Agent = 'WCProxy/1.0'
@@ -949,10 +948,10 @@ def start():
         s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"])
         jsonConfig = json.loads( s.read() )
         for k in jsonConfig:
-            print "read online json config " + k + " => " + str(jsonConfig[k])
+            logging.info( "read online json config " + k + " => " + str(jsonConfig[k]))
             gConfig[k] = jsonConfig[k]
     except:
-        print "Load online json config failed"
+        logging.info( "Load online json config failed")
 
     try:
         s = urllib2.urlopen('http://liruqi.sinaapp.com/mirror.php?u=aHR0cDovL3NtYXJ0aG9zdHMuZ29vZ2xlY29kZS5jb20vc3ZuL3RydW5rL2hvc3Rz')
@@ -975,10 +974,10 @@ def start():
         global gipWhiteList;
         s = open(gConfig["CHINA_IP_LIST_FILE"])
         gipWhiteList = json.loads( s.read() )
-        print "load %d ip range rules" % len(gipWhiteList);
+        logging.info( "load %d ip range rules" % len(gipWhiteList))
         s.close()
     except:
-        print "load ip-range config fail"
+        logging.info( "load ip-range config fail")
 
     try:
         s = urllib2.urlopen(gConfig["BLOCKED_DOMAINS_URI"])
@@ -987,7 +986,7 @@ def start():
             gConfig["BLOCKED_DOMAINS"][line] = True
         s.close()
     except:
-        print "load blocked domains failed"
+        logging.info("load blocked domains failed")
 
     httplib.HTTPMessage = SimpleMessageClass
     CertUtil.checkCA()
