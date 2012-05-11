@@ -418,7 +418,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def enableInjection(self, host, ip):
         self.depth += 1
         if self.depth > 3:
-            if gOptions.log>0: print host + " looping, exit"
+            logging.error(host + " looping, exit")
             return
 
         global gipWhiteList;
@@ -426,7 +426,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         
         for c in ip:
             if c!='.' and (c>'9' or c < '0'):
-                if gOptions.log>0: print "recursive ip "+ip
+                logging.error ("recursive ip "+ip)
                 return True
 
         for r in gipWhiteList:
@@ -435,8 +435,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             dran = struct.unpack('!I', socket.inet_aton(ran))[0]
             shift = 32 - int(m2)
             if (dip>>shift) == (dran>>shift):
-                if gOptions.log > 1: 
-                    print ip + " (" + host + ") is in China, matched " + (r)
+                logging.info (ip + " (" + host + ") is in China, matched " + r)
                 return False
         return True
 
@@ -455,8 +454,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         self.now = int( time.time() )
         if host in self.dnsCache:
             if self.now < self.dnsCache[host]["expire"]:
-                if gOptions.log > 1: 
-                    print "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now)
+                logging.info( "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now))
                 return self.dnsCache[host]["ip"]
 
         if gConfig["SKIP_LOCAL_RESOLV"]:
@@ -473,8 +471,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             elif ip in ChinaUnicom404:
                 print ("ChinaUnicom404 " + host + " => " + ip + ", ignore")
             else:
-                if gOptions.log > 1: 
-                    print ("DNS system resolve: " + host + " => " + ip)
+                logging.debug ("DNS system resolve: " + host + " => " + ip)
                 if isIpBlocked(ip):
                     print (host + " => " + ip + " blocked, try remote resolve")
                     return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
@@ -485,8 +482,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
 
     def getRemoteResolve(self, host, dnsserver):
-        if gOptions.log > 1: 
-            print "remote resolve " + host + " by " + dnsserver
+        logging.info ("remote resolve " + host + " by " + dnsserver)
         import DNS
         reqObj = DNS.Request()
         reqProtocol = "udp"
@@ -553,7 +549,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             redirectUrl = self.path
             while True:
                 (scm, netloc, path, params, query, _) = urlparse.urlparse(redirectUrl)
-                if gOptions.log > 2: print urlparse.urlparse(redirectUrl)
+                logging.debug( urlparse.urlparse(redirectUrl) )
 
                 if (netloc not in gConfig["REDIRECT_DOMAINS"]):
                     break
@@ -662,7 +658,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                         response_data = gConfig["PAGE_RELOAD_HTML"]
                 self.wfile.write(response_data)
                 dataLength += len(response_data)
-                if gOptions.log > 1: print "data length: %d"%dataLength
+                logging.debug( "data length: %d"%dataLength)
         except:
             if self.remote:
                 self.remote.close()
@@ -920,7 +916,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
         logging.info('>>>>>>>>>>>>>>> Range Fetch ended(%r)', self.headers.get('Host'))
         return True
 
-
     # reslove ssl from http://code.google.com/p/python-proxy/
     def _read_write(self):
         BUFLEN = 8192
@@ -931,7 +926,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             count += 1
             (recv, _, error) = select.select(socs, [], socs, 3)
             if error:
-                print ("select error")
+                logging.error ("select error")
                 break
             if recv:
                 for in_ in recv:
@@ -944,9 +939,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
                         out.send(data)
                         count = 0
             if count == time_out_max:
-                if gOptions.log > 1: print ("select timeout")
+                logging.debug( "select timeout")
                 break
-
 
 def start():
     # Read Configuration
