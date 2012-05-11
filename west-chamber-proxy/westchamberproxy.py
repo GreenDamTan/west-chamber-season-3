@@ -528,9 +528,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         if (cname != ""):
             return self.getip(cname)
 
-        if gOptions.log > 1: print ("DNS remote resolve: " + host + " => " + str(a))
-        if gOptions.log > 0: 
-            print "authority: "+ str(response.authority)
+        logging.info ("authority: "+ str(response.authority))
         for a in response.authority:
             if a['typename'] != "NS":
                 continue
@@ -544,7 +542,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def proxy(self):
         doInject = False
         inWhileList = False
-        if gOptions.log > 0: print self.requestline
+        logging.info (self.requestline)
         port = 80
         host = self.headers["Host"]
         if host.find(":") != -1:
@@ -591,7 +589,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if True:
                 for d in domainWhiteList:
                     if host.endswith(d):
-                        if gOptions.log > 0: print host + " in domainWhiteList: " + d
+                        logging.info (host + " in domainWhiteList: " + d)
                         inWhileList = True
 
                 if not inWhileList:
@@ -640,7 +638,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if doInject and (response.status == 400 or response.status == 405 or badStatusLine):
                     self.remote.close()
                     self.remote = None
-                    if gOptions.log > 0: print host + " seem not support inject, " + msg
+                    logging.info (host + " seem not support inject, " + msg)
                     domainWhiteList.append(host)
                     return self.do_METHOD_Tunnel()
 
@@ -683,7 +681,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].split(' ')[1]
                 if code in ["32", "10053"]: #errno.EPIPE, 10053 is for Windows
-                    if gOptions.log > 0: print "Detected remote disconnect: " + host
+                    logging.info ("Detected remote disconnect: " + host)
                     return
                 if code in ["61"]: #server not support injection
                     if doInject:
@@ -697,7 +695,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print str(exc_value) + " " + host
             if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
                 if not inWhileList:
-                    if gOptions.log > 0: print "add "+host+" to blocked domains"
+                    logging.info ("add "+host+" to blocked domains")
                     gConfig["BLOCKED_DOMAINS"][host] = True
 
             return self.do_METHOD_Tunnel()
