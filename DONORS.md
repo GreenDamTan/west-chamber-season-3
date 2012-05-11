@@ -3,7 +3,7 @@
 
 下面列表根据首次捐赠时间排序.
 
-* 黄枝 [@catdog](https://github.com/catdog) 
+* [@catdog](https://github.com/catdog) 
 * 万一
 * 彭自立
 * 王九思
