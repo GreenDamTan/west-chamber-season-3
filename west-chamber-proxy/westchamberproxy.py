@@ -418,15 +418,14 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def enableInjection(self, host, ip):
         self.depth += 1
         if self.depth > 3:
-            if gOptions.log>0: print host + " looping, exit"
+            logging.error(host + " looping, exit")
             return
 
         global gipWhiteList;
-        print "check "+host + " " + ip
         
         for c in ip:
             if c!='.' and (c>'9' or c < '0'):
-                if gOptions.log>0: print "recursive ip "+ip
+                logging.error ("recursive ip "+ip)
                 return True
 
         for r in gipWhiteList:
@@ -435,8 +434,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             dran = struct.unpack('!I', socket.inet_aton(ran))[0]
             shift = 32 - int(m2)
             if (dip>>shift) == (dran>>shift):
-                if gOptions.log > 1: 
-                    print ip + " (" + host + ") is in China, matched " + (r)
+                logging.info (ip + " (" + host + ") is in China, matched " + r)
                 return False
         return True
 
@@ -448,15 +446,14 @@ class ProxyHandler(BaseHTTPRequestHandler):
             return host
 
         if host in grules:
-            print ("Rule resolve: " + host + " => " + grules[host])
+            logging.info ("Rule resolve: " + host + " => " + grules[host])
             return grules[host]
 
-        print "Resolving " + host
+        logging.info ("Resolving " + host)
         self.now = int( time.time() )
         if host in self.dnsCache:
             if self.now < self.dnsCache[host]["expire"]:
-                if gOptions.log > 1: 
-                    print "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now)
+                logging.debug( "Cache: " + host + " => " + self.dnsCache[host]["ip"] + " / expire in %d (s)" %(self.dnsCache[host]["expire"] - self.now))
                 return self.dnsCache[host]["ip"]
 
         if gConfig["SKIP_LOCAL_RESOLV"]:
@@ -473,8 +470,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             elif ip in ChinaUnicom404:
                 print ("ChinaUnicom404 " + host + " => " + ip + ", ignore")
             else:
-                if gOptions.log > 1: 
-                    print ("DNS system resolve: " + host + " => " + ip)
+                logging.debug ("DNS system resolve: " + host + " => " + ip)
                 if isIpBlocked(ip):
                     print (host + " => " + ip + " blocked, try remote resolve")
                     return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
@@ -485,8 +481,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
 
     def getRemoteResolve(self, host, dnsserver):
-        if gOptions.log > 1: 
-            print "remote resolve " + host + " by " + dnsserver
+        logging.info ("remote resolve " + host + " by " + dnsserver)
         import DNS
         reqObj = DNS.Request()
         reqProtocol = "udp"
@@ -528,9 +523,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         if (cname != ""):
             return self.getip(cname)
 
-        if gOptions.log > 1: print ("DNS remote resolve: " + host + " => " + str(a))
-        if gOptions.log > 0: 
-            print "authority: "+ str(response.authority)
+        logging.info ("authority: "+ str(response.authority))
         for a in response.authority:
             if a['typename'] != "NS":
                 continue
@@ -544,7 +537,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def proxy(self):
         doInject = False
         inWhileList = False
-        if gOptions.log > 0: print self.requestline
+        logging.info (self.requestline)
         port = 80
         host = self.headers["Host"]
         if host.find(":") != -1:
@@ -555,7 +548,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             redirectUrl = self.path
             while True:
                 (scm, netloc, path, params, query, _) = urlparse.urlparse(redirectUrl)
-                if gOptions.log > 2: print urlparse.urlparse(redirectUrl)
+                logging.debug( urlparse.urlparse(redirectUrl) )
 
                 if (netloc not in gConfig["REDIRECT_DOMAINS"]):
                     break
@@ -591,7 +584,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if True:
                 for d in domainWhiteList:
                     if host.endswith(d):
-                        if gOptions.log > 0: print host + " in domainWhiteList: " + d
+                        logging.info (host + " in domainWhiteList: " + d)
                         inWhileList = True
 
                 if not inWhileList:
@@ -640,7 +633,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if doInject and (response.status == 400 or response.status == 405 or badStatusLine):
                     self.remote.close()
                     self.remote = None
-                    if gOptions.log > 0: print host + " seem not support inject, " + msg
+                    logging.info (host + " seem not support inject, " + msg)
                     domainWhiteList.append(host)
                     return self.do_METHOD_Tunnel()
 
@@ -659,12 +652,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if(len(response_data) == 0): break
                 if dataLength == 0 and (len(response_data) <= 501):
                     if response_data.find("<title>400 Bad Request") != -1 or response_data.find("<title>501 Method Not Implemented") != -1:
-                        print host + " not supporting injection"
+                        logging.error( host + " not supporting injection")
                         domainWhiteList.append(host)
                         response_data = gConfig["PAGE_RELOAD_HTML"]
                 self.wfile.write(response_data)
                 dataLength += len(response_data)
-                if gOptions.log > 1: print "data length: %d"%dataLength
+                logging.debug( "data length: %d"%dataLength)
         except:
             if self.remote:
                 self.remote.close()
@@ -683,11 +676,11 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 code, msg = str(exc_value).split('] ')
                 code = code[1:].split(' ')[1]
                 if code in ["32", "10053"]: #errno.EPIPE, 10053 is for Windows
-                    if gOptions.log > 0: print "Detected remote disconnect: " + host
+                    logging.info ("Detected remote disconnect: " + host)
                     return
                 if code in ["61"]: #server not support injection
                     if doInject:
-                        print "try not inject " + host
+                        logging.info( "try not inject " + host)
                         domainWhiteList.append(host)
                         self.do_METHOD_Tunnel()
                         return
@@ -697,7 +690,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print str(exc_value) + " " + host
             if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
                 if not inWhileList:
-                    if gOptions.log > 0: print "add "+host+" to blocked domains"
+                    logging.info ("add "+host+" to blocked domains")
                     gConfig["BLOCKED_DOMAINS"][host] = True
 
             return self.do_METHOD_Tunnel()
@@ -717,7 +710,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
         try:
             if not (isDomainBlocked(host) or isIpBlocked(ip)):
                 self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                print ("SSL: connect " + host + ":ip:" + ip)
+                logging.info ("SSL: connect " + host + " ip:" + ip)
                 self.remote.connect((ip, int(port)))
 
                 Agent = 'WCProxy/1.0'
@@ -922,7 +915,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
         logging.info('>>>>>>>>>>>>>>> Range Fetch ended(%r)', self.headers.get('Host'))
         return True
 
-
     # reslove ssl from http://code.google.com/p/python-proxy/
     def _read_write(self):
         BUFLEN = 8192
@@ -933,7 +925,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             count += 1
             (recv, _, error) = select.select(socs, [], socs, 3)
             if error:
-                print ("select error")
+                logging.error ("select error")
                 break
             if recv:
                 for in_ in recv:
@@ -946,9 +938,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
                         out.send(data)
                         count = 0
             if count == time_out_max:
-                if gOptions.log > 1: print ("select timeout")
+                logging.debug( "select timeout")
                 break
-
 
 def start():
     # Read Configuration
@@ -957,10 +948,10 @@ def start():
         s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"])
         jsonConfig = json.loads( s.read() )
         for k in jsonConfig:
-            print "read online json config " + k + " => " + str(jsonConfig[k])
+            logging.info( "read online json config " + k + " => " + str(jsonConfig[k]))
             gConfig[k] = jsonConfig[k]
     except:
-        print "Load online json config failed"
+        logging.info( "Load online json config failed")
 
     try:
         s = urllib2.urlopen('http://liruqi.sinaapp.com/mirror.php?u=aHR0cDovL3NtYXJ0aG9zdHMuZ29vZ2xlY29kZS5jb20vc3ZuL3RydW5rL2hvc3Rz')
@@ -983,10 +974,10 @@ def start():
         global gipWhiteList;
         s = open(gConfig["CHINA_IP_LIST_FILE"])
         gipWhiteList = json.loads( s.read() )
-        print "load %d ip range rules" % len(gipWhiteList);
+        logging.info( "load %d ip range rules" % len(gipWhiteList))
         s.close()
     except:
-        print "load ip-range config fail"
+        logging.info( "load ip-range config fail")
 
     try:
         s = urllib2.urlopen(gConfig["BLOCKED_DOMAINS_URI"])
@@ -995,7 +986,7 @@ def start():
             gConfig["BLOCKED_DOMAINS"][line] = True
         s.close()
     except:
-        print "load blocked domains failed"
+        logging.info("load blocked domains failed")
 
     httplib.HTTPMessage = SimpleMessageClass
     CertUtil.checkCA()
