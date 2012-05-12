@@ -634,7 +634,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     self.remote.close()
                     self.remote = None
                     logging.info (host + " seem not support inject, " + msg)
-                    domainWhiteList.append(host)
                     return self.do_METHOD_Tunnel()
 
             # Reply to the browser
