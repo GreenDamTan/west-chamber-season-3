@@ -373,7 +373,6 @@ ironicsoftware.com
 ironpython.net
 ithelp.ithome.com.tw
 itweet.net
-igfw.net
 jayparkinsonmd.com
 joachims.org
 juliereyc.com
@@ -503,7 +502,6 @@ penchinese.com
 pengyulong.com
 pign.net
 ping.fm
-plus.google.com
 plusbb.com
 popyard.org
 porn2.com

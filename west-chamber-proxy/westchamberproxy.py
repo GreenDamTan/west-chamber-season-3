@@ -17,8 +17,6 @@ try:
 except ImportError:
     OpenSSL = None
 
-
-
 import config
 
 gConfig = config.gConfig
@@ -449,7 +447,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
             logging.info ("Rule resolve: " + host + " => " + grules[host])
             return grules[host]
 
-        logging.info ("Resolving " + host)
         self.now = int( time.time() )
         if host in self.dnsCache:
             if self.now < self.dnsCache[host]["expire"]:
@@ -579,6 +576,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             path = self.path[self.path.find(netloc) + len(netloc):]
 
             connectHost = self.getip(host)
+            logging.info ("Resolved " + host + " => " + connectHost)
             rootDomain = string.join(host.split('.')[-2:], '.')
             
             if True:
@@ -634,7 +632,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     self.remote.close()
                     self.remote = None
                     logging.info (host + " seem not support inject, " + msg)
-                    domainWhiteList.append(host)
                     return self.do_METHOD_Tunnel()
 
             # Reply to the browser
@@ -707,6 +704,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def do_CONNECT(self):
         host, _, port = self.path.rpartition(':')
         ip = self.getip(host)
+        logging.info ("[Connect] Resolved " + host + " => " + ip)
         try:
             if not (isDomainBlocked(host) or isIpBlocked(ip)):
                 self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
