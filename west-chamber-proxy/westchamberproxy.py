@@ -542,31 +542,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
             host = host.split(":")[0]
 
         try:
-            redirectUrl = self.path
-            while True:
-                (scm, netloc, path, params, query, _) = urlparse.urlparse(redirectUrl)
-                logging.debug( urlparse.urlparse(redirectUrl) )
-
-                if (netloc not in gConfig["REDIRECT_DOMAINS"]):
-                    break
-                prefixes = gConfig["REDIRECT_DOMAINS"][netloc].split('|')
-                found = False
-                for prefix in prefixes:
-                    prefix = prefix + "="
-                    for param in query.split('&') :
-                        if param.find(prefix) == 0:
-                            print "redirect to " + urllib.unquote(param[len(prefix):])
-                            redirectUrl = urllib.unquote(param[len(prefix):])
-                            found = True
-                            continue 
-                if not found:
-                    break
-
             if (host in gConfig["HSTS_DOMAINS"]):
                 redirectUrl = "https://" + self.path[7:]
-
-            #redirect 
-            if (redirectUrl != self.path):
+                #redirect 
                 status = "HTTP/1.1 302 Found"
                 self.wfile.write(status + "\r\n")
                 self.wfile.write("Location: " + redirectUrl + "\r\n")

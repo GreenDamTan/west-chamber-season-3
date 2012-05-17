@@ -20,10 +20,6 @@ gConfig = {
     "DNS_PROTOCOL": "udp",
     "DNS_CACHE_MAXSZ" : 1024,
     "SKIP_LOCAL_RESOLV" : True,
-    "REDIRECT_DOMAINS": {
-        "plus.url.google.com":"url",
-        "plus.url.google.com.hk":"q|url"
-    },
     "LOCAL_PORT" : 1998,
     "HSTS_DOMAINS" : {
         "developers.facebook.com": 1,
