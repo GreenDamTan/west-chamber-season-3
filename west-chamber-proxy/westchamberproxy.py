@@ -542,6 +542,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             host = host.split(":")[0]
 
         try:
+            (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
             if (host in gConfig["HSTS_DOMAINS"]):
                 redirectUrl = "https://" + self.path[7:]
                 #redirect 
