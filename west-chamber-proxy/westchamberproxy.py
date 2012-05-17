@@ -987,14 +987,16 @@ if __name__ == "__main__":
             parser.add_argument('--port', default=gConfig["LOCAL_PORT"], type=int,
                    help='local port')
             parser.add_argument('--log', default=2, type=int, help='log level, 0-5')
-            parser.add_argument('--pidfile', default='', help='pid file')
+            parser.add_argument('--pidfile', default='wcproxy.pid', help='pid file')
+            parser.add_argument('--logfile', default='wcproxy.log', help='log file')
             gOptions = parser.parse_args()
         else:
             import optparse
             parser = optparse.OptionParser()
             parser.add_option("-p", "--port", action="store", type="int", dest="port", default=gConfig["LOCAL_PORT"], help="local port")
             parser.add_option("-l", "--log", action="store", type="int", dest="log", default=2, help="log level, 0-5")
-            parser.add_option("-f", "--pidfile", dest="pidfile", default="", help="pid file")
+            parser.add_option("-f", "--pidfile", dest="pidfile", default="wcproxy.pid", help="pid file")
+            parser.add_option("-o", "--logfile", dest="logfile", default="wcproxy.log", help="log file")
             (gOptions, args)=parser.parse_args()
 
     except :
@@ -1014,5 +1016,6 @@ if __name__ == "__main__":
         f.write(pid)
         f.close()
 
-    logging.basicConfig(level = gOptions.log*10)
+    logging.basicConfig(filename=gOptions.logfile, level = gOptions.log*10, format='%(asctime)-15s %(message)s')
+    
     start()
