@@ -570,10 +570,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if isDomainBlocked(host) or isIpBlocked(connectHost):
                     if gConfig["PROXY_TYPE"] == "socks5":
                         self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-                        logging.debug("connect to " + host + ":" + str(port) + " var socks5 proxy")
+                        logging.info("connect to " + host + ":" + str(port) + " var socks5 proxy")
                         self.remote.connect((connectHost, port))
                     else:
-                        logging.debug(host + " blocked, try goagent.")
+                        logging.info(host + " blocked, try goagent.")
                         return self.do_METHOD_Tunnel()
                 else:
                     self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
