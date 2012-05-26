@@ -17,6 +17,7 @@ try:
 except ImportError:
     OpenSSL = None
 
+import socks
 import config
 
 gConfig = config.gConfig
@@ -71,8 +72,8 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
         raise socket.error, msg
 
 def hookInit():
+    print ("hookInit: " + gConfig["PROXY_TYPE"])
     if gConfig["PROXY_TYPE"] == "socks5":
-        import socks
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
     else:
         socket.create_connection = socket_create_connection
@@ -567,6 +568,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 value = data["value"][0]
                 if key in gConfig:
                     gConfig[key] = type(gConfig[key]) (value)
+                    hookInit()
                 self.wfile.write(status + "\r\n\r\n" + value)
                 return
             for key in gConfig:
