@@ -38,6 +38,7 @@ gConfig["BLACKHOLES"] = [
     '59.24.3.173'
 ]
 
+gOriginalCreateConnection = socket.create_connection
 
 def socket_create_connection((host, port), timeout=None, source_address=None):
     logging.debug('socket_create_connection connect (%r, %r)', host, port)
@@ -74,6 +75,9 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
 def hookInit():
     print ("hookInit: " + gConfig["PROXY_TYPE"])
     if gConfig["PROXY_TYPE"] == "socks5":
+        if socket.create_connection != gOriginalCreateConnection:
+            print "restore socket.create_connection"
+            socket.create_connection = gOriginalCreateConnection
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
     else:
         socket.create_connection = socket_create_connection
@@ -1005,6 +1009,7 @@ def start():
     CertUtil.checkCA()
     print "Loaded", len(grules), " dns rules."
     print "Set your browser's HTTP/HTTPS proxy to 127.0.0.1:%d"%(gOptions.port)
+    print "You can configure your proxy var http://127.0.0.1:%d"%(gOptions.port)
     server = ThreadingHTTPServer(("0.0.0.0", gOptions.port), ProxyHandler)
     try: server.serve_forever()
     except KeyboardInterrupt: exit()
