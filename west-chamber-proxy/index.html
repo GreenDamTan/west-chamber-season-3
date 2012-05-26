@@ -5,6 +5,11 @@
         <script src="http://www.appelsiini.net/projects/jeditable/jquery.jeditable.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 
+True = true;
+gConfig = {
+    BLOCKED_DOMAINS: {BLOCKED_DOMAINS}
+};
+
 $(function() {
   $(".editable_select").editable("/save", {
     indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
@@ -17,6 +22,17 @@ $(function() {
     }
   });
 });
+
+$().ready(
+function() {
+var domains = "";
+for(var key in gConfig.BLOCKED_DOMAINS) {
+    domains = domains + "\r\n" + key;
+}
+$('#BLOCKED_DOMAINS_TEXT').text(domains)
+}
+);
+
 </script>
 
     </head>
@@ -33,7 +49,7 @@ $(function() {
         <div>
             <h1>The blocked domains</h1>
             <p>These domains have to pass through proxy server.</p>
-            <div id="BLOCKED_DOMAINS" data='{BLOCKED_DOMAINS}'></div>
+            <div id="BLOCKED_DOMAINS"> <textarea id="BLOCKED_DOMAINS_TEXT"></textarea></div>
         </div>
         
         <div>
