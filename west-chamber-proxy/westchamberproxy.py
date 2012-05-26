@@ -537,12 +537,37 @@ class ProxyHandler(BaseHTTPRequestHandler):
         logging.info (self.requestline)
         port = 80
         host = self.headers["Host"]
+        
         if host.find(":") != -1:
             port = int(host.split(":")[1])
             host = host.split(":")[0]
+        (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
 
+        if host in ["127.0.0.1", "localhost"]:
+            basedir = os.path.dirname(__file__)
+            htmlTemplate = os.path.join(basedir, "index.html")
+            htmlFile = open(htmlTemplate)
+            html = htmlFile.read()
+            htmlFile.close()
+            status = "HTTP/1.1 200 OK"
+            if path == "/save":
+                postData = self.rfile.read(int(self.headers['Content-Length']))
+                data = urlparse.parse_qs(postData)
+                logging.info(str(data))
+                key = data["id"][0]
+                value = data["value"][0]
+                if key in gConfig:
+                    gConfig[key] = type(gConfig[key]) (value)
+                self.wfile.write(status + "\r\n\r\n" + value)
+                return
+            for key in gConfig:
+                if type(gConfig[key]) in [str,int] :
+                    html = html.replace("{"+key+"}", str(gConfig[key]))
+                else :
+                    html = html.replace("{" + key + "}", str(gConfig[key]))
+            self.wfile.write(status + "\r\n\r\n" + html)
+            return
         try:
-            (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
             if (host in gConfig["HSTS_DOMAINS"]):
                 redirectUrl = "https://" + self.path[7:]
                 #redirect 

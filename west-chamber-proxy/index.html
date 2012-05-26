@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <title>West chamber proxy config / monitor</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="http://www.appelsiini.net/projects/jeditable/jquery.jeditable.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+
+$(function() {
+  $(".editable_select").editable("/save", {
+    indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
+    data   : "{'goagent':'goagent','socks5':'socks5'}",
+    type   : "select",
+    submit : "OK",
+    style  : "inherit",
+    submitdata : function() {
+      return {id : "PROXY_TYPE"};
+    }
+  });
+});
+</script>
+
+    </head>
+    <body>
+        <div><h1>Basic</h1>
+            <ul>
+                <li>Proxy Type: <b class="editable_select" style="display: inline">{PROXY_TYPE} </b></li>
+                <li>GoAgent Fetch Host: {GOAGENT_FETCHHOST} </li>
+                <li>Socks Proxy Host: {SOCKS_HOST}</li>
+                <li>Socks Proxy Port: {SOCKS_PORT}</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h1>The blocked domains</h1>
+            <p>These domains have to pass through proxy server.</p>
+            <div id="BLOCKED_DOMAINS" data='{BLOCKED_DOMAINS}'></div>
+        </div>
+        
+        <div>
+            <h1>Help</h1>
+            <ul>
+                <li><a href="http://wcproxy.sinaapp.com/">How to use</a></li>
+            </ul>
+        </div>
+    </body>
+</html>
