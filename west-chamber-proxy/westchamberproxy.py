@@ -37,6 +37,7 @@ gConfig["BLACKHOLES"] = [
     '59.24.3.173'
 ]
 
+
 def socket_create_connection((host, port), timeout=None, source_address=None):
     logging.debug('socket_create_connection connect (%r, %r)', host, port)
     if host == gConfig["GOAGENT_FETCHHOST"]:
@@ -68,6 +69,14 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
                 if sock is not None:
                     sock.close()
         raise socket.error, msg
+
+def hookInit():
+    if gConfig["PROXY_TYPE"] == "socks5":
+        import socks
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
+    else:
+        socket.create_connection = socket_create_connection
+
 
 class SimpleMessageClass(object):
     def __init__(self, fp, seekable = 0):
@@ -999,12 +1008,7 @@ def start():
     except KeyboardInterrupt: exit()
     
 if __name__ == "__main__":
-    if gConfig["PROXY_TYPE"] == "socks5":
-        import socks
-        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
-    else:
-        socket.create_connection = socket_create_connection
-
+    hookInit()
     try :
         if sys.version[:3] in ('2.7', '3.0', '3.1', '3.2', '3.3'):
             import argparse
