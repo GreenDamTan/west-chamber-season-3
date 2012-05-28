@@ -962,7 +962,10 @@ def start():
     # Read Configuration
     try :
         import json
-        s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"] + "?appid=" +gConfig["GOAGENT_FETCHHOST"])
+        param = ""
+        if len(gConfig["GOAGENT_FETCHHOST"]) > 0 and len(gConfig["GOAGENT_PASSWORD"]) == 0:
+            param = "?appid=" +gConfig["GOAGENT_FETCHHOST"]
+        s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"] + param)
         jsonConfig = json.loads( s.read() )
         for k in jsonConfig:
             logging.info( "read online json config " + k + " => " + str(jsonConfig[k]))
