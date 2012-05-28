@@ -11,7 +11,7 @@ gConfig = {
 };
 
 $(function() {
-  $(".editable_select").editable("/save", {
+  $(".PROXY_TYPE").editable("/save", {
     indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
     data   : "{'goagent':'goagent','socks5':'socks5'}",
     type   : "select",
@@ -19,6 +19,15 @@ $(function() {
     style  : "inherit",
     submitdata : function() {
       return {id : "PROXY_TYPE"};
+    }
+  });
+
+  $(".GOAGENT_FETCHHOST").editable("/save", {
+    indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
+    submit : "OK",
+    style  : "inherit",
+    submitdata : function() {
+      return {id : "GOAGENT_FETCHHOST"};
     }
   });
 });
@@ -39,8 +48,8 @@ $('#BLOCKED_DOMAINS_TEXT').text(domains)
     <body>
         <div><h1>Basic</h1>
             <ul>
-                <li>Proxy Type: <b class="editable_select" style="display: inline">{PROXY_TYPE} </b></li>
-                <li>GoAgent Fetch Host: {GOAGENT_FETCHHOST} </li>
+                <li>Proxy Type: <b class="PROXY_TYPE" style="display: inline">{PROXY_TYPE} </b></li>
+                <li>GoAgent Fetch Host: <b class="GOAGENT_FETCHHOST">{GOAGENT_FETCHHOST} </b></li>
                 <li>Socks Proxy Host: {SOCKS_HOST}</li>
                 <li>Socks Proxy Port: {SOCKS_PORT}</li>
             </ul>

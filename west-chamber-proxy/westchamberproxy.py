@@ -22,7 +22,6 @@ import config
 
 gConfig = config.gConfig
 
-gConfig["HOST"] = { gConfig["GOAGENT_FETCHHOST"]: "203.208.46.6" }
 
 gConfig["BLACKHOLES"] = [
     '243.185.187.30', 
@@ -80,6 +79,7 @@ def hookInit():
             socket.create_connection = gOriginalCreateConnection
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
     else:
+        gConfig["HOST"][gConfig["GOAGENT_FETCHHOST"]] = "203.208.46.6"
         socket.create_connection = socket_create_connection
 
 
@@ -972,6 +972,8 @@ def start():
     except:
         logging.info("Load online json config failed")
 
+    hookInit()
+
     try:
         import json
         global gipWhiteList;
@@ -1006,7 +1008,6 @@ def start():
     except KeyboardInterrupt: exit()
     
 if __name__ == "__main__":
-    hookInit()
     try :
         if sys.version[:3] in ('2.7', '3.0', '3.1', '3.2', '3.3'):
             import argparse
