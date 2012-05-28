@@ -22,7 +22,7 @@ import config
 
 gConfig = config.gConfig
 
-grules = { gConfig["GOAGENT_FETCHHOST"]: "203.208.46.6" }
+gConfig["HOST"] = { gConfig["GOAGENT_FETCHHOST"]: "203.208.46.6" }
 
 gConfig["BLACKHOLES"] = [
     '243.185.187.30', 
@@ -46,11 +46,11 @@ def socket_create_connection((host, port), timeout=None, source_address=None):
         msg = 'socket_create_connection returns an empty list'
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((grules[host],port))
+            sock.connect((gConfig["HOST"][host],port))
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
             return sock
         except socket.error, msg:
-            logging.error('socket_create_connection connect fail: (%r, %r)', grules[host], port)
+            logging.error('socket_create_connection connect fail: (%r, %r)', gConfig["HOST"][host], port)
             sock = None
         if not sock:
             raise socket.error, msg
@@ -457,9 +457,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
         if self.isIp(host):
             return host
 
-        if host in grules:
-            logging.info ("Rule resolve: " + host + " => " + grules[host])
-            return grules[host]
+        if host in gConfig["HOST"]:
+            logging.info ("Rule resolve: " + host + " => " + gConfig["HOST"][host])
+            return gConfig["HOST"][host]
 
         self.now = int( time.time() )
         if host in self.dnsCache:
@@ -962,30 +962,16 @@ def start():
     # Read Configuration
     try :
         import json
-        s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"])
+        s = urllib2.urlopen(gConfig["ONLINE_CONFIG_URI"] + "?appid=" +gConfig["GOAGENT_FETCHHOST"])
         jsonConfig = json.loads( s.read() )
         for k in jsonConfig:
             logging.info( "read online json config " + k + " => " + str(jsonConfig[k]))
+            if (k in gConfig) and (type(gConfig[k])==dict):
+                gConfig[k].update(jsonConfig[k])
             gConfig[k] = jsonConfig[k]
     except:
-        logging.info( "Load online json config failed")
+        logging.info("Load online json config failed")
 
-    try:
-        s = urllib2.urlopen('http://liruqi.sinaapp.com/mirror.php?u=aHR0cDovL3NtYXJ0aG9zdHMuZ29vZ2xlY29kZS5jb20vc3ZuL3RydW5rL2hvc3Rz')
-        for line in s.readlines():
-            line = line.strip()
-            line = line.split("#")[0]
-            d = line.split()
-            if (len(d) != 2): continue
-            logging.debug( "read "+line)
-            if isIpBlocked(d[0]) : 
-                logging.info (d[1]+"  ("+d[0] + ") blocked, skipping")
-                continue
-            grules[d[1]] = d[0]
-        s.close()
-    except:
-        logging.error("read onine hosts fail")
-    
     try:
         import json
         global gipWhiteList;
@@ -1007,7 +993,7 @@ def start():
 
     httplib.HTTPMessage = SimpleMessageClass
     CertUtil.checkCA()
-    print "Loaded", len(grules), " dns rules."
+    print "Loaded", len(gConfig["HOST"]), " dns rules."
     print "Set your browser's HTTP/HTTPS proxy to 127.0.0.1:%d"%(gOptions.port)
     try: 
         import webbrowser
