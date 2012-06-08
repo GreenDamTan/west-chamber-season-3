@@ -21,6 +21,7 @@ gConfig = {
     "DNS_CACHE_MAXSZ" : 1024,
     "SKIP_LOCAL_RESOLV" : True,
     "LOCAL_PORT" : 1998,
+    "HOST" : {},
     "HSTS_DOMAINS" : {
         "developers.facebook.com": 1,
         "groups.google.com": 1,
