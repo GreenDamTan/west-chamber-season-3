@@ -588,7 +588,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 #redirect 
                 status = "HTTP/1.1 302 Found"
                 self.wfile.write(status + "\r\n")
-                self.wfile.write("Location: " + redirectUrl + "\r\n")
+                self.wfile.write("Location: " + redirectUrl + "\r\n\r\n")
+                return
+            
+            if (gConfig["ADSHOSTON"] and host in gConfig["ADSHOST"]):
+                status = "HTTP/1.1 404 Not Found"
+                self.wfile.write(status + "\r\n\r\n")
                 return
 
             # Remove http://[host] , for google.com.hk
