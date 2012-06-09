@@ -571,7 +571,11 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 key = data["id"][0]
                 value = data["value"][0]
                 if key in gConfig:
-                    gConfig[key] = type(gConfig[key]) (value)
+                    if type(gConfig[key]) == type(True):
+                        if value == "true": gConfig[key] = True
+                        if value == "false": gConfig[key] = False
+                    else: 
+                        gConfig[key] = type(gConfig[key]) (value)
                     hookInit()
                 self.wfile.write(status + "\r\n\r\n" + value)
                 return

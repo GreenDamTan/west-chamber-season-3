@@ -30,6 +30,17 @@ $(function() {
       return {id : "GOAGENT_FETCHHOST"};
     }
   });
+
+  $(".ADSHOSTON").editable("/save", {
+    indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
+    data    :"{true:'ON',false:'OFF'}",
+    type   : "select",
+    submit : "OK",
+    style  : "inherit",
+    submitdata : function() {
+      return {id : "ADSHOSTON"};
+    }
+  });
 });
 
 $().ready(
@@ -54,7 +65,11 @@ $('#BLOCKED_DOMAINS_TEXT').text(domains)
                 <li>Socks Proxy Port: {SOCKS_PORT}</li>
             </ul>
         </div>
-        
+        <div><h1>ADs block</h1>
+            <ul>
+                <li>ADs Block: <b class="ADSHOSTON" style="display: inline">{ADSHOSTON} </b></li>
+            </ul>
+        </div>
         <div>
             <h1>The blocked domains</h1>
             <p>These domains have to pass through proxy server.</p>
