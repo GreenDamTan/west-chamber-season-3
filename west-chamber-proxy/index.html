@@ -31,6 +31,24 @@ $(function() {
     }
   });
 
+  $(".SOCKS_HOST").editable("/save", {
+    indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
+    submit : "OK",
+    style  : "inherit",
+    submitdata : function() {
+      return {id : "SOCKS_HOST"};
+    }
+  });
+
+  $(".SOCKS_PORT").editable("/save", {
+    indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
+    submit : "OK",
+    style  : "inherit",
+    submitdata : function() {
+      return {id : "SOCKS_PORT"};
+    }
+  });
+
   $(".ADSHOSTON").editable("/save", {
     indicator : '<img src="http://www.appelsiini.net/projects/jeditable/img/indicator.gif">',
     data    :"{true:'ON',false:'OFF'}",
@@ -61,8 +79,8 @@ $('#BLOCKED_DOMAINS_TEXT').text(domains)
             <ul>
                 <li>Proxy Type: <b class="PROXY_TYPE" style="display: inline">{PROXY_TYPE} </b></li>
                 <li>GoAgent Fetch Host: <b class="GOAGENT_FETCHHOST">{GOAGENT_FETCHHOST} </b></li>
-                <li>Socks Proxy Host: {SOCKS_HOST}</li>
-                <li>Socks Proxy Port: {SOCKS_PORT}</li>
+                <li>Socks Proxy Host: <b class="SOCKS_HOST">{SOCKS_HOST}</b></li>
+                <li>Socks Proxy Port: <b class="SOCKS_PORT">{SOCKS_PORT}</b></li>
             </ul>
         </div>
         <div><h1>ADs block</h1>
