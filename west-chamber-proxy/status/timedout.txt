@@ -50,7 +50,6 @@ aolchannels.aol.com
 api.proxlet.com
 apigee.com
 app.heywire.com
-appengine.google.com
 appledaily.com.tw
 apps.hloli.net
 archive.org
