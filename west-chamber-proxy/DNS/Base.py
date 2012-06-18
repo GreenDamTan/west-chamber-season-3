@@ -46,7 +46,9 @@ defaults["blackholes"] = [
     '203.98.7.65', 
     '8.7.198.45', 
     '159.106.121.75', 
-    '59.24.3.173'
+    '59.24.3.173',
+    '49.2.123.56',
+    '188.5.4.96'
 ]
 
 def ParseResolvConf(resolv_path="/etc/resolv.conf"):
