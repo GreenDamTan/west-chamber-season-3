@@ -12,6 +12,8 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 from httplib import HTTPResponse, BadStatusLine
 import os, re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time, hashlib, binascii, zlib, httplib, errno, string, logging
+import DNS
+
 try:
     import OpenSSL
 except ImportError:
@@ -34,9 +36,7 @@ gConfig["BLACKHOLES"] = [
     '203.98.7.65', 
     '8.7.198.45', 
     '159.106.121.75', 
-    '59.24.3.173',
-    '49.2.123.56',
-    '188.5.4.96'
+    '59.24.3.173'
 ]
 
 gOriginalCreateConnection = socket.create_connection
@@ -495,7 +495,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
     def getRemoteResolve(self, host, dnsserver):
         logging.info ("remote resolve " + host + " by " + dnsserver)
-        import DNS
         reqObj = DNS.Request()
         reqProtocol = "udp"
         if "DNS_PROTOCOL" in gConfig:
@@ -968,6 +967,23 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 break
 
 def start():
+    cnt = {}
+    for x in range(16):
+        dnsserver = "8.9.6.4"
+        try:
+            print "DNS: " + dnsserver + " - %d"%x
+            response = DNS.Request().req(name="www.twitter.com", qtype="A", protocol="udp", server=dnsserver)
+            ip = response.answers[0]["data"]
+            if ip not in cnt: cnt[ip] = 0
+            cnt[ip] += 1
+            if (ip not in gConfig["BLACKHOLES"]):
+                print "### new fake ip: " + ip 
+                gConfig["BLACKHOLES"].append(ip)
+                
+        except:
+            print sys.exc_info()
+    print "DNS hijack test:" + str(cnt)
+
     # Read Configuration
     try :
         import json
