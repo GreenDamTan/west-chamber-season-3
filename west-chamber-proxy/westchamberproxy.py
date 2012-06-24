@@ -971,9 +971,9 @@ def start():
     # Read Configuration
     try :
         import json
-        param = ""
+        param = "?version=" + gConfig["VERSION"]
         if len(gConfig["GOAGENT_FETCHHOST"]) > 0 and len(gConfig["GOAGENT_PASSWORD"]) == 0:
-            param = "?appid=" +gConfig["GOAGENT_FETCHHOST"]
+            param += "&appid=" +gConfig["GOAGENT_FETCHHOST"]
         url = (gConfig["ONLINE_CONFIG_URI"] + param)
         logging.info("Load online config: " + url)
         s = urllib2.urlopen(url)
