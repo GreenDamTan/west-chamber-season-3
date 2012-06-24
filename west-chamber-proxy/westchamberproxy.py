@@ -605,64 +605,62 @@ class ProxyHandler(BaseHTTPRequestHandler):
             # Remove http://[host] , for google.com.hk
             path = self.path[self.path.find(netloc) + len(netloc):]
 
-            connectHost = self.getip(host)
-            logging.info ("Resolved " + host + " => " + connectHost)
-            rootDomain = string.join(host.split('.')[-2:], '.')
-            
-            if True:
-                for d in domainWhiteList:
-                    if host.endswith(d):
-                        logging.info (host + " in domainWhiteList: " + d)
-                        inWhileList = True
+            connectHost = host
+            for d in domainWhiteList:
+                if host.endswith(d):
+                    logging.info (host + " in domainWhiteList: " + d)
+                    inWhileList = True
 
-                if not inWhileList:
-                    doInject = self.enableInjection(host, connectHost)
+            if not inWhileList:
+                doInject = self.enableInjection(host, connectHost)
+                connectHost = self.getip(host)
+                logging.info ("Resolved " + host + " => " + connectHost)
 
-                if isDomainBlocked(host) or isIpBlocked(connectHost):
-                    if gConfig["PROXY_TYPE"] == "socks5":
-                        self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-                        logging.info("connect to " + host + ":" + str(port) + " var socks5 proxy")
-                        self.remote.connect((connectHost, port))
-                    else:
-                        logging.info(host + " blocked, try goagent.")
-                        return self.do_METHOD_Tunnel()
-                else:
-                    self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    logging.debug( "connect to " + host + ":" + str(port))
+            if isDomainBlocked(host) or isIpBlocked(connectHost):
+                if gConfig["PROXY_TYPE"] == "socks5":
+                    self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+                    logging.info("connect to " + host + ":" + str(port) + " var socks5 proxy")
                     self.remote.connect((connectHost, port))
-                    if doInject: 
-                        logging.info ("inject http for "+host)
-                        self.remote.send("\r\n\r\n")
-
-                # Send requestline
-                if path == "":
-                    path = "/"
-                print " ".join((self.command, path, self.request_version)) + "\r\n"
-                self.remote.send(" ".join((self.command, path, self.request_version)) + "\r\n")
-                
-                self.remote.send(str(self.headers) + "\r\n")
-                # Send Post data
-                if(self.command=='POST'):
-                    self.remote.send(self.rfile.read(int(self.headers['Content-Length'])))
-                response = HTTPResponse(self.remote, method=self.command)
-                badStatusLine = False
-                msg = "http405"
-                try :
-                    response.begin()
-                    print host + " response: %d"%(response.status)
-                    msg = "http%d"%(response.status)
-                except BadStatusLine:
-                    print host + " response: BadStatusLine"
-                    msg = "badStatusLine"
-                    badStatusLine = True
-                except:
-                    raise
-
-                if doInject and (response.status == 400 or response.status == 405 or badStatusLine):
-                    self.remote.close()
-                    self.remote = None
-                    logging.info (host + " seem not support inject, " + msg)
+                else:
+                    logging.info(host + " blocked, try goagent.")
                     return self.do_METHOD_Tunnel()
+            else:
+                self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                logging.debug( "connect to " + host + ":" + str(port))
+                self.remote.connect((connectHost, port))
+                if doInject: 
+                    logging.info ("inject http for "+host)
+                    self.remote.send("\r\n\r\n")
+
+            # Send requestline
+            if path == "":
+                path = "/"
+            print " ".join((self.command, path, self.request_version)) + "\r\n"
+            self.remote.send(" ".join((self.command, path, self.request_version)) + "\r\n")
+                
+            self.remote.send(str(self.headers) + "\r\n")
+            # Send Post data
+            if(self.command=='POST'):
+                self.remote.send(self.rfile.read(int(self.headers['Content-Length'])))
+            response = HTTPResponse(self.remote, method=self.command)
+            badStatusLine = False
+            msg = "http405"
+            try :
+                response.begin()
+                print host + " response: %d"%(response.status)
+                msg = "http%d"%(response.status)
+            except BadStatusLine:
+                print host + " response: BadStatusLine"
+                msg = "badStatusLine"
+                badStatusLine = True
+            except:
+                raise
+
+            if doInject and (response.status == 400 or response.status == 405 or badStatusLine):
+                self.remote.close()
+                self.remote = None
+                logging.info (host + " seem not support inject, " + msg)
+                return self.do_METHOD_Tunnel()
 
             # Reply to the browser
             status = "HTTP/1.1 " + str(response.status) + " " + response.reason
