@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import random
-GOAGENT_FETCHHOST_LIST = ["goagent-hrd.appspot.com", "wcproxy1.appspot.com"]
+GOAGENT_FETCHHOST_LIST = ["goagent-hrd.appspot.com", "wcproxy1.appspot.com", "benhot063.appspot.com", "btbf006.appspot.com", "btbf007.appspot.com", "btbf008.appspot.com"]
 
 gConfig = {
-    "VERSION" : "20120424",
+    "VERSION" : "20120624",
     "PROXY_TYPE": "goagent",# "goagent" or "socks5", can be created by `ssh -NfD 0.0.0.0:1234 user@hostname`
     "SOCKS_HOST": "localhost",
     "SOCKS_PORT": 1234,

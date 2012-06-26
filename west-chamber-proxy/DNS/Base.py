@@ -46,10 +46,9 @@ defaults["blackholes"] = [
     '203.98.7.65', 
     '8.7.198.45', 
     '159.106.121.75', 
-    '59.24.3.173',
-    '49.2.123.56',
-    '188.5.4.96'
+    '59.24.3.173'
 ]
+defaults["fakednsserver"] = '8.9.6.4'
 
 def ParseResolvConf(resolv_path="/etc/resolv.conf"):
     "parses the /etc/resolv.conf file and sets defaults for name servers"
@@ -269,6 +268,9 @@ class DnsRequest:
                                 or self.from_address[1] != self.port \
                                 or ( len(r.answers)==0 and len(r.authority)==0) \
                                 or ( len(r.answers)==1 and r.answers[0]["data"] in defaults["blackholes"] )   :
+                            if len(r.answers)==1 and (defaults["fakednsserver"] in server):
+                                #print "return on test" 
+                                break
                             print "ignored answers: " + str(r.answers)
                             r=self.processUDPReply()
                         self.response = r
