@@ -969,10 +969,10 @@ class ProxyHandler(BaseHTTPRequestHandler):
 def start():
     cnt = {}
     for x in range(16):
-        dnsserver = "8.9.6.4"
+        dnsserver = gConfig['REMOTE_DNS']
         try:
             print "DNS: " + dnsserver + " - %d"%x
-            response = DNS.Request().req(name="www.twitter.com", qtype="A", protocol="udp", server=dnsserver)
+            response = DNS.Request().req(name="www.twitter.com", qtype="A", protocol="udp", server=dnsserver, drop_blackholes=False)
             ip = response.answers[0]["data"]
             if ip not in cnt: cnt[ip] = 0
             cnt[ip] += 1
