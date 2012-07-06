@@ -18,6 +18,7 @@ gConfig = {
     "ONLINE_CONFIG_URI" : "http://wcproxy.sinaapp.com/config.php",
     "REMOTE_DNS" : "168.95.1.1",
     "DNS_PROTOCOL": "udp",
+    "DNS_PORT": 53,
     "DNS_CACHE_MAXSZ" : 1024,
     "SKIP_LOCAL_RESOLV" : True,
     "LOCAL_PORT" : 1998,

@@ -495,13 +495,12 @@ class ProxyHandler(BaseHTTPRequestHandler):
 
     def getRemoteResolve(self, host, dnsserver):
         logging.info ("remote resolve " + host + " by " + dnsserver)
-        reqObj = DNS.Request()
         reqProtocol = "udp"
         if "DNS_PROTOCOL" in gConfig:
             if gConfig["DNS_PROTOCOL"] in ["udp", "tcp"]:
                 reqProtocol = gConfig["DNS_PROTOCOL"]
 
-        response = reqObj.req(name=host, qtype="A", protocol=reqProtocol, server=dnsserver)
+        response = DNS.Request().req(name=host, qtype="A", protocol=reqProtocol, port=gConfig["DNS_PORT"], server=dnsserver)
         #response.show()
         #print "answers: " + str(response.answers)
         ip = ""
@@ -972,7 +971,7 @@ def start():
         dnsserver = gConfig['REMOTE_DNS']
         try:
             print "DNS: " + dnsserver + " - %d"%x
-            response = DNS.Request().req(name="www.twitter.com", qtype="A", protocol="udp", server=dnsserver, drop_blackholes=False)
+            response = DNS.Request().req(name="www.twitter.com", qtype="A", protocol="udp", port=gConfig["DNS_PORT"], server=dnsserver, drop_blackholes=False)
             ip = response.answers[0]["data"]
             if ip not in cnt: cnt[ip] = 0
             cnt[ip] += 1
