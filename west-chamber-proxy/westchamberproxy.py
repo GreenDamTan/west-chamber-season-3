@@ -803,6 +803,11 @@ class ProxyHandler(BaseHTTPRequestHandler):
     def do_METHOD_Tunnel(self):
         headers = self.headers
         host = headers.get('Host') or urlparse.urlparse(self.path).netloc.partition(':')[0]
+        if (host in gConfig["ADSHOST"]):
+            status = "HTTP/1.1 404 Not Found"
+            self.wfile.write(status + "\r\n\r\n")
+            return
+
         if self.path[0] == '/':
             self.path = 'http://%s%s' % (host, self.path)
         payload_len = int(headers.get('Content-Length', 0))
