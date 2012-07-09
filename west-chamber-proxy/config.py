@@ -103,7 +103,8 @@ gConfig = {
         "biz5.sandai.net" : "127.0.0.1",
         "server1.adpolestar.net" : "127.0.0.1",
         "advstat.xunlei.com" : "127.0.0.1",
-        "mpv.sandai.net" : "127.0.0.1"
+        "mpv.sandai.net" : "127.0.0.1",
+        "asimgs.pplive.cn" : "127.0.0.1"
     },
     "HSTS_DOMAINS" : {
         "developers.facebook.com": 1,
