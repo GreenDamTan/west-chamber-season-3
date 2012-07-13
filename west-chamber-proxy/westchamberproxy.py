@@ -192,7 +192,9 @@ domainWhiteList = [
     "no-ip.com",
     "nbcsandiego.com",
     "unity3d.com",
-    "opswat.com"
+    "opswat.com",
+    "126.net",
+    "163.com",
     ]
 
 def isIpBlocked(ip):
@@ -715,8 +717,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if not inWhileList:
                     logging.info ("add "+host+" to blocked domains")
                     gConfig["BLOCKED_DOMAINS"][host] = True
-
-            return self.do_METHOD_Tunnel()
+                    return self.do_METHOD_Tunnel()
     
     def do_GET(self):
         #some sites(e,g, weibo.com) are using comet (persistent HTTP connection) to implement server push
