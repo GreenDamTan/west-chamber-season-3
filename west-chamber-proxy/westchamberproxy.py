@@ -978,13 +978,18 @@ def start():
         try:
             print "DNS: " + dnsserver + " - %d"%x
             response = DNS.Request().req(name="www.twitter.com", qtype="A", protocol="udp", port=gConfig["DNS_PORT"], server=dnsserver, drop_blackholes=False)
-            ip = response.answers[0]["data"]
-            if ip not in cnt: cnt[ip] = 0
-            cnt[ip] += 1
-            if (ip not in gConfig["BLACKHOLES"]):
-                print "### new fake ip: " + ip 
-                gConfig["BLACKHOLES"].append(ip)
-                
+            for a in response.answers:
+                if a["typename"]=="CNAME":
+                    continue
+                ip = a["data"]
+                if ip not in cnt: cnt[ip] = 0
+                cnt[ip] += 1
+                if (ip not in gConfig["BLACKHOLES"]):
+                    if ip.split(".")[0] == "199": 
+                        continue
+                    print "### new fake ip: " + ip 
+                    gConfig["BLACKHOLES"].append(ip)
+                break
         except:
             print sys.exc_info()
     print "DNS hijack test:" + str(cnt)
