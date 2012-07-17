@@ -823,7 +823,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             m = re.search('bytes=(\d+)-', autorange)
             start = int(m.group(1) if m else 0)
             headers['Range'] = 'bytes=%d-%d' % (start, start+1048576-1)
-
+        headers['X-Version'] = gConfig["VERSION"]
         skip_headers = frozenset(['Host', 'Vary', 'Via', 'X-Forwarded-For', 'Proxy-Authorization', 'Proxy-Connection', 'Upgrade', 'Keep-Alive'])
         strheaders = ''.join('%s: %s\r\n' % (k, v) for k, v in headers.iteritems() if k not in skip_headers)
 
