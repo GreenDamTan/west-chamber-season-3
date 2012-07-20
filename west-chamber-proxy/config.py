@@ -197,6 +197,14 @@ gConfig = {
         "69.163.223.11": 1, #letscorp.net
         "199.59.148.12": 1, "199.59.149.210": 1, #t.co
     },
+    "BLOCKED_IPS_M16": {
+        "174.129" : 1
+    },
+    "BLOCKED_IPS_M24": {
+        "199.16.156": 1,
+        "66.220.156": 1,
+        "208.109.6": 1,
+    }
     "CHINA_IP_LIST_FILE":"exclude-ip.json",
     "PAGE_RELOAD_HTML": """<html>
     <head>
