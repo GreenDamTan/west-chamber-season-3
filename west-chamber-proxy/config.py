@@ -204,7 +204,7 @@ gConfig = {
         "199.16.156": 1,
         "66.220.156": 1,
         "208.109.6": 1,
-    }
+    },
     "CHINA_IP_LIST_FILE":"exclude-ip.json",
     "PAGE_RELOAD_HTML": """<html>
     <head>
