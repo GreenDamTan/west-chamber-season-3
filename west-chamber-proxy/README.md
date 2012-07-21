@@ -15,7 +15,7 @@
 
     1. 默认配置是GoAgent，包含一个内置的appid ("goagent-hrd")，如果有自己的appid 建议更换，把 config.py 里面的"goagent-hrd" 替换即可。
     2. 也可以设置socks5代理。如 `ssh -NfD 0.0.0.0:1234 user@hostname` 启动代理之后，把PROXY_TYPE的配置 "goagent" 改为 "socks5"，然后把 SOCKS_HOST/SOCKS_PORT 修改为自己的代理。
-    3. 配置也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
+    3. 部分配置项也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
 
 使用方法
 --------
