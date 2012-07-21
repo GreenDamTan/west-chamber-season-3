@@ -15,6 +15,7 @@
 
     1. 默认配置是GoAgent，包含一个内置的appid ("goagent-hrd")，如果有自己的appid 建议更换，把 config.py 里面的"goagent-hrd" 替换即可。
     2. 也可以设置socks5代理。如 `ssh -NfD 0.0.0.0:1234 user@hostname` 启动代理之后，把PROXY_TYPE的配置 "goagent" 改为 "socks5"，然后把 SOCKS_HOST/SOCKS_PORT 修改为自己的代理。
+    3. 配置也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
 
 使用方法
 --------
@@ -30,7 +31,7 @@
     
 * Linux
 
-    1. 下载项目代码: [zip](https://github.com/downloads/liruqi/west-chamber-season-3/west-chamber-proxy-src-20120325.zip)
+    1. 下载项目代码: [zip](https://github.com/liruqi/west-chamber-season-3/zipball/master)
     2. 解压缩，打开终端，cd 到代码目录，cd west-chamber-proxy; 启动代理：./wcproxy start；关闭代理：./wcproxy stop。
     3. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
 

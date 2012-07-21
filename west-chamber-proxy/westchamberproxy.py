@@ -1037,11 +1037,13 @@ def start():
     CertUtil.checkCA()
     print "Loaded", len(gConfig["HOST"]), " dns rules."
     print "Set your browser's HTTP/HTTPS proxy to 127.0.0.1:%d"%(gOptions.port)
-    try: 
-        import webbrowser
-        webbrowser.open("http://127.0.0.1:%d"%gOptions.port)
-    except:
-        print "You can configure your proxy var http://127.0.0.1:%d"%(gOptions.port)
+    print "You can configure your proxy var http://127.0.0.1:%d"%(gOptions.port)
+    if gConfig['CONFIG_ON_STARTUP']:
+        try: 
+            import webbrowser
+            webbrowser.open("http://127.0.0.1:%d"%gOptions.port)
+        except:
+            pass
 
     server = ThreadingHTTPServer(("0.0.0.0", gOptions.port), ProxyHandler)
     try: server.serve_forever()

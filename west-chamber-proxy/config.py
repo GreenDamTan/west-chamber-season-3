@@ -21,6 +21,7 @@ gConfig = {
     "DNS_PORT": 53,
     "DNS_CACHE_MAXSZ" : 1024,
     "SKIP_LOCAL_RESOLV" : True,
+    "CONFIG_ON_STARTUP" : False,
     "LOCAL_PORT" : 1998,
     "HOST" : {},
     "ADSHOSTON" : True,
