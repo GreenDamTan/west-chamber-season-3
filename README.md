@@ -15,12 +15,12 @@ DNS污染
 
 2. 设置国外的DNS 服务器，并本机丢弃GFW的 DNS伪包。
 
-    a) 国外DNS服务器。大家比较熟悉的可能是[Google Public DNS](http://code.google.com/speed/public-dns/)。但是最近测试发现针对 Google DNS 的丢包很严重。先推荐两个，[我的](http://liruqi.info/dns) 和 [OpenDNS](http://www.opendns.com/)。
+    a) 国外DNS服务器。大家比较熟悉的可能是[Google Public DNS](http://code.google.com/speed/public-dns/)。但是最近测试发现针对 Google DNS 的丢包很严重。先推荐两个，台湾中华电信的168.95.1.1 和 [OpenDNS](http://www.opendns.com/)。
 
     b) 丢弃DNS伪包。
-    * Windows: [west-chmber的windows 移植](http://code.google.com/p/west-chamber-season-3/downloads/detail?name=west-chamber-win-0.05.zip)
-    * Mac OS X: [kernet](https://github.com/liruqi/kernet/downloads)。实现TCP连接混淆，下最新的。运气好的话还能上blogspot。
-    * Linux: (Linux平台上比较麻烦，先推荐使用dnsmasq，要喜欢折腾继续看。)需要有iptables。如果 iptables 有 u32模块(或者你能自己搞定安装一个)，可以直接用本项目中的 client.sh；否则，只能自己编译原始的[西厢项目](http://code.google.com/p/scholarzhang)，具体操作看西厢的文档吧。
+    * Windows: west-chmber的windows 移植目测不太好用，建议使用[DNSCrypt](http://www.opendns.com/technology/dnscrypt/)
+    * Mac OS X: 建议使用[DNSCrypt](http://www.opendns.com/technology/dnscrypt/)。也可以尝试[kernet](https://github.com/liruqi/kernet/downloads)。实现TCP连接混淆，下最新的。运气好的话还能上blogspot。
+    * Linux: 需要有iptables。如果 iptables 有 u32模块(或者你能自己搞定安装一个)，可以直接用本项目中的 client.sh；否则，只能自己编译原始的[西厢项目](http://code.google.com/p/scholarzhang)，具体操作看西厢的文档。
 
 TCP连接混淆
 -----------
