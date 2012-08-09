@@ -605,15 +605,14 @@ class ProxyHandler(BaseHTTPRequestHandler):
             # Remove http://[host] , for google.com.hk
             path = self.path[self.path.find(netloc) + len(netloc):]
 
-            connectHost = host
             for d in domainWhiteList:
                 if host.endswith(d):
                     logging.info (host + " in domainWhiteList: " + d)
                     inWhileList = True
 
+            connectHost = self.getip(host)
             if not inWhileList:
                 doInject = self.enableInjection(host, connectHost)
-                connectHost = self.getip(host)
                 logging.info ("Resolved " + host + " => " + connectHost)
 
             if isDomainBlocked(host) or isIpBlocked(connectHost):
