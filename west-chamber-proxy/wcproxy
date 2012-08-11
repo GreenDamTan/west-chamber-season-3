@@ -21,12 +21,27 @@ fi
 RETVAL=0
 
 # See how we were called.
+IPTABLES=`which iptables`
+IPSET=`which ipset`
+
+match_set=""
+if [ -x "$IPSET" ]; then 
+    $IPSET -R < ../CHINA
+    match_set="-m set ! --match-set CHINA dst"
+fi
+
 case "$1" in
   start)
         echo "Starting wcproxy: "
-         $wcproxy --pidfile $pidfile &
+        $wcproxy --pidfile $pidfile &
+	    if [ -x "$IPTABLES" ]; then
+            $IPTABLES -t nat -A OUTPUT -p tcp --dport 80 $match_set -j REDIRECT --to-ports 1998
+        fi
         ;;
   stop)
+        if [ -x "$IPTABLES" ]; then
+            $IPTABLES -t nat -D OUTPUT -p tcp --dport 80 $match_set -j REDIRECT --to-ports 1998
+        fi
         if [ -f $pidfile ]; then
         processcheck="ps -c"
         if $processcheck `cat $pidfile` > /dev/null; then
