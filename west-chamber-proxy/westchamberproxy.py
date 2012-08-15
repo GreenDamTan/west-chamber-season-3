@@ -975,7 +975,7 @@ def start():
     for x in range(16):
         dnsserver = gConfig['REMOTE_DNS']
         try:
-            print "DNS: " + dnsserver + " - %d"%x
+            logging.info("DNS: " + dnsserver + " - %d"%x)
             response = DNS.Request().req(name="www.twitter.com", qtype="A", protocol="udp", port=gConfig["DNS_PORT"], server=dnsserver, drop_blackholes=False)
             for a in response.answers:
                 if a["typename"]=="CNAME":
