@@ -1014,16 +1014,6 @@ def start():
     hookInit()
 
     try:
-        import json
-        global gipWhiteList;
-        s = open(gConfig["CHINA_IP_LIST_FILE"])
-        gipWhiteList = json.loads( s.read() )
-        logging.info( "load %d ip range rules" % len(gipWhiteList))
-        s.close()
-    except:
-        logging.info( "load ip-range config fail")
-
-    try:
         s = urllib2.urlopen(gConfig["BLOCKED_DOMAINS_URI"])
         for line in s.readlines():
             line = line.strip()
