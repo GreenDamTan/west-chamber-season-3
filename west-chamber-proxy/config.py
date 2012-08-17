@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import random
-GOAGENT_FETCHHOST_LIST = ["wcproxy-web.appspot.com", "wcproxy1.appspot.com", "benhot063.appspot.com", "cenjianneng11.appspot.com", "cyanagt.appspot.com", "gokunkka.appspot.com", "ianbhullar.appspot.com", "wcproxy-content.appspot.com", "jndtydl005.appspot.com", "mengqin1-hrd.appspot.com"]
+GOAGENT_FETCHHOST_LIST = ["wcproxy-web.appspot.com", "wcproxy1.appspot.com", "tricle86.appspot.com", "cenjianneng11.appspot.com", "cyanagt.appspot.com", "gokunkka.appspot.com", "ianbhullar.appspot.com", "wcproxy-content.appspot.com", "jndtydl005.appspot.com", "mengqin1-hrd.appspot.com"]
 
 gConfig = {
     "VERSION" : "20120718",
