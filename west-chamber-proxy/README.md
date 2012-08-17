@@ -17,6 +17,9 @@
     2. 也可以设置socks5代理。如 `ssh -NfD 0.0.0.0:1234 user@hostname` 启动代理之后，把PROXY_TYPE的配置 "goagent" 改为 "socks5"，然后把 SOCKS_HOST/SOCKS_PORT 修改为自己的代理。
     3. 部分配置项也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
 
+* SSL证书
+    如果希望HTTPS代理正常使用，在Windows上用管理员权限、Mac 上用root 权限执行本代理即可。
+
 使用方法
 --------
 * Windows
