@@ -17,7 +17,7 @@ gConfig = {
     "BLOCKED_DOMAINS_URI" : "https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/status/timedout.txt",
     "ONLINE_CONFIG_URI" : "http://wcproxy.sinaapp.com/config.php",
     "REMOTE_DNS" : "168.95.1.1",
-    "DNS_PROTOCOL": "udp",
+    "DNS_PROTOCOL": "tcp",
     "DNS_PORT": 53,
     "DNS_CACHE_MAXSZ" : 1024,
     "SKIP_LOCAL_RESOLV" : True,
