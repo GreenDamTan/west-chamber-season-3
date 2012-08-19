@@ -581,6 +581,16 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     hookInit()
                 self.wfile.write(status + "\r\n\r\n" + value)
                 return
+            if path == "/add":
+                postData = self.rfile.read(int(self.headers['Content-Length']))
+                data = urlparse.parse_qs(postData)
+                if "BLOCKED_DOMAINS" in data:
+                    domain = data["BLOCKED_DOMAINS"][0]
+                    gConfig["BLOCKED_DOMAINS"][domain] = True
+                    
+                self.wfile.write("HTTP/1.1 302 FOUND\r\n" + "Location: /\r\n\r\n" + domain)
+                return
+
             for key in gConfig:
                 if type(gConfig[key]) in [str,int] :
                     html = html.replace("{"+key+"}", str(gConfig[key]))

@@ -170,6 +170,7 @@ gConfig = {
         "bbs.wenxuecity.com": True,
         "www.blogger.com": True,
         "blogger.com": True,
+        "plarouter.com": True,
     },
     "BLOCKED_IPS": {
         "23.21.220.40":1, "23.21.242.194":1, #dropbox
