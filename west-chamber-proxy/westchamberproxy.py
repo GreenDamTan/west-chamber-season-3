@@ -586,6 +586,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 data = urlparse.parse_qs(postData)
                 if "BLOCKED_DOMAINS" in data:
                     domain = data["BLOCKED_DOMAINS"][0]
+                    if domain[:4] == "http":
+                        (scm, netloc, path, params, query, _) = urlparse.urlparse(domain)
+                        domain = netloc
                     gConfig["BLOCKED_DOMAINS"][domain] = True
                     
                 self.wfile.write("HTTP/1.1 302 FOUND\r\n" + "Location: /\r\n\r\n" + domain)
