@@ -715,12 +715,13 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if code in ["32", "10053"]: #errno.EPIPE, 10053 is for Windows
                     logging.info ("Detected remote disconnect: " + host)
                     return
+                if code in ["54"]:
+                    return self.do_METHOD_Tunnel()
                 if code in ["61"]: #server not support injection
                     if doInject:
-                        logging.info( "try not inject " + host)
+                        logging.info("try not inject " + host)
                         domainWhiteList.append(host)
-                        self.do_METHOD_Tunnel()
-                        return
+                        return self.do_METHOD_Tunnel()
  
             print "error in proxy: ", self.requestline
             print exc_type
