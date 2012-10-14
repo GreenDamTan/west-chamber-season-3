@@ -657,7 +657,6 @@ twitoaster.com
 twitonmsn.com
 twitpic.com
 twitstat.com
-twitter.com
 twitter.jp
 twittergadget.com
 twitthat.com
@@ -730,9 +729,7 @@ www.macrovpn.com
 www.mitbbs.com
 www.moztw.org
 www.powerpointninja.com
-www.somee.com
 www.tv.com
-www.twitter.com
 www.vegorpedersen.com
 www.voy.com
 www.vpncup.com
