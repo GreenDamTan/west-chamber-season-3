@@ -81,7 +81,7 @@ def hookInit():
             socket.create_connection = gOriginalCreateConnection
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
     else:
-        gConfig["HOST"][gConfig["GOAGENT_FETCHHOST"]] = "203.208.46.6"
+        gConfig["HOST"][gConfig["GOAGENT_FETCHHOST"]] = "203.208.47.6"
         socket.create_connection = socket_create_connection
 
 

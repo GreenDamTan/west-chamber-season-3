@@ -1,6 +1,12 @@
 项目目的
 --------
+提供几种免费的翻墙方案. 比如:
+
 * [西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具。
+
+* 修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目, 改了之后可以上Facebook。另外，台湾某运营商很有良心地提供了一个HTTP/HTTPS代理IP,可以用来上Twitter
+ 61.30.127.2 twitter.com www.twitter.com t.co mobile.twitter.com
+ 
 * 介绍几种反DNS污染的方法。
 
 DNS污染
@@ -11,7 +17,7 @@ DNS污染
 
     系统要求：Linux 或 Mac。
 
-    可以用dnsmasq 做本地的DNS服务器。只要把DNS服务器设置到国外，dnsmasq 可以很神奇地规避DNS 污染的问题。如果在国内有Linux服务器，建议做一个DNS服务小范围共享。我自己有维护一份 dnsmasq 的[配置文件](https://github.com/liruqi/kernet/blob/stable/kerdns/dnsmasq.conf)。
+    可以用dnsmasq 做本地的DNS服务器。只要把DNS服务器设置到国外，dnsmasq 可以很神奇地规避DNS 污染的问题。如果在国内有Linux服务器，建议做一个DNS服务小范围共享。
 
 2. 设置国外的DNS 服务器，并本机丢弃GFW的 DNS伪包。
 
