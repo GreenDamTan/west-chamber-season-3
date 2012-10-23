@@ -81,7 +81,7 @@ def hookInit():
             socket.create_connection = gOriginalCreateConnection
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
     else:
-        gConfig["HOST"][gConfig["GOAGENT_FETCHHOST"]] = "www.google.com"
+        gConfig["HOST"][gConfig["GOAGENT_FETCHHOST"]] = gConfig["GOAGENT_IP"]
         socket.create_connection = socket_create_connection
 
 
