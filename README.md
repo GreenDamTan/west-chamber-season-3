@@ -4,8 +4,7 @@
 
 * [西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具。
 
-* 修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目, 改了之后可以上Facebook。另外，台湾某运营商很有良心地提供了一个HTTP/HTTPS代理IP,可以用来上Twitter
- 61.30.127.2 twitter.com www.twitter.com t.co mobile.twitter.com
+* 修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目, 改了之后可以上Facebook。
  
 * 介绍几种反DNS污染的方法。
 
