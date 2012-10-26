@@ -39,7 +39,7 @@
 --------
 
 * 浏览器代理设置
-    做了一个 [.pac 文件](https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/SwitchyPac.pac)。下载这个pac 文件，然后在代理设置中导入即可。
+    做了一个 [.pac 文件](https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/SwitchyPac.pac)。下载这个pac 文件，然后在浏览器代理设置中导入即可, IE, Firefox, Safari 都可以设置自动代理配置。
 
 * Chrome浏览器+SwitchySharp扩展
 
