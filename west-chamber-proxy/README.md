@@ -1,24 +1,7 @@
 项目目的
 --------
 * 不依赖代理服务器的本地翻墙代理工具。
-* [项目维护地址](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy)
 * [Follow up](https://plus.google.com/b/108661470402896863593/)
-
-代理设置
---------
-
-* 浏览器代理设置
-    做了一个 [.pac 文件](https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/SwitchyPac.pac)。下载这个pac 文件，然后在代理设置中导入即可。
-    具体使用方法，在[这里](http://wcproxy.sinaapp.com/) 更新。
-
-* 代理自身的代理配置
-
-    1. 默认配置是GoAgent，包含一个内置的appid ("goagent-hrd")，如果有自己的appid 建议更换，把 config.py 里面的"goagent-hrd" 替换即可。
-    2. 也可以设置socks5代理。如 `ssh -NfD 0.0.0.0:1234 user@hostname` 启动代理之后，把PROXY_TYPE的配置 "goagent" 改为 "socks5"，然后把 SOCKS_HOST/SOCKS_PORT 修改为自己的代理。
-    3. 部分配置项也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
-
-* SSL证书
-    如果希望HTTPS代理正常使用，在Windows上用管理员权限、Mac 上用root 权限执行本代理即可。
 
 使用方法
 --------
@@ -49,11 +32,36 @@
     1. 局域网内的其它设备(PC, Android 设备)上安装本代理，然后把 iOS 设备的 HTTP 代理设置到该设备上。（或者在国内有服务器的同学，自己搭建HTTP 代理）
     2. 类似GoAgent 那种iOS客户端的办法。需要越狱。单我本人没有iOS设备，所以，暂不研究了。
 
+* SSL证书
+    如果希望HTTPS代理正常使用，在Windows上用管理员权限、Mac 上用root 权限执行本代理即可。
+
+代理设置
+--------
+
+* 浏览器代理设置
+    做了一个 [.pac 文件](https://raw.github.com/liruqi/west-chamber-season-3/master/west-chamber-proxy/SwitchyPac.pac)。下载这个pac 文件，然后在代理设置中导入即可。
+
+* Chrome浏览器+SwitchySharp扩展
+
+    Chrome可以直接在高级选项中设置代理服务器，不过这样Chrome会修改系统的代理设置. 要实现Chrome自动代理配置，可以使用switchysharp扩展.
+    首先安装[SwitchySharp](https://chrome.google.com/webstore/detail/dpplabbmogkhghncfbfdeeokoefdjegm), 安装后的设置：
+   
+    1. 在switchysharp选项页面，点击后面的导入/导出 -> “在线恢复备份”后面的输入框粘贴进下面的链接 http://west-chamber-season-3.googlecode.com/files/SwitchyOptions.bak
+    2. 点击在线恢复备份 -> 确定 
+    3. 点击SwitchySharp扩展图标 -> 自动切换模式
+
+    到此浏览器代理配置成功。
+
+* 代理自身的代理配置
+
+    1. 默认配置是GoAgent，包含若干内置的appid, 如果有自己的appid 建议更换，在 config.py 里面替换即可。
+    2. 也可以设置socks5代理。如 `ssh -NfD 0.0.0.0:1234 user@hostname` 启动代理之后，把PROXY_TYPE的配置 "goagent" 改为 "socks5"，然后把 SOCKS_HOST/SOCKS_PORT 修改为自己的代理。
+    3. 部分配置项也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
+
 开发者
 ------
 * [XIAOXIA](http://xiaoxia.org), 原始版本作者
 * [LIRUQI](http://liruqi.info), 后续开发, 各平台的打包、发布
-
 
 代理原理
 --------

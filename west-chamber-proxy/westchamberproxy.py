@@ -1007,24 +1007,6 @@ def start():
             print sys.exc_info()
     print "DNS hijack test:" + str(cnt)
 
-    # Read Configuration
-    try :
-        import json
-        param = "?version=" + gConfig["VERSION"]
-        if len(gConfig["GOAGENT_FETCHHOST"]) > 0 and len(gConfig["GOAGENT_PASSWORD"]) == 0:
-            param += "&appid=" +gConfig["GOAGENT_FETCHHOST"]
-        url = (gConfig["ONLINE_CONFIG_URI"] + param)
-        logging.info("Load online config: " + url)
-        s = urllib2.urlopen(url)
-        jsonConfig = json.loads( s.read() )
-        for k in jsonConfig:
-            logging.info( "read online json config " + k + " => " + str(jsonConfig[k]))
-            if (k in gConfig) and (type(gConfig[k])==dict):
-                gConfig[k].update(jsonConfig[k])
-            gConfig[k] = jsonConfig[k]
-    except:
-        logging.info("Load online json config failed")
-
     hookInit()
 
     try:
