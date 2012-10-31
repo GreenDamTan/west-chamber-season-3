@@ -11,7 +11,7 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
 from httplib import HTTPResponse, BadStatusLine
-import os, re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time, hashlib, binascii, zlib, httplib, errno, string, logging, random
+import os, re, socket, struct, threading, traceback, sys, select, urlparse, signal, urllib, urllib2, time, hashlib, binascii, zlib, httplib, errno, string, logging, random, heapq
 import DNS
 
 try:
@@ -24,6 +24,7 @@ import config
 
 gConfig = config.gConfig
 
+dnsHeap = []
 
 gConfig["BLACKHOLES"] = [
     '243.185.187.30', 
@@ -472,7 +473,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 return self.dnsCache[host]["ip"]
 
         if gConfig["SKIP_LOCAL_RESOLV"]:
-            return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
+            return self.getRemoteResolve(host)
 
         try:
             ip = socket.gethostbyname(host)
@@ -488,21 +489,29 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 logging.debug ("DNS system resolve: " + host + " => " + ip)
                 if isIpBlocked(ip):
                     print (host + " => " + ip + " blocked, try remote resolve")
-                    return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
+                    return self.getRemoteResolve(host)
                 return ip
         except:
             print "DNS system resolve Error: " + host
             ip = ""
-        return self.getRemoteResolve(host, gConfig["REMOTE_DNS"])
+        return self.getRemoteResolve(host)
 
-    def getRemoteResolve(self, host, dnsserver):
+    def getRemoteResolve(self, host):
+        dnsserver = dnsHeap[0][1] #heap top
+
         logging.info ("remote resolve " + host + " by " + dnsserver)
         reqProtocol = "udp"
         if "DNS_PROTOCOL" in gConfig:
             if gConfig["DNS_PROTOCOL"] in ["udp", "tcp"]:
                 reqProtocol = gConfig["DNS_PROTOCOL"]
+        try:
+            response = DNS.Request().req(name=host, qtype="A", protocol=reqProtocol, port=gConfig["DNS_PORT"], server=dnsserver)
+        except:
+            d = heapq.heappop(dnsHeap)
+            heapq.heappush(dnsHeap, (d[0]+1, d[1]))
+            logging.error(host + " resolve fail by " + dnsserver)
+            return host
 
-        response = DNS.Request().req(name=host, qtype="A", protocol=reqProtocol, port=gConfig["DNS_PORT"], server=dnsserver)
         #response.show()
         #print "answers: " + str(response.answers)
         ip = ""
@@ -987,6 +996,9 @@ class ProxyHandler(BaseHTTPRequestHandler):
 def start():
     hookInit()
 
+    for d in gConfig["REMOTE_DNS_LIST"]:
+        heapq.heappush(dnsHeap, (1,d))
+    
     try:
         s = urllib2.urlopen(gConfig["BLOCKED_DOMAINS_URI"])
         for line in s.readlines():
