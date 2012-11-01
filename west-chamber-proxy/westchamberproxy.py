@@ -766,7 +766,8 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 self._read_write()
                 return
         except:
-            pass
+            logging.info ("SSL: connect " + ip + " failed.")
+            gConfig["BLOCKED_IPS"][ip] = True
 
         if gConfig["PROXY_TYPE"]=="socks5":
             self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
