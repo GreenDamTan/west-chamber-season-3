@@ -724,22 +724,23 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 if code in ["32", "10053"]: #errno.EPIPE, 10053 is for Windows
                     logging.info ("Detected remote disconnect: " + host)
                     return
-                if code in ["54"]:
-                    return self.do_METHOD_Tunnel()
+                if code in ["54", "10054"]: #reset
+                    logging.info(host + ": reset from " + connectHost)
+                    gConfig["BLOCKED_IPS"][connectHost] = True
+                    return
                 if code in ["61"]: #server not support injection
                     if doInject:
                         logging.info("try not inject " + host)
                         domainWhiteList.append(host)
-                        return self.do_METHOD_Tunnel()
- 
+                    return
+                     
             print "error in proxy: ", self.requestline
             print exc_type
             print str(exc_value) + " " + host
             if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
                 if not inWhileList:
                     logging.info ("add "+host+" to blocked domains")
-                    gConfig["BLOCKED_DOMAINS"][host] = True
-                    return self.do_METHOD_Tunnel()
+                    gConfig["BLOCKED_IPS"][connectHost] = True
     
     def do_GET(self):
         #some sites(e,g, weibo.com) are using comet (persistent HTTP connection) to implement server push
