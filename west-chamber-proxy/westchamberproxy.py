@@ -719,16 +719,15 @@ class ProxyHandler(BaseHTTPRequestHandler):
             exc_type, exc_value, exc_traceback = sys.exc_info()
 
             if exc_type == socket.error:
-                code, msg = str(exc_value).split('] ')
-                code = code[1:].split(' ')[1]
-                if code in ["32", "10053"]: #errno.EPIPE, 10053 is for Windows
+                code = exc_value[0]
+                if code in [32, 10053]: #errno.EPIPE, 10053 is for Windows
                     logging.info ("Detected remote disconnect: " + host)
                     return
-                if code in ["54", "10054"]: #reset
+                if code in [54, 10054]: #reset
                     logging.info(host + ": reset from " + connectHost)
                     gConfig["BLOCKED_IPS"][connectHost] = True
                     return
-                if code in ["61"]: #server not support injection
+                if code in [61]: #server not support injection
                     if doInject:
                         logging.info("try not inject " + host)
                         domainWhiteList.append(host)
@@ -737,7 +736,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             print "error in proxy: ", self.requestline
             print exc_type
             print str(exc_value) + " " + host
-            if exc_type == socket.timeout or (exc_type == socket.error and code in ["60", "110", "10060"]): #timed out, 10060 is for Windows
+            if exc_type == socket.timeout or (exc_type == socket.error and code in [60, 110, 10060]): #timed out, 10060 is for Windows
                 if not inWhileList:
                     logging.info ("add "+host+" to blocked domains")
                     gConfig["BLOCKED_IPS"][connectHost] = True

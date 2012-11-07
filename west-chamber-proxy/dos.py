@@ -1,25 +1,25 @@
 import socket,sys,random
 import config
 
-ipset = {}
+refusedipset = {}
 badipset = {}
 
-rf = open("timedout.list", "r")
+rf = open("status/timedout-ip.list", "r")
 blockedIpString = rf.read()
 rf.close()
 
 for ip in blockedIpString.split("\n"):
     badipset[ip]=1
 
-rf = open("reset.list", "r")
+rf = open("status/refused-ip.list", "r")
 resetIpString = rf.read()
 rf.close()
 
 for ip in resetIpString.split("\n"):
-    ipset[ip]=1
+    refusedipset[ip]=1
 
-wf = open("timedout.list", "a")
-resetf = open("reset.list", "a")
+wf = open("status/timedout-ip.list", "a")
+resetf = open("status/refused-ip.list", "a")
 
 while 1:
     for ip in config.gConfig["BLOCKED_IPS"]:
@@ -28,6 +28,8 @@ while 1:
             oip = ipm24 + "." + str(last)
             if oip in badipset:
                 print "ignore", oip
+                continue
+            if oip in refusedipset:
                 continue
 
             print "connect to", oip
@@ -43,15 +45,14 @@ while 1:
                 badipset[oip]=1
                 wf.write(oip+"\n")
                 wf.flush()
-            except:
-                print oip, "bad", sys.exc_info()
-                if oip in ipset:
-                    continue
-
-                ipset[oip]=1
-                resetf.write(oip+"\n")
-                resetf.flush()
-
+            except socket.error, e:
+                print oip, "socket.error", e
+                
+                if e[0] != 54:
+                    print "* refused", oip
+                    refusedipset[oip]=1
+                    resetf.write(oip+"\n")
+                    resetf.flush()
 
 wf.close()
 resetf.close()
