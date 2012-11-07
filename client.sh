@@ -17,7 +17,8 @@ if [ -x "$IPSET" ]; then
     fi
 fi
 
-$IPTABLES -A INPUT -p tcp -m tcp --tcp-flags RST RST -m state --state ESTABLISHED $match_set -j DROP
+#TODO match HTTP
+$IPTABLES -A INPUT -p tcp -m tcp --tcp-flags RST RST $match_set -j DROP
 
 # you need to compile west-chamber from http://code.google.com/p/scholarzhang in advance to gain module gfw
 # $IPTABLES -A INPUT -p udp -m udp --sport 53 -m state --state ESTABLISHED -m gfw -j DROP

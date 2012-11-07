@@ -1,8 +1,11 @@
-项目目的
---------
-提供几种免费的翻墙方案. 比如:
+本项目是一个关于GFW 的半研究性项目，尝试提供可用的翻墙方案，并找出关于GFW 的一些统计数据.
 
 * [西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具。
+
+* 服务器、客户端同时丢掉GFW 的干扰包。服务器上脚本 server.sh ，客户端脚本 client.sh. 如果路由器可以设置 iptables 防火墙(如Tomato 或 OpenWRT)，直接在路由器上设置即可：
+    iptables -I FORWARD -p tcp -m tcp --tcp-flags RST RST -j DROP
+    iptables -I FORWARD -p tcp -m tcp --tcp-flags SYN,ACK SYN,ACK -m u32 --u32 "18&0xFFFF=0x0" -j DROP
+    
 
 * 修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目, 改了之后可以上Facebook。
  
