@@ -1,17 +1,28 @@
 本项目是一个关于GFW 的半研究性项目，尝试提供可用的翻墙方案，并找出关于GFW 的一些统计数据.
 
-* [西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具。
+西厢代理
+--------
+[西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具。
 
-* 服务器、客户端同时丢掉GFW 的干扰包。服务器上脚本 server.sh ，客户端脚本 client.sh. 如果路由器可以设置 iptables 防火墙(如Tomato 或 OpenWRT)，直接在路由器上设置即可：
+双向丢包
+--------
+服务器、客户端同时丢掉GFW 的干扰包。服务器上脚本 server.sh ，客户端脚本 client.sh. 如果路由器可以设置 iptables 防火墙(如Tomato 或 OpenWRT)，直接在路由器上设置即可：
+
     iptables -I FORWARD -p tcp -m tcp --tcp-flags RST RST -j DROP
-    iptables -I FORWARD -p tcp -m tcp --tcp-flags SYN,ACK SYN,ACK -m u32 --u32 "18&0xFFFF=0x0" -j DROP
     
+  目前这种方法还有问题。第一次丢包可以成功，第二次会被GFW发的SYN+ACK 干扰，而且这个非RESET的干扰包似乎不太好丢。
 
-* 修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目, 改了之后可以上Facebook。
+DoS攻击
+-------
+这种方式暂时不能翻墙，但是，理论上可以增加GFW的负载。期望是，攻击者达到一定数量之后，能够降低GFW 的reset 判断精度，或者放弃对CRLF 注入的reset。
+使用方法：cd west-chamber-proxy; python dos.py
+
+修改本地hosts文件
+----------------
+修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目。
  
-* 介绍几种反DNS污染的方法。
 
-DNS污染
+反DNS污染
 -------
 修改hosts 文件部分解决了污染问题, 但是很可能不全. 有两个办法可以实现反DNS污染
 
