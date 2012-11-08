@@ -36,7 +36,7 @@ while 1:
             print "connect to", oip
             try:
                 remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                remote.settimeout(3)
+                remote.settimeout(6)
                 remote.connect((oip, 80))
                 #remote.send("\r\n"*89)
                 remote.send("\r\n"*random.randint(64,89) + "GET /theconnectionwasreset HTTP/1.1\r\n")
