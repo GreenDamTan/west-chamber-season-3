@@ -10,7 +10,8 @@
 
     iptables -I FORWARD -p tcp -m tcp --tcp-flags RST RST -j DROP
     
-  目前这种方法还有问题。第一次丢包可以成功，第二次会被GFW发的SYN+ACK 干扰，而且这个非RESET的干扰包似乎不太好丢。
+目前这种方法还有问题。第一次丢包可以成功，第二次会被GFW发的SYN+ACK 干扰，而且这个非RESET的干扰包似乎不太好丢, 因为iptables 没有针对SEQ 错乱的丢包规则。
+学术上, 这种攻击被定义为 Off-Path TCP Sequence Number Inference Attack [PDF](http://web.eecs.umich.edu/~zhiyunq/pub/oakland12_TCP_sequence_number_inference.pdf)
 
 DoS攻击
 -------
