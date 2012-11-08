@@ -1,5 +1,6 @@
-import socket,sys,random
+import socket,sys,random,errno
 import config
+
 
 refusedipset = {}
 badipset = {}
@@ -27,7 +28,7 @@ while 1:
         for last in range(1,256):
             oip = ipm24 + "." + str(last)
             if oip in badipset:
-                print "ignore", oip
+                #print "ignore", oip
                 continue
             if oip in refusedipset:
                 continue
@@ -39,7 +40,7 @@ while 1:
                 remote.connect((oip, 80))
                 #remote.send("\r\n"*89)
                 remote.send("\r\n"*random.randint(64,89) + "GET /theconnectionwasreset HTTP/1.1\r\n")
-                print oip, "good: ", len(remote.recv(1024*1024))
+                print oip, "good"
                 remote.close()
             except socket.timeout:
                 badipset[oip]=1
@@ -48,7 +49,7 @@ while 1:
             except socket.error, e:
                 print oip, "socket.error", e
                 
-                if e[0] != 54:
+                if e[0] == errno.ECONNREFUSED:
                     print "* refused", oip
                     refusedipset[oip]=1
                     resetf.write(oip+"\n")
