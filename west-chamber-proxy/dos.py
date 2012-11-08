@@ -39,7 +39,8 @@ while 1:
                 remote.settimeout(6)
                 remote.connect((oip, 80))
                 #remote.send("\r\n"*89)
-                remote.send("\r\n"*random.randint(64,89) + "GET /theconnectionwasreset HTTP/1.1\r\n")
+                remote.send("\r\n\r\n" + "GET /theconnectionwasreset HTTP/1.1\r\nHost: twitter.com\r\n\r\n")
+                remote.recv(1024*64)
                 print oip, "good"
                 remote.close()
             except socket.timeout:
