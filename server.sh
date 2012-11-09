@@ -18,7 +18,10 @@ if [ -x "$IPSET" ]; then
 fi
 
 $IPTABLES -A INPUT -p tcp --dport 80 -m tcp --tcp-flags RST RST -m state --state ESTABLISHED $match_set -j DROP
-iptables -I INPUT -p tcp --dport 80 -m conntrack --ctstate INVALID -j DROP
+$IPTABLES -I INPUT -p tcp --dport 80 -m conntrack --ctstate INVALID -j DROP
+$IPTABLES -I INPUT -p tcp --dport 80 -m conntrack --ctstate INVALID -j LOG --log-prefix "state-invalid "
+$IPTABLES -I INPUT -p tcp --dport 80 -m conntrack --ctstate ESTABLISHED --tcp-flags all syn -j DROP
+$IPTABLES -I INPUT -p tcp --dport 80 -m conntrack --ctstate ESTABLISHED --tcp-flags all syn -j LOG --log-prefix "syn-after-sync "
 
 exit 0
 fi
