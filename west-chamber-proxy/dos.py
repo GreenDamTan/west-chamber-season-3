@@ -1,4 +1,4 @@
-import socket,sys,random,errno,argparse
+import socket,sys,random,errno,argparse,os
 import config
 
 
@@ -34,6 +34,9 @@ for ip in config.gConfig["BLOCKED_IPS"]:
     ipm24 = ".".join(ip.split(".")[:3])
     ipm24set[ipm24]=1
 
+pid = os.getpid()
+resetcnt = 0
+
 while 1:
     ipm24list = ipm24set.keys()
     random.shuffle(ipm24list)
@@ -47,7 +50,7 @@ while 1:
             if oip in refusedipset:
                 continue
 
-            print "connect to", oip
+            #print "connect to", oip
             try:
                 remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 remote.settimeout(6)
@@ -55,7 +58,7 @@ while 1:
                 #remote.send("\r\n"*89)
                 remote.send("\r\n\r\n" + "GET /theconnectionwasreset HTTP/1.1\r\nHost: twitter.com\r\n\r\n")
                 remote.recv(1024*64)
-                print oip, "good"
+                #print oip, "good"
                 remote.close()
             except socket.timeout:
                 badipset[oip]=1
@@ -63,10 +66,15 @@ while 1:
                     timeoutf.write(oip+"\n")
                     timeoutf.flush()
             except socket.error, e:
-                print oip, "socket.error", e
-                
+                #print oip, "socket.error", e
+                if e[0] == errno.ECONNRESET:
+                    resetcnt += 1
+                    #print "*" resetcnt, "resets"
+                    if resetcnt % 100 == 0:
+                        print pid, resetcnt, "resets"
+                        continue
                 if e[0] == errno.ECONNREFUSED:
-                    print "* refused", oip
+                    #print "* refused", oip
                     refusedipset[oip]=1
                     if resetf:
                         resetf.write(oip+"\n")

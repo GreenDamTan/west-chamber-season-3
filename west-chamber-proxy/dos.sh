@@ -13,9 +13,11 @@ case "$1" in
        	$0 stop
         $0 start
         ;;
-
+    status)
+        ps axu|grep dos|grep -v "grep"|wc |awk '{print $1" running processes"}'
+        ;;
    *)
-        echo "Usage: $0 {start|stop|restart}"
+        echo "Usage: $0 {start|stop|restart|status}"
         ;;
 
 esac
