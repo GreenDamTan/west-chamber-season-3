@@ -27,17 +27,9 @@ DoS攻击
 
 反DNS污染
 -------
-修改hosts 文件部分解决了污染问题, 但是很可能不全. 有两个办法可以实现反DNS污染
+修改hosts 文件部分解决了污染问题, 但是很可能不全. 要彻底解决DNS污染，设置国外的DNS 服务器，并本机丢弃GFW的 DNS伪包。
 
-1. 自建DNS 服务器。
-
-    系统要求：Linux 或 Mac。
-
-    可以用dnsmasq 做本地的DNS服务器。如果在国内有Linux服务器，建议做一个DNS服务小范围共享。
-
-2. 设置国外的DNS 服务器，并本机丢弃GFW的 DNS伪包。
-
-    a) 国外DNS服务器。大家比较熟悉的可能是[Google Public DNS](http://code.google.com/speed/public-dns/)。但是最近测试发现针对 Google DNS 的丢包很严重。先推荐两个，台湾中华电信的168.95.1.1 和 [OpenDNS](http://www.opendns.com/)。
+    a) 国外DNS服务器。大家比较熟悉的可能是[Google Public DNS](http://code.google.com/speed/public-dns/)。但是Google DNS经常出问题。先推荐两个，台湾中华电信的168.95.1.1 和 [OpenDNS](http://www.opendns.com/), 还不行，那就上午搜一个国外的DNS。
 
     b) 丢弃DNS伪包。
     * Windows: west-chmber的windows 移植目测不太好用，建议使用[DNSCrypt](http://www.opendns.com/technology/dnscrypt/)
