@@ -1,6 +1,14 @@
 import socket,sys,random,errno,argparse,os
 import config
 
+def connectip(ip):
+    remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    remote.settimeout(6)
+    remote.connect((oip, 80))
+    remote.send("\r\n\r\n" + "GET /theconnectionwasreset HTTP/1.1\r\nHost: twitter.com\r\n\r\n")
+    remote.recv(1024*64)
+    #print oip, "good"
+    remote.close()
 
 refusedipset = {}
 badipset = {}
@@ -10,14 +18,16 @@ blockedIpString = rf.read()
 rf.close()
 
 for ip in blockedIpString.split("\n"):
-    badipset[ip]=1
+    if len(ip) >= 7:
+        badipset[ip]=1
 
 rf = open("status/refused-ip.list", "r")
 resetIpString = rf.read()
 rf.close()
 
 for ip in resetIpString.split("\n"):
-    refusedipset[ip]=1
+    if len(ip) >= 7: 
+        refusedipset[ip]=1
 
 timeoutf = 0
 resetf = 0
@@ -25,7 +35,24 @@ resetf = 0
 parser = argparse.ArgumentParser(description='gfw doser')
 parser.add_argument('--action', default='', help='set to a if logging')
 gOptions = parser.parse_args()
-if gOptions.action == "a":
+
+
+if gOptions.action == "c": #check
+    timeoutf = open("status/timedout-ip-checked.list", "a")
+    for oip in badipset:
+        print "connect to", oip
+        try:
+            connectip(oip)
+        except socket.timeout:
+            print "timed out", oip
+            timeoutf.write(oip+"\n")
+            timeoutf.flush()
+        except:
+            print "connected to", oip
+    timeoutf.close()
+    exit(0)
+
+if gOptions.action == "a": #append
     timeoutf = open("status/timedout-ip.list", "a")
     resetf = open("status/refused-ip.list", "a")
 
