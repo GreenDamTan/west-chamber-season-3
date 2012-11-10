@@ -1,4 +1,4 @@
-import socket,sys,random,errno
+import socket,sys,random,errno,argparse
 import config
 
 
@@ -19,12 +19,26 @@ rf.close()
 for ip in resetIpString.split("\n"):
     refusedipset[ip]=1
 
-wf = open("status/timedout-ip.list", "a")
-resetf = open("status/refused-ip.list", "a")
+timeoutf = 0
+resetf = 0
+
+parser = argparse.ArgumentParser(description='gfw doser')
+parser.add_argument('--action', default='', help='set to a if logging')
+gOptions = parser.parse_args()
+if gOptions.action == "a":
+    timeoutf = open("status/timedout-ip.list", "a")
+    resetf = open("status/refused-ip.list", "a")
+
+ipm24set = {}
+for ip in config.gConfig["BLOCKED_IPS"]:
+    ipm24 = ".".join(ip.split(".")[:3])
+    ipm24set[ipm24]=1
 
 while 1:
-    for ip in config.gConfig["BLOCKED_IPS"]:
-        ipm24 = ".".join(ip.split(".")[:3])
+    ipm24list = ipm24set.keys()
+    random.shuffle(ipm24list)
+
+    for ipm24 in ipm24list:
         for last in range(1,256):
             oip = ipm24 + "." + str(last)
             if oip in badipset:
@@ -45,16 +59,18 @@ while 1:
                 remote.close()
             except socket.timeout:
                 badipset[oip]=1
-                wf.write(oip+"\n")
-                wf.flush()
+                if timeoutf:
+                    timeoutf.write(oip+"\n")
+                    timeoutf.flush()
             except socket.error, e:
                 print oip, "socket.error", e
                 
                 if e[0] == errno.ECONNREFUSED:
                     print "* refused", oip
                     refusedipset[oip]=1
-                    resetf.write(oip+"\n")
-                    resetf.flush()
+                    if resetf:
+                        resetf.write(oip+"\n")
+                        resetf.flush()
 
-wf.close()
-resetf.close()
+if timeoutf: timeoutf.close()
+if resetf: resetf.close()
