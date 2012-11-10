@@ -61,7 +61,6 @@ while 1:
                 #print oip, "good"
                 remote.close()
             except socket.timeout:
-                badipset[oip]=1
                 if timeoutf:
                     timeoutf.write(oip+"\n")
                     timeoutf.flush()
