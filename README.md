@@ -18,7 +18,13 @@ DoS攻击
 -------
 这种方式暂时不能翻墙，但是，理论上可以增加GFW的负载。期望是，攻击者达到一定数量之后，能够降低GFW 的reset 判断精度，或者迫使其放弃对CRLF 注入的reset。
 使用方法：
-    cd west-chamber-proxy; python dos.py
+
+    cd west-chamber-proxy;
+    sh dos.sh start 
+    sh dos.sh status 
+    sh dos.sh stop #停止
+
+Windows 用户可以直接双机 dos.py （可以同时打开N个）
 
 修改本地hosts文件
 ----------------
