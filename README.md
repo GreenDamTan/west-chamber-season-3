@@ -1,8 +1,9 @@
 本项目是一个关于GFW 的半研究性项目，尝试提供可用的翻墙方案，并找出关于GFW 的一些统计数据.
 
-西厢代理
---------
-[西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具。
+数据统计
+-------
+做了一些有意思的不完全统计数据：[被封锁的IP列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout-ip.list) 以及被[IP封锁的域名列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout.txt)
+另外，打算再维护一份被RESET的域名列表。
 
 双向丢包
 --------
@@ -48,7 +49,12 @@ TCP连接混淆
 -----------
 首先说明一下，[这东西很不靠谱](http://gfwrev.blogspot.com/2010/03/gfw.html)，容易受GFW 的更新而影响。感觉是，目前就kernet 项目效果还行。西厢的原始项目和Windows 移植现在都不好用。
 
+西厢代理
+--------
+[西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具,不过暂时不可用。
+
 其它工具
 --------
 [icefox](https://code.google.com/p/icefox/) 原理跟西厢代理类似,但是此软件可以直接修改系统代理的设置,更方便.目测没解决IP封锁问题.
+[jjproxy](https://github.com/liruqi/jjproxy) 还是通过HTTP注入，不过由于注入方式不遵守RFC，很多网站都会有问题，但是看blogspot 还可以。
 
