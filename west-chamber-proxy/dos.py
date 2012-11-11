@@ -38,8 +38,18 @@ gOptions = parser.parse_args()
 
 
 if gOptions.action == "c": #check
+    timeoutf = open("status/timedout-ip-checked.list", "r")
+    timeoutString = timeoutf.read()
+    timeoutf.close()
+
+    timeoutList = timeoutString.split("\n")
+    
     timeoutf = open("status/timedout-ip-checked.list", "a")
     for oip in badipset:
+        if oip in timeoutList:
+            print "ignore ", oip
+            continue
+
         print "connect to", oip
         try:
             connectip(oip)
