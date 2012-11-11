@@ -89,22 +89,16 @@ while 1:
             if oip in refusedipset:
                 continue
 
-            #print "connect to", oip
             try:
-                remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                remote.settimeout(6)
-                remote.connect((oip, 80))
-                #remote.send("\r\n"*89)
-                remote.send("\r\n\r\n" + "GET /theconnectionwasreset HTTP/1.1\r\nHost: twitter.com\r\n\r\n")
-                remote.recv(1024*64)
-                #print oip, "good"
-                remote.close()
+                if gOptions.action == "a": print "connect to", oip
+                connectip(oip)
             except socket.timeout:
                 if timeoutf:
                     timeoutf.write(oip+"\n")
                     timeoutf.flush()
             except socket.error, e:
-                #print oip, "socket.error", e
+                if gOptions.action == "a": print oip, "socket.error", e
+
                 if e[0] == errno.ECONNRESET:
                     resetcnt += 1
                     #print "*" resetcnt, "resets"
@@ -117,6 +111,9 @@ while 1:
                     if resetf:
                         resetf.write(oip+"\n")
                         resetf.flush()
+
+    if gOptions.action == "a": #append
+        break
 
 if timeoutf: timeoutf.close()
 if resetf: resetf.close()
