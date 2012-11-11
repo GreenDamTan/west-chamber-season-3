@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import socket,sys,random,errno,argparse,os
 import config
 

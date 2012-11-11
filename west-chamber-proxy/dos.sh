@@ -1,3 +1,5 @@
+#!/bin/sh +x
+
 case "$1" in
     start)
         for (( i=0;i<300;i++)); do
