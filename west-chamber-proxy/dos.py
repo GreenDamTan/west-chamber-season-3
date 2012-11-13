@@ -7,7 +7,8 @@ def connectip(ip):
     remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     remote.settimeout(6)
     remote.connect((oip, 80))
-    remote.send("GET /theconnectionwasreset HTTP/1.1\r\nHost: twitter.com\r\n\r\n")
+    host = random.choice(config.gConfig["BLOCKED_DOMAINS_LIST"])
+    remote.send("GET / HTTP/1.1\r\nHost: "+host+"\r\n\r\n")
     remote.recv(1024*64)
     #print oip, "good"
     remote.close()

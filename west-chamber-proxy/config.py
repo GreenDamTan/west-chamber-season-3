@@ -1006,6 +1006,7 @@ twitoaster.com
 twitonmsn.com
 twitpic.com
 twitstat.com
+twitter.com
 twitter.jp
 twittergadget.com
 twitthat.com
@@ -1114,6 +1115,7 @@ zonaeuropa.com
 zuihulu.net
 zuo.la"""
 
+gConfig["BLOCKED_DOMAINS_LIST"] = blockedDomainString.split("\n")
 for d in blockedDomainString.split("\n"):
     if len(d) > 0:
         gConfig["BLOCKED_DOMAINS"][d] = True
