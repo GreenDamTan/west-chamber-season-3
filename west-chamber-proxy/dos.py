@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import socket,sys,random,errno,argparse,os
+import socket,sys,random,errno,os
 import config
 
 def connectip(ip):
@@ -35,10 +35,16 @@ for ip in resetIpString.split("\n"):
 timeoutf = 0
 resetf = 0
 
-parser = argparse.ArgumentParser(description='gfw doser')
-parser.add_argument('--action', default='', help='set to a if logging')
-gOptions = parser.parse_args()
-
+try:
+    import argparse
+    parser = argparse.ArgumentParser(description='gfw doser')
+    parser.add_argument('--action', default='', help='set to a if logging')
+    gOptions = parser.parse_args()
+except:
+    class option:
+        def __init__(self): 
+            self.action = ''
+    gOptions = option()
 
 if gOptions.action == "c": #check
     timeoutf = open("status/timedout-ip-checked.list", "r")
