@@ -55,6 +55,7 @@ if gOptions.action == "c": #check
     
     timeoutf = open("status/timedout-ip-checked.list", "a")
     for oip in badipset:
+        oip = oip.split(" ")[0]
         if oip in timeoutList:
             print "ignore ", oip
             continue
