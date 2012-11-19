@@ -19,7 +19,7 @@ fi
 
 #TODO match HTTP
 $IPTABLES -I INPUT -p tcp --tcp-flags RST RST $match_set -j DROP
-$IPTABLES -I FORWARD -p tcp --tcp-flags ALL SYN,ACK -m u32 --u32 "34&0xf0000000=0"  -j DROP
+$IPTABLES -I FORWARD -p tcp -s ! 192.168.0.0/16 --tcp-flags ALL SYN,ACK -m u32 --u32 "34&0xf0000000=0"  -j DROP
 $IPTABLES -I FORWARD -p tcp --tcp-flags ALL SYN,ACK -m u32 --u32 "34&0xf0000000=0"  -j LOG --log-prefix "gfw-syn-ack "
 
 # you need to compile west-chamber from http://code.google.com/p/scholarzhang in advance to gain module gfw
