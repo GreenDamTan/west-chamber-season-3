@@ -72,14 +72,25 @@ if gOptions.action == "c": #check
     timeoutf.close()
     exit(0)
 
+verbose = 0
 if gOptions.action == "a": #append
     timeoutf = open("status/timedout-ip.list", "a")
     resetf = open("status/refused-ip.list", "a")
+    verbose = 1
 
 ipm24set = {}
 for ip in config.gConfig["BLOCKED_IPS"]:
     ipm24 = ".".join(ip.split(".")[:3])
     ipm24set[ipm24]=1
+for ip in config.gConfig["BLOCKED_IPS_M24"]:
+    ipm24set[ip] = 1
+    if verbose: print "M24: " + ip
+
+for ip in config.gConfig["BLOCKED_IPS_M16"]:
+    for ip3 in range(256):
+        ipm24 = ip + "." + str(ip3)
+        ipm24set[ipm24]=1
+        if verbose: print "M16: " + ipm24
 
 pid = os.getpid()
 resetcnt = 0
