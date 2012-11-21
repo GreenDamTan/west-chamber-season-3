@@ -2,7 +2,7 @@
 
 case "$1" in
     start)
-        for (( i=0;i<300;i++)); do
+        for i in `seq 1 300`; do
         python dos.py &
         done 
         ;;
