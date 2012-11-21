@@ -2,7 +2,7 @@
 
 数据统计
 -------
-做了一些有意思的不完全统计数据：[被封锁的IP列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout-ip.list) 以及被[IP封锁的域名列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout.txt)
+做了一些有意思的不完全统计数据：[被封锁的IP列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout-ip.list)(这个列表中存在大量的无HTTP服务的IP,目前尚未未做区分) 以及被[IP封锁的域名列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout.txt)
 另外，打算再维护一份被RESET的域名列表。
 
 双向丢包
