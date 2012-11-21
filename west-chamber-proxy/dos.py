@@ -39,11 +39,14 @@ try:
     import argparse
     parser = argparse.ArgumentParser(description='gfw doser')
     parser.add_argument('--action', default='', help='set to a if logging')
+    parser.add_argument('--verbose', default=0, type=int, help='verbose mode')
     gOptions = parser.parse_args()
 except:
+    print "usage: ./dos.py a 1"
     class option:
         def __init__(self): 
-            self.action = ''
+            self.action = sys.argv[1]
+            self.verbose = sys.argv[2]
     gOptions = option()
 
 if gOptions.action == "c": #check
@@ -72,9 +75,10 @@ if gOptions.action == "c": #check
     timeoutf.close()
     exit(0)
 
-verbose = 0
+verbose = gOptions.verbose
+pid = os.getpid()
 if gOptions.action == "a": #append
-    timeoutf = open("status/timedout-ip.list", "a")
+    timeoutf = open("status/timedout-ip.list"+".pid"+str(pid), "a")
     resetf = open("status/refused-ip.list", "a")
     verbose = 1
 
@@ -92,7 +96,6 @@ for ip in config.gConfig["BLOCKED_IPS_M16"]:
         ipm24set[ipm24]=1
         if verbose: print "M16: " + ipm24
 
-pid = os.getpid()
 resetcnt = 0
 
 while 1:
@@ -109,14 +112,14 @@ while 1:
                 continue
 
             try:
-                if gOptions.action == "a": print "connect to", oip
+                if verbose: print "connect to", oip
                 connectip(oip)
             except socket.timeout:
                 if timeoutf:
                     timeoutf.write(oip+"\n")
                     timeoutf.flush()
             except socket.error, e:
-                if gOptions.action == "a": print oip, "socket.error", e
+                if verbose: print oip, "socket.error", e
 
                 if e[0] == errno.ECONNRESET:
                     resetcnt += 1
