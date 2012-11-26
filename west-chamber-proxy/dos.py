@@ -38,7 +38,7 @@ resetf = 0
 try:
     import argparse
     parser = argparse.ArgumentParser(description='gfw doser')
-    parser.add_argument('--action', default='a', help='set to a if logging')
+    parser.add_argument('--action', default='', help='set to a if logging')
     parser.add_argument('--verbose', default=0, type=int, help='verbose mode')
     gOptions = parser.parse_args()
 except:
