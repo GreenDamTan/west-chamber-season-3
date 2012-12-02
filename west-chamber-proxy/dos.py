@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#using scapy to inject ack
+#but scapy lock resource, buggy
 
 import socket,sys,random,errno,os,threading
 import config
@@ -9,7 +11,7 @@ class sendSYN(threading.Thread):
     def __init__(self, dst):
         global sending
         threading.Thread.__init__(self)
-        print "seding ack " + dst
+        print "sending ack " + dst +" " + str(sending)
         sending += 1
         self.dstIP = dst
 
@@ -131,17 +133,17 @@ while 1:
         for last in range(1,256):
             oip = ipm24 + "." + str(last)
             if oip in badipset:
-                if sending < 64: sendSYN(oip).start()
+                if sending < 8: sendSYN(oip).start()
                 continue
             if oip in refusedipset:
-                if sending < 64: sendSYN(oip).start()
+                if sending < 8: sendSYN(oip).start()
                 continue
 
             try:
                 if verbose: print "connect to", oip
                 connectip(oip)
             except socket.timeout:
-                sendSYN(oip).start()
+                if sending < 8: sendSYN(oip).start()
                 if timeoutf:
                     timeoutf.write(oip+"\n")
                     timeoutf.flush()
