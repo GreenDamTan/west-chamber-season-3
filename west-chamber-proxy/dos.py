@@ -38,7 +38,7 @@ def connectip(ip):
     host = "twitter.com"
     remote.send("GET / HTTP/1.1\r\nHost: "+host+"\r\n\r\n")
     remote.recv(1024*64)
-    #print oip, "good"
+    print oip, "good"
     remote.close()
 
 refusedipset = {}
@@ -107,6 +107,7 @@ pid = os.getpid()
 if gOptions.action == "a": #append
     timeoutf = open("status/timedout-ip.list"+".pid"+str(pid), "a")
     resetf = open("status/refused-ip.list", "a")
+    goodf = open("status/good-ip.list", "a")
     verbose = 1
 
 ipm24set = {}
@@ -133,17 +134,18 @@ while 1:
         for last in range(1,256):
             oip = ipm24 + "." + str(last)
             if oip in badipset:
-                if sending < 8: sendSYN(oip).start()
+                #if sending < 8: sendSYN(oip).start()
                 continue
             if oip in refusedipset:
-                if sending < 8: sendSYN(oip).start()
+                #if sending < 8: sendSYN(oip).start()
                 continue
 
             try:
                 if verbose: print "connect to", oip
                 connectip(oip)
+                goodf.write(oip+"\n")
             except socket.timeout:
-                if sending < 8: sendSYN(oip).start()
+                #if sending < 8: sendSYN(oip).start()
                 if timeoutf:
                     timeoutf.write(oip+"\n")
                     timeoutf.flush()
@@ -152,6 +154,7 @@ while 1:
 
                 if e[0] == errno.ECONNRESET:
                     resetcnt += 1
+                    goodf.write(oip+"\n")
                     #print "*" resetcnt, "resets"
                     if resetcnt % 100 == 0:
                         print pid, resetcnt, "resets"
@@ -168,3 +171,4 @@ while 1:
 
 if timeoutf: timeoutf.close()
 if resetf: resetf.close()
+if goodf: goodf.close()
