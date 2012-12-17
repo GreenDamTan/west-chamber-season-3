@@ -144,6 +144,7 @@ while 1:
                 if verbose: print "connect to", oip
                 connectip(oip)
                 goodf.write(oip+"\n")
+                goodf.flush()
             except socket.timeout:
                 #if sending < 8: sendSYN(oip).start()
                 if timeoutf:
