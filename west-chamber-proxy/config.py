@@ -162,14 +162,6 @@ gConfig = {
         "199.59.149": 1,
         "199.59.150": 1,
     },
-    "PAGE_RELOAD_HTML": """<html>
-    <head>
-        <script type="text/javascript" charset="utf-8">
-            window.location.reload();
-        </script>
-    </head>
-    <body>
-    </body></html>""",
 }
 
 # 69.171.228.0/24 for facebook
