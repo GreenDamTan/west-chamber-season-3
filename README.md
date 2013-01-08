@@ -51,7 +51,7 @@ TCP连接混淆
 
 西厢代理
 --------
-[西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy),目前已经推出了多个平台的代理工具,不过暂时不可用。
+[西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy), 需要客户端忽略RST 包(由于Windows 系统没有方便的丢包方法,所以暂不支持Windows,如果路由器刷了合适的固件,也可以在路由器上丢包), 执行client.sh 即可。
 
 其它工具
 --------
