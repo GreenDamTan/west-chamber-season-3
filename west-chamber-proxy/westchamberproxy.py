@@ -395,6 +395,18 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 logging.debug( "select timeout")
                 break
 
+def addressInNetwork(ip,net):
+    "Is an address in a network"
+    ipaddr = struct.unpack('>L',socket.inet_aton(ip))[0]
+    netaddr,bits = net.split('/')
+    netmask = struct.unpack('>L',socket.inet_aton(netaddr))[0]
+    ipaddr_masked = ipaddr & (4294967295<<(32-int(bits)))   # Logical AND of IP address and mask will equal the network address if it matches
+    if netmask == netmask & (4294967295<<(32-int(bits))):   # Validate network address is valid for mask
+        return ipaddr_masked == netmask
+    else:
+        print "***WARNING*** Network",netaddr,"not valid with mask /"+bits
+        return ipaddr_masked == netmask
+
 def start():
     socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
 
@@ -406,7 +418,17 @@ def start():
         s = open("httpproxy.list")
         for line in s.readlines():
             line = line.strip()
-            gConfig["HTTP_PROXY_SERVERS"].append(line)
+            
+            ip, port = line.split(':')
+            china = False
+            for r in gConfig["CHINA_IP_LIST"]:
+                if addressInNetwork(ip,r):
+                    china = True
+                    break
+            if not china: 
+                gConfig["HTTP_PROXY_SERVERS"].append(line)
+                #print (line)
+            
         s.close()
     except:
         logging.info("Load httpproxy.list fail.") 
