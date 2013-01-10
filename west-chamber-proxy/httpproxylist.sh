@@ -12,4 +12,5 @@ curl http://www.binary-zone.com/files/MyProxyList.txt | awk  '/[[:digit:]]{1,3}\
 
 cat httpproxy.list | sort -n | grep -Fv "223.164.255.78" | grep -Fv "216.52.223.184" | grep -Fv "180.96.62.21" |grep -Fv "67.205.67.45" > tmp
 mv tmp httpproxy.list
-cat httpproxy.list
+
+cat httpproxy.list | awk '{print "curl http://www.huanqiu.com/robots.txt --max-time 3 --proxy "$1 " -o status/" $1}' | sh -x
