@@ -42,7 +42,9 @@ class send_server_thread(threading.Thread):
             
         except:
             exc_type, self.error, exc_traceback = sys.exc_info()
-            print ("error: ", exc_type, self.error)
+            print (self.ip + " error: " , exc_type , self.error)
+            sys.stdout.flush()
+
 
 #等待user input的thread       
 class checkThread(threading.Thread):
@@ -62,13 +64,18 @@ if __name__ == "__main__":
     gConfig["HTTP_PROXY_SERVERS"] = []
     threads = []
     socket.setdefaulttimeout(6)
+    url = "http://twitter.com/"
+    if len(sys.argv) > 1: url=sys.argv[1]
+        
+    (scm, netloc, path, params, query, _) = urlparse.urlparse(url)
     for line in s.readlines():
         line = line.strip()
         ip, port = line.split(':')
         client_thread = send_server_thread(ip, port)
         gConfig["HTTP_PROXY_SERVERS"].append((ip,(int)(port)))
 
-        (scm, netloc, path, params, query, _) = urlparse.urlparse(sys.argv[1])
+        
+        if path=="": path="/"
         print (scm, netloc, path, params, query)
         #client_thread.client.SendData = (" ".join(("GET", path, "1.1")) + "\r\n") + "Host: " + netloc + "\r\n" + "\r\n"
         client_thread.clientSendData = (" ".join(("GET", path, "1.1")) + "\r\n") + "Host: " + netloc + "\r\n" + "\r\n"
@@ -88,10 +95,11 @@ if __name__ == "__main__":
             else:
                 recvset[thread.client.RecvData] = 1
     """
+    ef = open(netloc+".log", "w")
     for thread in threads:
         if len(thread.clientRecvData) > 0:
             if thread.status == 200:
-                print thread.clientRecvData
+                ef.write ("200: " + thread.ip + thread.clientRecvData)
                 continue
             if thread.clientRecvData in recvset:
                 recvset[thread.clientRecvData] += 1
@@ -106,6 +114,7 @@ if __name__ == "__main__":
             recvmaxcnt = recvset[data] 
             recvmax = data
 
-    print recvmax
+    ef.write("Error: " + recvmax)
+    ef.close()
     exit(1)
 
