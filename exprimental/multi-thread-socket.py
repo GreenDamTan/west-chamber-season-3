@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # author: liruqi@gmail.com
 
-import asyncore, socket, sys, urlparse, threading, time
+import asyncore, socket, sys, urlparse, threading, time, random
 from httplib import HTTPResponse
 
 #收到data最大長度
@@ -46,18 +46,6 @@ class send_server_thread(threading.Thread):
             sys.stdout.flush()
 
 
-#等待user input的thread       
-class checkThread(threading.Thread):
-    def __init__(self,client_threads):
-        self.client_threads = client_threads
-        threading.Thread.__init__ ( self )
-    def run(self):
-        print ("Check recv data.")
-        recvset = {}
-        for thread in threads:
-            if len(thread.client.RecvData) > 0:
-                recvset[thread.client.RecvData] += 1
-
 #主程式
 if __name__ == "__main__":
     s = open("../west-chamber-proxy/httpproxy.list")
@@ -68,14 +56,15 @@ if __name__ == "__main__":
     if len(sys.argv) > 1: url=sys.argv[1]
         
     (scm, netloc, path, params, query, _) = urlparse.urlparse(url)
+    if path=="": path="/"
     for line in s.readlines():
         line = line.strip()
         ip, port = line.split(':')
         client_thread = send_server_thread(ip, port)
         gConfig["HTTP_PROXY_SERVERS"].append((ip,(int)(port)))
 
-        
-        if path=="": path="/"
+        if random.randint(0,3) != 0: continue
+ 
         print (scm, netloc, path, params, query)
         #client_thread.client.SendData = (" ".join(("GET", path, "1.1")) + "\r\n") + "Host: " + netloc + "\r\n" + "\r\n"
         client_thread.clientSendData = (" ".join(("GET", path, "1.1")) + "\r\n") + "Host: " + netloc + "\r\n" + "\r\n"
@@ -83,7 +72,6 @@ if __name__ == "__main__":
         client_thread.start()
         threads.append(client_thread)
 
-    #checkThread(threads).start()
     time.sleep(6)
     print ("Check recv data.")
     recvset = {}
