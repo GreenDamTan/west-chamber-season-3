@@ -57,13 +57,16 @@ if __name__ == "__main__":
         
     (scm, netloc, path, params, query, _) = urlparse.urlparse(url)
     if path=="": path="/"
-    for line in s.readlines():
+
+    lines = s.readlines()
+    s.close()
+    for line in lines:
         line = line.strip()
         ip, port = line.split(':')
         client_thread = send_server_thread(ip, port)
         gConfig["HTTP_PROXY_SERVERS"].append((ip,(int)(port)))
 
-        if random.randint(0,3) != 0: continue
+        if random.randint(0,len(lines)/256) != 0: continue
  
         print (scm, netloc, path, params, query)
         #client_thread.client.SendData = (" ".join(("GET", path, "1.1")) + "\r\n") + "Host: " + netloc + "\r\n" + "\r\n"

@@ -10,6 +10,6 @@ curl http://www.searchlores.org/pxylist2.txt | awk  '/[[:digit:]]{1,3}\.[[:digit
 curl http://www.freeproxy.ru/download/lists/goodproxy.txt | awk  '/[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}/ {print $2}' >> httpproxy.list
 curl http://www.binary-zone.com/files/MyProxyList.txt | awk  '/[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}/ {print $1$2}' >> httpproxy.list
 
-cat httpproxy.list | sort -n | grep -Fv "223.164.255.78" | grep -Fv "216.52.223.184" | grep -Fv "180.96.62.21"  > tmp
+cat httpproxy.list | sort -n | grep -Fv "223.164.255.78" | grep -Fv "216.52.223.184" | grep -Fv "180.96.62.21" |grep -Fv "67.205.67.45" > tmp
 mv tmp httpproxy.list
 cat httpproxy.list
