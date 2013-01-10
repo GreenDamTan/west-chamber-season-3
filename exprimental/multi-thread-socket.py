@@ -42,7 +42,7 @@ class send_server_thread(threading.Thread):
             
         except:
             exc_type, self.error, exc_traceback = sys.exc_info()
-            print (self.ip + " error: " , exc_type , self.error)
+            print (self.ip+":"+self.port + " error: " , exc_type , self.error)
             sys.stdout.flush()
 
 

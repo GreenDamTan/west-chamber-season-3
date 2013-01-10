@@ -427,7 +427,7 @@ def start():
                     break
             if not china: 
                 gConfig["HTTP_PROXY_SERVERS"].append(line)
-                #print (line)
+                logging.info("proxy: "+line) 
             
         s.close()
     except:
