@@ -433,6 +433,9 @@ def start():
     except:
         logging.info("Load httpproxy.list fail.") 
 
+    if gOptions.check>0:
+        exit()
+
     print ("Set your browser's HTTP/HTTPS proxy to 127.0.0.1:%d"%(gOptions.port))
     print ("You can configure your proxy var http://127.0.0.1:%d"%(gOptions.port))
     if gConfig['CONFIG_ON_STARTUP']:
@@ -456,6 +459,7 @@ if __name__ == "__main__":
             parser.add_argument('--log', default=2, type=int, help='log level, 0-5')
             parser.add_argument('--pidfile', default='wcproxy.pid', help='pid file')
             parser.add_argument('--logfile', default='wcproxy.log', help='log file')
+            parser.add_argument('--check', default=0, type=int, help='check proxy list only')
             gOptions = parser.parse_args()
         else:
             import optparse
@@ -482,6 +486,9 @@ if __name__ == "__main__":
         print ("Writing pid " + pid + " to "+gOptions.pidfile)
         f.write(pid)
         f.close()
+
+    if gOptions.check>0:
+        open(gOptions.logfile,'w').close()
 
     logging.basicConfig(filename=gOptions.logfile, level = gOptions.log*10, format='%(asctime)-15s %(message)s')
     
