@@ -10,7 +10,10 @@ curl http://www.searchlores.org/pxylist2.txt | awk  '/[[:digit:]]{1,3}\.[[:digit
 curl http://www.freeproxy.ru/download/lists/goodproxy.txt | awk  '/[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}/ {print $2}' >> httpproxy.list
 curl http://www.binary-zone.com/files/MyProxyList.txt | awk  '/[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}/ {print $1$2}' >> httpproxy.list
 
-cat httpproxy.list | sort -n | grep -Fv "223.164.255.78" | grep -Fv "216.52.223.184" | grep -Fv "180.96.62.21" |grep -Fv "67.205.67.45" > tmp
+cat httpproxy.list | sort -n > tmp
 mv tmp httpproxy.list
 
-cat httpproxy.list | awk '{print "curl http://www.huanqiu.com/robots.txt --max-time 3 --proxy "$1 " -o status/" $1}' | sh -x
+mkdir /tmp/proxies
+cat httpproxy.list | awk '{print "curl http://www.huanqiu.com/license/servicelicense.htm --max-time 6 --proxy "$1 " -o /tmp/proxies/" $1}' | sh -x
+ls -al /tmp/proxies/ | awk '{if ($5=="1230") print $9}' checkedhttpproxy.list
+ 
