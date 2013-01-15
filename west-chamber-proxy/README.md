@@ -5,34 +5,27 @@
 
 使用方法
 --------
-* Windows
 
-    1. 下载[客户端](http://code.google.com/p/west-chamber-season-3/downloads/list) ，解压缩，双击 exe
-    2. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
-    3. Windows 版本更新比较慢。如果希望使用最新代码，先下载 python 2.7，[32位](http://python.org/ftp/python/2.7.2/python-2.7.2.msi) / [64位](http://python.org/ftp/python/2.7.2/python-2.7.2.amd64.msi) ，然后下载[代码](https://github.com/liruqi/west-chamber-season-3/zipball/master)，解压缩，进入 west-chamber-proxy 文件夹，双击 westchamberproxy.py。
-
-* Mac 
-    1. 去GoAgentX for WCProxy的[下载列表](https://github.com/liruqi/GoAgentX/downloads)下载最新的客户端，解压缩，双击打开
-    2. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
-    
-* Linux
+* Linux/Mac
 
     1. 下载项目代码: [zip](https://github.com/liruqi/west-chamber-season-3/zipball/master)
     2. 解压缩，打开终端，cd 到代码目录，cd west-chamber-proxy; 启动代理：./wcproxy start；关闭代理：./wcproxy stop。
     3. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
 
-* Android
-
-    基于[GAE Proxy](http://code.google.com/p/gaeproxy/)修改的。Google Market 上的[地址](https://market.android.com/details?id=org.westchamberproxy)。
-
-* iOS
+* Windows
     
-    目前不打算自己做一个iOS 应用放在 appstore上，比较麻烦。越狱版本的可能最近会推出。
+    尚不支持.
 
-    1. 局域网内的其它设备(PC, Android 设备)上安装本代理，然后把 iOS 设备的 HTTP 代理设置到该设备上。（或者在国内有服务器的同学，自己搭建HTTP 代理）
-    2. 类似GoAgent 那种iOS客户端的办法。需要越狱。单我本人没有iOS设备，所以，暂不研究了。
+    1. 丢掉RST包. 尚无相关工具, 自己想办法.
+    2. 下载 python 2.7，[32位](http://python.org/ftp/python/2.7.2/python-2.7.2.msi) / [64位](http://python.org/ftp/python/2.7.2/python-2.7.2.amd64.msi) ，然后下载[代码](https://github.com/liruqi/west-chamber-season-3/zipball/master)，解压缩，进入 west-chamber-proxy 文件夹，双击 westchamberproxy.py。
+    3. 把浏览器HTTP/HTTPS 代理设置为 127.0.0.1:1998，或者使用pac 脚本设置自动代理。
+
+* iOS/Android
+    
+    尚不支持. 可以尝试在局域网内的其它PC设备上安装本代理，然后把 iOS 设备的 HTTP 代理设置到该设备上。（或者在国内有服务器的同学，自己搭建HTTP 代理）
 
 * SSL证书
+
     如果希望HTTPS代理正常使用，在Windows上用管理员权限、Mac 上用root 权限执行本代理即可。
 
 代理设置
@@ -50,26 +43,17 @@
     2. 点击在线恢复备份 -> 确定 
     3. 点击SwitchySharp扩展图标 -> 自动切换模式
 
-    到此浏览器代理配置成功。
-
-* 代理自身的代理配置
-
-    1. 默认配置是GoAgent，包含若干内置的appid, 如果有自己的appid 建议更换，在 config.py 里面替换即可。
-    2. 也可以设置socks5代理。如 `ssh -NfD 0.0.0.0:1234 user@hostname` 启动代理之后，把PROXY_TYPE的配置 "goagent" 改为 "socks5"，然后把 SOCKS_HOST/SOCKS_PORT 修改为自己的代理。
-    3. 部分配置项也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
+    到此浏览器代理配置成功。部分配置项也可以在网页上修改，直接打开代理地址即可（如 http://127.0.0.1:1998）
 
 开发者
 ------
-* [XIAOXIA](http://xiaoxia.org), 原始版本作者
-* [LIRUQI](http://liruqi.info), 后续开发, 各平台的打包、发布
+* [LIRUQI](http://liruqi.info)
 
 代理原理
 --------
 
-1. 对抗关键词过滤: [rfc2616 - section 4.1](http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html)
+1. 对抗关键词过滤/IP封锁: 轮训多个HTTP服务器, 丢RESET包
 2. 对抗DNS污染: 修改PyDNS 库，实现丢弃GFW DNS 伪包。
-3. 对抗IP封锁: 收集被封锁的IP, 在DNS 解析过程中尝试找到可用IP。
-4. 如果没有可用IP，或者是HTTP注入导致异常，本代理会走[GoAgent](http://code.google.com/p/goagent/) 代理。
 
 问题反馈
 --------
@@ -81,9 +65,7 @@
 
 TODO
 ----
-* [ALL] 把80端口和443端口的IP封锁区分开来
-* [Android] 实现系统HTTP 代理的设置，这样系统自带的浏览器也可以用。
-* [Android] 用 Java 重写代理逻辑，用户就不用下载依赖的 python 软件包。
+* [ALL] 非Linux/Mac 系统的支持
 
 UPDATE LOG
 ---
@@ -98,3 +80,5 @@ UPDATE LOG
 * 2012-04-14 DNS解析结果中，移除被GFW 封锁的IP。
 * 2012-04-14 支持UDP方式DNS解析，并丢弃GFW伪包。
 * 2012-04-24 基本完成与GoAgent 的整合，直连失败后会走GoAgent 代理。
+* 2013-01-08 放弃HTTP注入/GoAgent, 直接丢RESET包并轮训HTTP Proxy
+

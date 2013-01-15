@@ -3,9 +3,6 @@
 
 '''
     westchamberproxy by liruqi@gmail.com
-    Based on:
-    PyGProxy by gdxxhg@gmail.com 
-    GoAgent by {phus.lu,hewigovens}@gmail.com (Phus Lu and Hewig Xu)
 '''
 
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -197,7 +194,6 @@ class ProxyHandler(BaseHTTPRequestHandler):
     
     def proxy(self):
         doProxy = False
-        inWhileList = False
         logging.info (self.requestline)
         port = 80
         host = self.headers["Host"]
@@ -248,97 +244,98 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     html = html.replace("{" + key + "}", str(gConfig[key]))
             self.wfile.write(status + "\r\n\r\n" + html)
             return
-        try:
-            
-            if (gConfig["ADSHOSTON"] and host in gConfig["ADSHOST"]):
-                status = "HTTP/1.1 404 Not Found"
-                self.wfile.write(status + "\r\n\r\n")
-                return
+        
+        random.shuffle(gConfig['HTTP_PROXY_SERVERS'])
+        for s in gConfig['HTTP_PROXY_SERVERS']:
+            try:
+                if (gConfig["ADSHOSTON"] and host in gConfig["ADSHOST"]):
+                    status = "HTTP/1.1 404 Not Found"
+                    self.wfile.write(status + "\r\n\r\n")
+                    return
 
-            # Remove http://[host] , for google.com.hk
-            path = self.path[self.path.find(netloc) + len(netloc):]
+                # Remove http://[host] , for google.com.hk
+                path = self.path[self.path.find(netloc) + len(netloc):]
 
-            connectHost = self.getip(host)
-            logging.info ("Resolved " + host + " => " + connectHost)
+                connectHost = self.getip(host)
+                logging.info ("Resolved " + host + " => " + connectHost)
 
-            if isDomainBlocked(host) or isIpBlocked(connectHost):
-                self.remote = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-                logging.info("connect to " + host + ":" + str(port) + " var socks5 proxy")
-                self.remote.connect((connectHost, port))
-                doProxy = True
-            else:
                 self.remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                logging.debug( "connect to " + host + ":" + str(port))
-                self.remote.connect((connectHost, port))
+                if isDomainBlocked(host) or isIpBlocked(connectHost):
+                    connectHost, port = s.split(':')
+                    logging.info("connect to proxy " + s)
+                    self.remote.connect((connectHost, int(port)))
+                    doProxy = True
+                else:
+                    logging.debug( "connect to " + host + ":" + str(port))
+                    self.remote.connect((connectHost, port))
 
-            # Send requestline
-            if path == "":
-                path = "/"
-            print (" ".join((self.command, path, self.request_version)) + "\r\n")
-            self.remote.send(" ".join((self.command, path, self.request_version)) + "\r\n")
+                # Send requestline
+                if path == "":
+                    path = "/"
+                print (" ".join((self.command, path, self.request_version)) + "\r\n")
+                self.remote.send(" ".join((self.command, path, self.request_version)) + "\r\n")
+                    
+                self.remote.send(str(self.headers) + "\r\n")
+                # Send Post data
+                if(self.command=='POST'):
+                    self.remote.send(self.rfile.read(int(self.headers['Content-Length'])))
+                response = HTTPResponse(self.remote, method=self.command)
+                response.begin()
+                print (host + " response: %d"%(response.status))
+
+                # Reply to the browser
+                status = "HTTP/1.1 " + str(response.status) + " " + response.reason
+                self.wfile.write(status + "\r\n")
+                h = ''
+                for hh, vv in response.getheaders():
+                    if hh.upper()!='TRANSFER-ENCODING':
+                        h += hh + ': ' + vv + '\r\n'
+                self.wfile.write(h + "\r\n")
+
+                dataLength = 0
+                while True:
+                    response_data = response.read(8192)
+                    if(len(response_data) == 0): break
+                    self.wfile.write(response_data)
+                    dataLength += len(response_data)
+                    logging.debug( "data length: %d"%dataLength)
+                return
+            except:
+                if self.remote:
+                    self.remote.close()
+                    self.remote = None
+
+                (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
+                status = "HTTP/1.1 302 Found"
+
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+
+                if exc_type == socket.error:
+                    code = exc_value[0]
+                    if code == errno.EPIPE: #errno.EPIPE, 10053 is for Windows
+                        logging.info ("Detected remote disconnect: " + host)
+                        return
+                    if code == errno.ECONNREFUSED:
+                        logging.info ("Detected ECONNREFUSED: " + host)
+                        return
+                    if code == errno.ECONNRESET: #reset
+                        logging.info(host + ": reset from " + connectHost)
+
+                if not doProxy:
+                    gConfig["BLOCKED_IPS"][connectHost] = True
+                    return self.proxy()
                 
-            self.remote.send(str(self.headers) + "\r\n")
-            # Send Post data
-            if(self.command=='POST'):
-                self.remote.send(self.rfile.read(int(self.headers['Content-Length'])))
-            response = HTTPResponse(self.remote, method=self.command)
-            response.begin()
-            print (host + " response: %d"%(response.status))
+                if exc_type == socket.timeout:
+                    logging.info("Bad proxy:" + s)
 
-            # Reply to the browser
-            status = "HTTP/1.1 " + str(response.status) + " " + response.reason
-            self.wfile.write(status + "\r\n")
-            h = ''
-            for hh, vv in response.getheaders():
-                if hh.upper()!='TRANSFER-ENCODING':
-                    h += hh + ': ' + vv + '\r\n'
-            self.wfile.write(h + "\r\n")
-
-            dataLength = 0
-            while True:
-                response_data = response.read(8192)
-                if(len(response_data) == 0): break
-                if dataLength == 0 and (len(response_data) <= 501):
-                    if response_data.find("<title>400 Bad Request") != -1 or response_data.find("<title>501 Method Not Implemented") != -1:
-                        logging.error( host + " not supporting injection")
-                        domainWhiteList.append(host)
-                        response_data = gConfig["PAGE_RELOAD_HTML"]
-                self.wfile.write(response_data)
-                dataLength += len(response_data)
-                logging.debug( "data length: %d"%dataLength)
-        except:
-            if self.remote:
-                self.remote.close()
-                self.remote = None
-
-            (scm, netloc, path, params, query, _) = urlparse.urlparse(self.path)
-            status = "HTTP/1.1 302 Found"
-
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-
-            if exc_type == socket.error:
-                code = exc_value[0]
-                if code == errno.EPIPE: #errno.EPIPE, 10053 is for Windows
-                    logging.info ("Detected remote disconnect: " + host)
-                    return
-                if code == errno.ECONNREFUSED:
-                    logging.info ("Detected ECONNREFUSED: " + host)
-                    return
-                if code in errno.ECONNRESET: #reset
-                    logging.info(host + ": reset from " + connectHost)
-
-            if not doProxy:
-                gConfig["BLOCKED_IPS"][connectHost] = True
-                return self.proxy()
-
-            print ("error in proxy: ", self.requestline)
-            print (exc_type)
-            print (str(exc_value) + " " + host)
-    
+                print ("error in proxy: ", self.requestline)
+                print (exc_type)
+                print (str(exc_value) + " " + host)
+        
     def do_GET(self):
         #some sites(e,g, weibo.com) are using comet (persistent HTTP connection) to implement server push
         #after setting socket timeout, many persistent HTTP requests redirects to web proxy, waste of resource
-        #socket.setdefaulttimeout(18)
+        socket.setdefaulttimeout(6)
         self.proxy()
 
     def do_POST(self):
@@ -398,12 +395,46 @@ class ProxyHandler(BaseHTTPRequestHandler):
                 logging.debug( "select timeout")
                 break
 
+def addressInNetwork(ip,net):
+    "Is an address in a network"
+    ipaddr = struct.unpack('>L',socket.inet_aton(ip))[0]
+    netaddr,bits = net.split('/')
+    netmask = struct.unpack('>L',socket.inet_aton(netaddr))[0]
+    ipaddr_masked = ipaddr & (4294967295<<(32-int(bits)))   # Logical AND of IP address and mask will equal the network address if it matches
+    if netmask == netmask & (4294967295<<(32-int(bits))):   # Validate network address is valid for mask
+        return ipaddr_masked == netmask
+    else:
+        print "***WARNING*** Network",netaddr,"not valid with mask /"+bits
+        return ipaddr_masked == netmask
+
 def start():
     socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, gConfig["SOCKS_HOST"], gConfig["SOCKS_PORT"])
 
     for d in gConfig["REMOTE_DNS_LIST"]:
         heapq.heappush(dnsHeap, (1,d))
- 
+    
+    try :
+        gConfig["HTTP_PROXY_SERVERS"] = []
+        s = open("httpproxy.list")
+        for line in s.readlines():
+            line = line.strip()
+            
+            ip, port = line.split(':')
+            china = False
+            for r in gConfig["CHINA_IP_LIST"]:
+                if addressInNetwork(ip,r):
+                    china = True
+                    break
+            if not china: 
+                gConfig["HTTP_PROXY_SERVERS"].append(line)
+                logging.info("proxy: "+line) 
+            
+        s.close()
+    except:
+        logging.info("Load httpproxy.list fail.") 
+
+    if gOptions.check>0:
+        exit()
 
     print ("Set your browser's HTTP/HTTPS proxy to 127.0.0.1:%d"%(gOptions.port))
     print ("You can configure your proxy var http://127.0.0.1:%d"%(gOptions.port))
@@ -428,6 +459,7 @@ if __name__ == "__main__":
             parser.add_argument('--log', default=2, type=int, help='log level, 0-5')
             parser.add_argument('--pidfile', default='wcproxy.pid', help='pid file')
             parser.add_argument('--logfile', default='wcproxy.log', help='log file')
+            parser.add_argument('--check', default=0, type=int, help='check proxy list only')
             gOptions = parser.parse_args()
         else:
             import optparse
@@ -454,6 +486,9 @@ if __name__ == "__main__":
         print ("Writing pid " + pid + " to "+gOptions.pidfile)
         f.write(pid)
         f.close()
+
+    if gOptions.check>0:
+        open(gOptions.logfile,'w').close()
 
     logging.basicConfig(filename=gOptions.logfile, level = gOptions.log*10, format='%(asctime)-15s %(message)s')
     
