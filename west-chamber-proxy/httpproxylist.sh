@@ -13,7 +13,6 @@ curl http://www.binary-zone.com/files/MyProxyList.txt | awk  '/[[:digit:]]{1,3}\
 cat httpproxy.list | sort -n > tmp
 mv tmp httpproxy.list
 
-mkdir /tmp/proxies
+mkdir -p /tmp/proxies/good
 cat httpproxy.list | awk '{print "curl http://www.huanqiu.com/license/servicelicense.htm --max-time 6 --proxy "$1 " -o /tmp/proxies/" $1}' | sh -x
-ls -al /tmp/proxies/ | awk '{if ($5=="1230") print $9}' checkedhttpproxy.list
- 
+find /tmp/proxies -maxdepth 1 -size 1230c | awk '{print "mv "$1" /tmp/proxies/good/"}'
