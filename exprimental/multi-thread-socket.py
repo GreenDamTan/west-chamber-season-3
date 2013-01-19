@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # author: liruqi@gmail.com
 
-import asyncore, socket, sys, urlparse, threading, time, random
+import asyncore, socket, sys, urlparse, threading, time, random, urllib2
 from httplib import HTTPResponse
 
 #收到data最大長度
@@ -48,7 +48,7 @@ class send_server_thread(threading.Thread):
 
 #主程式
 if __name__ == "__main__":
-    s = open("../west-chamber-proxy/httpproxy.list")
+    s = urllib2.urlopen("http://china.ipgeo.info/")
     gConfig["HTTP_PROXY_SERVERS"] = []
     threads = []
     socket.setdefaulttimeout(6)
