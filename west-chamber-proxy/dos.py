@@ -156,6 +156,7 @@ while 1:
                 if e[0] == errno.ECONNRESET:
                     resetcnt += 1
                     goodf.write(oip+"\n")
+                    goodf.flush()
                     #print "*" resetcnt, "resets"
                     if resetcnt % 100 == 0:
                         print pid, resetcnt, "resets"
