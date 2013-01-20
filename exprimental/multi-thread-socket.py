@@ -48,7 +48,7 @@ class send_server_thread(threading.Thread):
 
 #主程式
 if __name__ == "__main__":
-    s = urllib2.urlopen("http://china.ipgeo.info/")
+    s = urllib2.urlopen("http://ipgeo.info/httpproxy/")
     gConfig["HTTP_PROXY_SERVERS"] = []
     threads = []
     socket.setdefaulttimeout(6)
