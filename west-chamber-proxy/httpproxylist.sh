@@ -22,7 +22,7 @@ do
     echo "checking " $domain "..."
     DIR="$WORK_DIR/$domain/"
     mkdir -p $DIR
-    cat $WORK_DIR/$domain".list" | mawk -v prefix=$DIR '{print "curl http://www.huanqiu.com/license/servicelicense.htm --max-time 6 --proxy "$1 " -o " prefix $1}' | sh -x
+    cat $WORK_DIR/$domain".list" | awk -v prefix=$DIR '{print "curl http://www.huanqiu.com/license/servicelicense.htm --max-time 6 --proxy "$1 " -o " prefix $1}' | sh -x
     cd $DIR
     find $DIR -maxdepth 1 -size 1230c | awk '{print "cp "$1" /tmp/proxies/good/"}'
 

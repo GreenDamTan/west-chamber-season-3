@@ -62,6 +62,8 @@ if __name__ == "__main__":
     s.close()
     for line in lines:
         line = line.strip()
+        if len(line) <= 0: continue
+
         ip, port = line.split(':')
         client_thread = send_server_thread(ip, port)
         gConfig["HTTP_PROXY_SERVERS"].append((ip,(int)(port)))
