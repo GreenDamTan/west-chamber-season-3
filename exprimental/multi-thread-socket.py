@@ -80,14 +80,7 @@ if __name__ == "__main__":
     time.sleep(6)
     print ("Check recv data.")
     recvset = {}
-    """
-    for thread in threads:
-        if len(thread.client.RecvData) > 0:
-            if thread.client.RecvData in recvset:
-                recvset[thread.client.RecvData] += 1
-            else:
-                recvset[thread.client.RecvData] = 1
-    """
+    
     ef = open(netloc+".log", "w")
     for thread in threads:
         if len(thread.clientRecvData) > 0:
