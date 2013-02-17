@@ -2,7 +2,8 @@
 
 WORK_DIR=/tmp/proxylist
 mkdir -p $WORK_DIR
-
+mkdir -p /tmp/proxies/good
+ 
 curl -iv http://www.ip-adress.com/proxy_list/ -H 'User-Agent:Mozilla/6.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11' | grep '<td>' | awk -F'>|<' '/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+/ {print $3}' > $WORK_DIR/www.ip-adress.com.list
 
 #seq command is outdated, this version is recommended, ref: http://www.cyberciti.biz/faq/bash-for-loop/
@@ -25,7 +26,7 @@ do
     mkdir -p $DIR
     cat $WORK_DIR/$domain".list" | awk -v prefix=$DIR '{print "curl http://www.huanqiu.com/license/servicelicense.htm --max-time 6 --proxy "$1 " -o " prefix $1}' | sh -x
     cd $DIR
-    find $DIR -maxdepth 1 -size 1230c | awk '{print "cp "$1" /tmp/proxies/good/"}'
+    find $DIR -maxdepth 1 -size 1230c | awk '{print "cp "$1" /tmp/proxies/good/"}' | sh -x
 
 done
 
