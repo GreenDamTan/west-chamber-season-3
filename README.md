@@ -1,5 +1,10 @@
 本项目是一个关于GFW 的半研究性项目，尝试提供可用的翻墙方案，并找出关于GFW 的一些统计数据.
 
+jjproxy
+-------
+由于完全不依赖代理服务器的方案已经无效，把西厢代理的代码都删了。
+这个[jjproxy](https://github.com/liruqi/jjproxy) 神奇的地方在于用了标准的HTTP/HTTPS 和 SOCKS5代理服务器翻墙。目前可用。但用的是个人的VPS。如果有朋友愿意捐赠服务器，欢迎邮件告知。
+
 数据统计
 -------
 做了一些有意思的不完全统计数据：[被封锁的IP列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout-ip.list)(这个列表中存在大量的无HTTP服务的IP,目前尚未未做区分) 以及被[IP封锁的域名列表](https://github.com/liruqi/west-chamber-season-3/blob/master/west-chamber-proxy/status/timedout.txt)
@@ -14,18 +19,6 @@
 目前这种方法还有问题。第一次丢包可以成功,但GFW把双方IP记入缓存; 第二次会被GFW发的SYN+ACK 干扰(一般而言这个干扰包会比服务器的先返回, 发现的特征是windows size 小于5000), 而且GFW会封锁被缓存住的正常的通信数据包,所以即使丢包也无法正常通信.
 学术上, 这种攻击被定义为 Off-Path TCP Sequence Number Inference Attack [PDF](http://web.eecs.umich.edu/~zhiyunq/pub/oakland12_TCP_sequence_number_inference.pdf)
 因此, 目前这种方式只能保证大概20秒内, 可以进行一次HTTP通信.
-
-DoS攻击
--------
-这种方式暂时不能翻墙，但是，理论上可以增加GFW的负载。期望是，攻击者达到一定数量之后，能够降低GFW 的reset 判断精度，或者迫使其放弃对CRLF 注入的reset。
-使用方法：
-
-    cd west-chamber-proxy;
-    sh dos.sh start 
-    sh dos.sh status 
-    sh dos.sh stop #停止
-
-Windows 用户可以直接双机 dos.py （可以同时打开N个）
 
 修改本地hosts文件
 ----------------
@@ -49,12 +42,7 @@ TCP连接混淆
 -----------
 首先说明一下，[这东西很不靠谱](http://gfwrev.blogspot.com/2010/03/gfw.html)，容易受GFW 的更新而影响。感觉是，目前就kernet 项目效果还行。西厢的原始项目和Windows 移植现在都不好用。
 
-西厢代理
---------
-[西厢代理](https://github.com/liruqi/west-chamber-season-3/tree/master/west-chamber-proxy), 需要客户端忽略RST 包(由于Windows 系统没有方便的丢包方法,所以暂不支持Windows,如果路由器刷了合适的固件,也可以在路由器上丢包), 执行client.sh 即可。
-
 其它工具
 --------
 [icefox](https://code.google.com/p/icefox/) 原理跟西厢代理类似,但是此软件可以直接修改系统代理的设置,更方便.目测没解决IP封锁问题.
-[jjproxy](https://github.com/liruqi/jjproxy) 还是通过HTTP注入，不过由于注入方式不遵守RFC，很多网站都会有问题，但是看blogspot 还可以。
 
