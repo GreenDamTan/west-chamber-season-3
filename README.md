@@ -44,5 +44,5 @@ TCP连接混淆
 
 其它工具
 --------
-[icefox](https://code.google.com/p/icefox/) 原理跟西厢代理类似,但是此软件可以直接修改系统代理的设置,更方便.目测没解决IP封锁问题.
-
+[fqrouter](http://fqrouter.com/) 强大的开源翻墙工具，而且有详细的技术文档。测试过Android 版本，免配置，很好用。
+[shadowsocks](http://www.shadowsocks.org/) 我用过的最省心的翻墙代理工具，依赖境外服务器使用。客户端和服务端都很稳定。
