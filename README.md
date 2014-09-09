@@ -1,10 +1,8 @@
-本项目是一个关于GFW 的半研究性项目，尝试提供可用的翻墙方案，并找出关于GFW 的一些统计数据.
+本项目是一个关于GFW 的半研究性项目，尝试提供可用的翻墙方案，并找出关于GFW 的一些统计数据。之前完全不依赖代理服务器的方案已经无效，已删除相关代码。
 
 jjproxy
 -------
-由于完全不依赖代理服务器的方案已经无效，把西厢代理的代码都删了。
-
-这个[jjproxy](https://github.com/liruqi/jjproxy) 神奇的地方在于用了标准的HTTP/HTTPS 和 SOCKS5代理服务器翻墙。目前可用。但用的是个人的VPS。如果有朋友愿意捐赠服务器，欢迎邮件告知。
+[jjproxy](https://github.com/liruqi/jjproxy) 可以直接用标准的HTTP/HTTPS代理服务器翻墙，需要自行搭建。
 
 双向丢包
 --------
@@ -36,11 +34,8 @@ TCP连接混淆
 -----------
 首先说明一下，[这东西很不靠谱](http://gfwrev.blogspot.com/2010/03/gfw.html)，容易受GFW 的更新而影响。感觉是，目前就kernet 项目效果还行。西厢的原始项目和Windows 移植现在都不好用。
 
-数据统计
--------
-本项目不做统计了。数据统计参考[greatfire.org](https://greatfire.org/)。
-
 其它工具
 --------
 * [fqrouter](http://fqrouter.com/) 强大的开源翻墙工具，而且有详细的技术文档。测试过Android 版本，免配置，很好用。
 * [shadowsocks](https://github.com/clowwindy/shadowsocks) 非常好用的加密代理工具，提供本地 SOCKS5 代理，依赖境外服务器使用。客户端和服务端都很稳定。
+* [greatfire.org](https://greatfire.org/)
