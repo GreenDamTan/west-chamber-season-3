@@ -27,9 +27,8 @@ jjproxy
     a) 国外DNS服务器。大家比较熟悉的可能是[Google Public DNS](http://code.google.com/speed/public-dns/)。但是Google DNS经常出问题。先推荐两个，台湾中华电信的168.95.1.1 和 [OpenDNS](http://www.opendns.com/), 还不行，那就上午搜一个国外的DNS。
 
     b) 丢弃DNS伪包。
-    * Windows: west-chmber的windows 移植目测不太好用，建议使用[DNSCrypt](http://www.opendns.com/technology/dnscrypt/)
-    * Mac OS X: 建议使用[DNSCrypt](http://www.opendns.com/technology/dnscrypt/)。也可以尝试[kernet](https://github.com/liruqi/kernet/downloads)。实现TCP连接混淆，下最新的。运气好的话还能上blogspot。
-    * Linux: 需要有iptables。如果 iptables 有 u32模块(或者你能自己搞定安装一个)，可以直接用本项目中的 client.sh；否则，只能自己编译原始的[西厢项目](http://code.google.com/p/scholarzhang)，具体操作看西厢的文档。
+    建议使用 [ChinaDNS](https://github.com/clowwindy/ChinaDNS)
+    有 iptables 的 Linux 环境带u32模块的话，可以直接用本项目中的 client.sh。 也可以尝试原始的[西厢项目](http://code.google.com/p/scholarzhang)，具体操作看西厢的文档。
 
 其它值得尝试的方法：[如何本地避免GFW的DNS污染](http://liruqi.info/post/28775426009/how-to-avoid-dns-hijack-locally)
 
@@ -44,4 +43,4 @@ TCP连接混淆
 其它工具
 --------
 * [fqrouter](http://fqrouter.com/) 强大的开源翻墙工具，而且有详细的技术文档。测试过Android 版本，免配置，很好用。
-* [shadowsocks](http://www.shadowsocks.org/) 我用过的最省心的翻墙代理工具，依赖境外服务器使用。客户端和服务端都很稳定。
+* [shadowsocks](https://github.com/clowwindy/shadowsocks) 非常好用的加密代理工具，提供本地 SOCKS5 代理，依赖境外服务器使用。客户端和服务端都很稳定。
