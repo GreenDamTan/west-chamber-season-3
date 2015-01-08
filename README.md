@@ -17,6 +17,9 @@ jjproxy
 修改本地hosts文件
 ----------------
 修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目。
+
+6to4
+----using a 6to4 tunnel, that you can get for free at he.net is one great way to avoid problems with the gfw. I configured the tunnel into my router, and all of my devices worked without  problem oncee i enabled ipv6 on them.  i should note that this method was aways especially fast. 
  
 反DNS污染
 -------
