@@ -2,7 +2,7 @@
 
 jjproxy
 -------
-[jjproxy](https://github.com/liruqi/jjproxy) 可以直接用标准的HTTP/HTTPS代理服务器翻墙，需要自行搭建。
+[jjproxy](https://github.com/liruqi/jjproxy) 可以直接用标准的HTTP/HTTPS代理服务器翻墙，可以自行搭建服务器，也可以购买本人提供的服务。
 
 双向丢包
 --------
@@ -19,19 +19,12 @@ jjproxy
 修改本地的 hosts 文件，并使用https 方式访问。参考[smarthosts](http://code.google.com/p/smarthosts/)项目。
 
 6to4
-----using a 6to4 tunnel, that you can get for free at he.net is one great way to avoid problems with the gfw. I configured the tunnel into my router, and all of my devices worked without  problem oncee i enabled ipv6 on them.  i should note that this method was aways especially fast. 
- 
+----
+Using a 6to4 tunnel, that you can get for free at he.net is one great way to avoid problems with the GFW. I configured the tunnel into my router, and all of my devices worked without  problem once I enabled ipv6 on them. I should note that this method was aways especially fast. 
+
 反DNS污染
--------
-修改hosts 文件部分解决了污染问题, 但是很可能不全. 要彻底解决DNS污染，设置国外的DNS 服务器，并本机丢弃GFW的 DNS伪包。
-
-    a) 国外DNS服务器。大家比较熟悉的可能是[Google Public DNS](http://code.google.com/speed/public-dns/)。但是Google DNS经常出问题。先推荐两个，台湾中华电信的168.95.1.1 和 [OpenDNS](http://www.opendns.com/), 还不行，那就上午搜一个国外的DNS。
-
-    b) 丢弃DNS伪包。
-    建议使用 [ChinaDNS](https://github.com/clowwindy/ChinaDNS)
-    有 iptables 的 Linux 环境带u32模块的话，可以直接用本项目中的 client.sh。 也可以尝试原始的[西厢项目](http://code.google.com/p/scholarzhang)，具体操作看西厢的文档。
-
-其它值得尝试的方法：[如何本地避免GFW的DNS污染](http://liruqi.info/post/28775426009/how-to-avoid-dns-hijack-locally)
+---------
+最近GFW DNS 污染模块升级，以前简单粗暴的丢包方案不可用。可以参考 [ChinaDNS](https://github.com/clowwindy/ChinaDNS) 的实现。
 
 TCP连接混淆
 -----------
@@ -39,6 +32,6 @@ TCP连接混淆
 
 其它工具
 --------
-* [fqrouter](http://fqrouter.com/) 强大的开源翻墙工具，而且有详细的技术文档。测试过Android 版本，免配置，很好用。
 * [shadowsocks](https://github.com/clowwindy/shadowsocks) 非常好用的加密代理工具，提供本地 SOCKS5 代理，依赖境外服务器使用。客户端和服务端都很稳定。
 * [greatfire.org](https://greatfire.org/)
+* [gfwrev.blogspot.com](http://gfwrev.blogspot.com/)
