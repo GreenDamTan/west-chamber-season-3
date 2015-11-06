@@ -1,9 +1,5 @@
 本项目是一个关于GFW 的半研究性项目，尝试提供可用的翻墙方案，并找出关于GFW 的一些统计数据。之前完全不依赖代理服务器的方案已经无效，已删除相关代码。
 
-jjproxy
--------
-[jjproxy](https://github.com/liruqi/jjproxy) 可以直接用标准的HTTP/HTTPS代理服务器翻墙，可以自行搭建服务器，也可以购买本人提供的服务。
-
 双向丢包
 --------
 服务器、客户端同时丢掉GFW 的干扰包。服务器上脚本 server.sh ，客户端脚本 client.sh. 如果路由器可以设置 iptables 防火墙(如Tomato 或 OpenWRT)，直接在路由器上设置即可：
